@@ -1681,10 +1681,10 @@ converging to 1 (no spread) as ${tex`A_i`} and ${tex`G_i`} tend to 100%.
 This additional section is not present in the original Klima 2.0 whitepaper. It
 presents an interactive model of the AAM where each parameter can be adjusted
 by the reader. In
-[Section 6.3.1](#6-3-1-a-tokens-created-by-the-amm-while-purchasing-carbon), a
+[Section 6.3.1](#6-3-1-a-tokens-created-by-the-aam-while-purchasing-carbon), a
 carbon holder sells carbon to the AAM in exchange for ${tex`A`} tokens; from the
 point of view of the AAM, this represents a carbon purchase. In
-[Section 6.3.2](#6-3-2-carbon-sold-by-the-amm-while-burning-a-tokens), a holder
+[Section 6.3.2](#6-3-2-carbon-sold-by-the-aam-while-burning-a-tokens), a holder
 of ${tex`A`} tokens burns ${tex`A`} tokens to buy carbon from the AAM; from the
 point of view of the AAM, this represents a carbon sale.
 
