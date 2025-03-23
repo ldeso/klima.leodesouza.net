@@ -1694,11 +1694,11 @@ In this section, the price of a carbon class ${tex`i`} is calculated by dividing
 the number of liquid tonnes of carbon class ${tex`i`} purchased by the AAM by
 the number of ${tex`A`} tokens emitted in exchange.
 
-|               | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
-| ------------- | ----------------------------:| ----------------------------------------------:|
-| **Total**     | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq                     |
-| **Variation** | ${stringAEmitted} KLIMA      | ${stringDeltaTonnes} tCO2eq                    |
-| **Price**     | $${stringAPrice}             | $${stringDeltaBarCiPrice}                      |
+|                | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
+| -------------- | ----------------------------:| ----------------------------------------------:|
+| **Total**      | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq                     |
+| **Variation**  | ${stringAEmitted} KLIMA      | ${stringDeltaTonnes} tCO2eq                    |
+| **Unit Price** | $${stringAPrice}             | $${stringDeltaBarCiPrice}                      |
 
 ```js
 function setInput(input, value) {
@@ -1821,11 +1821,11 @@ In this section, the price of carbon is calculated by dividing the number of
 tonnes of carbon class ${tex`i`} sold by the AAM by the number of ${tex`A`}
 tokens burnt in exchange.
 
-|               | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
-| ------------- | ----------------------------:| ---------------------------------------:|
-| **Total**     | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq              |
-| **Variation** | ${stringABurnt} KLIMA        | ${stringDeltaCiTonnes} tCO2eq           |
-| **Price**     | $${stringAPrice}             | $${stringDeltaCiPrice}                  |
+|                | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
+| -------------- | ----------------------------:| ---------------------------------------:|
+| **Total**      | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq              |
+| **Variation**  | ${stringABurnt} KLIMA        | ${stringDeltaCiTonnes} tCO2eq           |
+| **Unit Price** | $${stringAPrice}             | $${stringDeltaCiPrice}                  |
 
 ```js
 const defaultABurnt = 2e2;
@@ -1919,9 +1919,9 @@ const inputA = view(viewA);
 const paramTildeAnullView = html`<p class="inputs">${tex`\tilde A_\emptyset =
         ${stringTildeAnull} \text{ (implied } A \text{ stake pricing class } i
         \text)`}`;
-const paramDeltaCnullTonnesView = html`<p>Until all carbon is sold, the AAM
-        issues ~${stringDeltaCnullTonnes} tCO2eq of class ${tex`i`} as a liquid
-        daily yield to all bond holders.`;
+const paramDeltaCnullTonnesView = html`<p>Until all carbon of class ${tex`i`} is
+        sold, the AAM issues ~${stringDeltaCnullTonnes} tCO2eq of class
+        ${tex`i`} as a liquid daily yield to all bond holders.`;
 
 display(paramTildeAnullView);
 display(paramDeltaCnullTonnesView);
