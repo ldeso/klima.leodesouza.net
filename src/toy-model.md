@@ -1679,22 +1679,22 @@ converging to 1 (no spread) as ${tex`A_i`} and ${tex`G_i`} tend to 100%.
 ### 6.3 Interactive Model
 
 This additional section is not present in the original Klima 2.0 whitepaper. It
-presents an interactive model of the AMM where each parameter can be adjusted
+presents an interactive model of the AAM where each parameter can be adjusted
 by the reader. In
 [Section 6.3.1](#6-3-1-a-tokens-created-by-the-amm-while-purchasing-carbon), a
-carbon holder sells carbon to the AMM in exchange for ${tex`A`} tokens; from the
-point of view of the AMM, this represents a carbon purchase. In
+carbon holder sells carbon to the AAM in exchange for ${tex`A`} tokens; from the
+point of view of the AAM, this represents a carbon purchase. In
 [Section 6.3.2](#6-3-2-carbon-sold-by-the-amm-while-burning-a-tokens), a holder
-of ${tex`A`} tokens burns ${tex`A`} tokens to buy carbon from the AMM; from the
-point of view of the AMM, this represents a carbon sale.
+of ${tex`A`} tokens burns ${tex`A`} tokens to buy carbon from the AAM; from the
+point of view of the AAM, this represents a carbon sale.
 
-#### 6.3.1 A Tokens Created by the AMM While Purchasing Carbon
+#### 6.3.1 A Tokens Created by the AAM While Purchasing Carbon
 
 In this section, the price of a carbon class ${tex`i`} is calculated by dividing
 the number of liquid tonnes of carbon class ${tex`i`} purchased by the AAM by
 the number of ${tex`A`} tokens emitted in exchange.
 
-|               | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AMM |
+|               | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
 | ------------- | ----------------------------:| ----------------------------------------------:|
 | **Total**     | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq                     |
 | **Variation** | ${stringAEmitted} KLIMA      | ${stringDeltaTonnes} tCO2eq                    |
@@ -1722,13 +1722,13 @@ const viewASupply = Inputs.range([2e5, 2e9], {
   transform: Math.log,
 });
 const viewHeldTonnes = Inputs.range([1e5, 1e9], {
-  label: tex`\text{Present-value tonnes of class } i \text{ in AMM}`,
+  label: tex`\text{Present-value tonnes of class } i \text{ in AAM}`,
   step: 1e5,
   value: defaultHeldTonnes,
   transform: Math.log,
 });
 const viewDeltaTonnes = Inputs.range([1e-1, 1e5], {
-  label: tex`\text{Present-value tonnes bought by the AMM}`,
+  label: tex`\text{Present-value tonnes bought by the AAM}`,
   step: 1e-1,
   value: defaultDeltaTonnes,
   transform: Math.log,
@@ -1815,13 +1815,13 @@ const stringDeltaBarCiPrice = paramDeltaBarCiPrice.toLocaleString(
 );
 ```
 
-#### 6.3.2 Carbon Sold by the AMM While Burning A Tokens
+#### 6.3.2 Carbon Sold by the AAM While Burning A Tokens
 
 In this section, the price of carbon is calculated by dividing the number of
 tonnes of carbon class ${tex`i`} sold by the AAM by the number of ${tex`A`}
 tokens burnt in exchange.
 
-|               | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AMM |
+|               | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
 | ------------- | ----------------------------:| ---------------------------------------:|
 | **Total**     | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq              |
 | **Variation** | ${stringABurnt} KLIMA        | ${stringDeltaCiTonnes} tCO2eq           |
@@ -1840,13 +1840,13 @@ const viewASupply_ = Inputs.range([2e5, 2e9], {
   transform: Math.log,
 });
 const viewHeldTonnes_ = Inputs.range([1e5, 1e9], {
-  label: tex`\text{Liquid tonnes of class } i \text{ in AMM}`,
+  label: tex`\text{Liquid tonnes of class } i \text{ in AAM}`,
   step: 1e5,
   value: defaultHeldTonnes,
   transform: Math.log,
 });
 const viewABurnt = Inputs.range([2e-1, 2e5], {
-  label: tex`A \text{ tokens burnt by the AMM}`,
+  label: tex`A \text{ tokens burnt by the AAM}`,
   step: 1e-1,
   value: defaultABurnt,
   transform: Math.log,
@@ -2020,7 +2020,7 @@ Structure
 
 There are two core liquidity pools:
 
-1. An AMM 50:50 pairing of ${tex`A`} and ${tex`G`} tokens; pool
+1. An AAM 50:50 pairing of ${tex`A`} and ${tex`G`} tokens; pool
 ${tex`\overline{AG}`}.
 
 2. A hard currency USDC denoted as ${tex`Q`} paired with ${tex`A`}; pool
