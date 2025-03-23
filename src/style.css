@@ -1,0 +1,76 @@
+@import url("observablehq:default.css");
+@import url("observablehq:theme-air.css");
+
+figcaption {
+  text-align: center;
+}
+
+form {
+  flex-wrap: wrap !important;
+  width: initial !important;
+  max-width: 640px !important;
+}
+
+form > label, form > div {
+  flex: 1 !important;
+  width: initial !important;
+  max-width: 100% !important;
+}
+
+input {
+  flex: auto !important;
+}
+
+input[type="number"] {
+  width: 120px !important;
+}
+
+.inputs {
+  font: 13px/1.2 var(--sans-serif);
+}
+
+.katex-display {
+  overflow: auto hidden;
+  padding: 6px 0;
+}
+
+.katex-display > .katex > .katex-html > .tag {
+  position: relative !important;
+  float: right;
+}
+
+.Copyright {
+  border: solid 1px;
+}
+
+.Copyright-row {
+  border: none !important;
+}
+
+.Copyright-cell {
+  padding: 3px 6.5px;
+}
+
+.u-blue {
+  color: blue;
+}
+
+.u-red {
+  color: red;
+}
+
+.u-center {
+  text-align: center;
+}
+
+.u-underline {
+  text-decoration: underline;
+}
+
+.u-hidden {
+  visibility: hidden;
+}
+
+.u-removed {
+  display: none !important;
+}
