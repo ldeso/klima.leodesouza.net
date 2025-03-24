@@ -974,7 +974,7 @@ function computeDeltaA(Ai, Gi, deltaCi) {
 Finally, ${tex`\Delta A`} is applied to the outstanding supply of ${tex`A`} to
 solve for token quantities.
 
-[Figure ](#figure-9) illustrates the ${tex`G`} token capacity to maintain the
+[Figure 9](#figure-9) illustrates the ${tex`G`} token capacity to maintain the
 initial portfolio pricing of the ${tex`A`} token. The data has been normalised
 in [Figure 10](#figure-10) to ${tex`\Delta \bar C_i A_i`}.
 
