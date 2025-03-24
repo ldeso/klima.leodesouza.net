@@ -1917,6 +1917,9 @@ const viewA = Inputs.range([0, 1], {
   step: 0.001,
   value: defaultA,
 });
+const viewFullyStaked = Inputs.button(
+  [["Implied Zero Stake", () => setInput(viewA, 1)]],
+);
 const viewS = Inputs.range([0, 1], {
   label: tex`S \text{ (share of } A \text{ tokens staked for bonds)}`,
   step: 0.001,
@@ -1947,7 +1950,7 @@ display(Inputs.bind(viewAi_, viewAi));
 display(Inputs.bind(viewGi_, viewGi));
 const inputGnull = view(viewGnull);
 const inputS_ = view(viewS);
-const inputUnweighed = view(viewUnweighed);
+display(viewUnweighed);
 const inputA = view(viewA);
 ```
 
@@ -1955,11 +1958,14 @@ const inputA = view(viewA);
 const paramTildeAnullView = html`<p class="inputs">${tex`\tilde A_\emptyset =
         ${stringTildeAnull} \text{ (implied } A \text{ stake pricing class } i
         \text)`}`;
-const paramDeltaCnullTonnesView = html`<p>Until all Carbon of class ${tex`i`} is
-        sold, the AAM issues ~${stringDeltaCnullTonnes} tCO2eq of class
-        ${tex`i`} as a liquid daily yield to all bond holders.`;
+const paramDeltaCnullTonnesView = html`<p>All ${tex`A`} tokens are already
+        staked for pricing. If the AAM cannot sell Carbon class ${tex`i`}, it
+        issues ${stringDeltaCnull} of its liquid Carbon balance as a daily
+        liquid yield to all bond holders. On the first day, this represents a
+        total of ${stringDeltaCnullTonnes} tCO2eq.`;
 
 display(paramTildeAnullView);
+display(viewFullyStaked);
 display(paramDeltaCnullTonnesView);
 ```
 
@@ -1979,12 +1985,12 @@ if (inputAi === 0) {
   viewUnweighed.classList.add("u-removed");
   if (inputA === 1) {
     viewGnull.classList.add("u-removed");
-    paramTildeAnullView.classList.add("u-removed");
+    viewFullyStaked.classList.add("u-removed");
     viewS.classList.remove("u-removed");
     paramDeltaCnullTonnesView.classList.remove("u-removed");
   } else {
     viewGnull.classList.remove("u-removed");
-    paramTildeAnullView.classList.remove("u-removed");
+    viewFullyStaked.classList.remove("u-removed");
     viewS.classList.add("u-removed");
     paramDeltaCnullTonnesView.classList.add("u-removed");
   }
@@ -2038,6 +2044,14 @@ const stringDeltaCi = paramDeltaCi.toLocaleString(
 const stringDeltaCiTonnes = paramDeltaCiTonnes.toLocaleString(
   "en-GB",
   { minimumSignificantDigits: 3, maximumSignificantDigits: 3 },
+);
+const stringDeltaCnull = paramDeltaCnull.toLocaleString(
+  "en-GB",
+  {
+    style: "percent",
+    minimumSignificantDigits: 3,
+    maximumSignificantDigits: 3,
+  },
 );
 const stringDeltaCnullTonnes = paramDeltaCnullTonnes.toLocaleString(
   "en-GB",
