@@ -1,5 +1,5 @@
 ---
-title: Klima 2.0 Interactive Whitepaper
+title: Klima 2.0 Interactive White Paper
 ---
 
 # Klima 2.0
