@@ -649,8 +649,6 @@ Plot.plot({
 })
 ```
 
-See Appendix A for further outputs.
-
 For visualising the sensitivity of ${tex`A`} overall inflation rates with
 respect to staking and duration, [Figure 7](#figure-7) assumes a single maturity
 over the staking range to provide an approximation of inflation
@@ -1177,6 +1175,13 @@ Hence ${tex`\tilde C_\emptyset`} can be substituted in
 [Equation (16)](#equation-16) for ${tex`\bar C_i`} and the process can compute.
 
 ```js
+function computeDeltaBarCi(deltaBarCiTonnes, barCi, tildeCnull) {
+  const trueBarCiTonnes = barCi === 0 ? tildeCnull : barCi;
+  return deltaBarCiTonnes / trueBarCiTonnes;
+}
+```
+
+```js
 const balanceData = [];
 for (let i = 0; i < vecBarC.length; i++) {
   balanceData.push({ key: "Carbon Balance", value: vecBarC[i], class: i + 1 });
@@ -1391,9 +1396,7 @@ const inputDeltaA = view(Inputs.range([0.001, 0.999], {
 ```
 
 [Figure 11](#figure-11) shows the cost of Carbon increasing with ${tex`A_i`} and
-${tex`G_i`} increasing.
-
-More examples are in Appendix C.
+decreasing with ${tex`G_i`}.
 
 #### 6.2.2 Unweighted Carbon Class
 
@@ -1690,16 +1693,24 @@ point of view of the AAM, this represents a Carbon sale.
 #### 6.3.1 A Tokens Created by the AAM While it Purchases Carbon
 
 In this section, the price of a Carbon class ${tex`i`} is calculated by dividing
-the number of liquid tonnes of Carbon class ${tex`i`} purchased by the AAM by
-the number of ${tex`A`} tokens emitted in exchange.
+the number of ${tex`A`} tokens emitted by the AAM by the number of liquid tonnes
+of Carbon class ${tex`i`} purchased by the AAM in exchange.
 
 |                | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
 | -------------- | ----------------------------:| ----------------------------------------------:|
-| **Total**      | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq                     |
+| **Total**      | ${stringASupply} KLIMA       | ${stringPresentHeldTonnes} tCO2eq              |
 | **Variation**  | ${stringAEmitted} KLIMA      | ${stringDeltaTonnes} tCO2eq                    |
 | **Unit Price** | $${stringAPrice}             | $${stringDeltaBarCiPrice}                      |
 
 ```js
+function piecewiseLogTransform(x, cutoff=1) {
+  return x > cutoff ? Math.log(x) : x;
+}
+
+function piecewiseLogInvert(x, cutoff=1) {
+  return x > cutoff ? Math.exp(x) : x;
+}
+
 function setInput(input, value) {
   input.value = value;
   input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -1708,11 +1719,12 @@ function setInput(input, value) {
 
 ```js
 const defaultASupply = 2e7;
-const defaultHeldTonnes = 1e7;
+const defaultPresentHeldTonnes = 1e5;
 const defaultDeltaTonnes = 1e2;
 const defaultAPrice = 1e-1;
 const defaultAi = 0.5;
 const defaultGi = 0.5;
+const defaultTildeCnull = 1e5;
 
 const viewASupply = Inputs.range([2e5, 2e9], {
   label: tex`\text{Circulating } A \text{ tokens}`,
@@ -1720,11 +1732,12 @@ const viewASupply = Inputs.range([2e5, 2e9], {
   value: defaultASupply,
   transform: Math.log,
 });
-const viewHeldTonnes = Inputs.range([1e5, 1e9], {
+const viewPresentHeldTonnes = Inputs.range([0, 1e10], {
   label: tex`\text{Present-value tonnes of class } i \text{ in AAM}`,
-  step: 1e5,
-  value: defaultHeldTonnes,
-  transform: Math.log,
+  step: 1,
+  value: defaultPresentHeldTonnes,
+  transform: piecewiseLogTransform,
+  invert: piecewiseLogInvert,
 });
 const viewDeltaTonnes = Inputs.range([1e-1, 1e5], {
   label: tex`\text{Present-value tonnes bought by the AAM}`,
@@ -1733,7 +1746,7 @@ const viewDeltaTonnes = Inputs.range([1e-1, 1e5], {
   transform: Math.log,
 });
 const viewAPrice = Inputs.range([1e-3, 1e1], {
-  label: tex`A \text{ token USD price}`,
+  label: tex`A \text{ token unit price}`,
   step: 1e-3,
   value: defaultAPrice,
   transform: Math.log,
@@ -1748,14 +1761,24 @@ const viewGi = Inputs.range([0, 1], {
   step: 0.001,
   value: defaultGi,
 });
+const viewZeroCarbon = Inputs.button(
+  [["Zero Carbon Scenario", () => setInput(viewPresentHeldTonnes, 0)]],
+);
+const viewTildeCnull = Inputs.range([1, 1e10], {
+  label: tex`\text{Implied tonnes of class } i \text{ in AAM}`,
+  step: 1,
+  value: defaultTildeCnull,
+  transform: Math.log,
+});
 const viewReset = Inputs.button(
   [["Reset", () => {
     setInput(viewASupply, defaultASupply);
-    setInput(viewHeldTonnes, defaultHeldTonnes);
+    setInput(viewPresentHeldTonnes, defaultPresentHeldTonnes);
     setInput(viewDeltaTonnes, defaultDeltaTonnes);
     setInput(viewAPrice, defaultAPrice);
     setInput(viewAi, defaultAi);
     setInput(viewGi, defaultGi);
+    setInput(viewTildeCnull, defaultTildeCnull);
   }]],
 );
 ```
@@ -1763,27 +1786,40 @@ const viewReset = Inputs.button(
 ```js
 const inputReset = view(viewReset);
 const inputASupply = view(viewASupply);
-const inputHeldTonnes = view(viewHeldTonnes);
+const inputPresentHeldTonnes = view(viewPresentHeldTonnes);
 const inputDeltaTonnes = view(viewDeltaTonnes);
 const inputAPrice = view(viewAPrice);
 const inputAi = view(viewAi);
 const inputGi = view(viewGi);
+const inputZeroCarbon = view(viewZeroCarbon);
+const inputTildeCnull = view(viewTildeCnull);
 ```
 
 ```js
 if (inputASupply === defaultASupply &&
-        inputHeldTonnes === defaultHeldTonnes &&
+        inputPresentHeldTonnes === defaultPresentHeldTonnes &&
         inputDeltaTonnes === defaultDeltaTonnes &&
         inputAPrice === defaultAPrice && inputAi === defaultAi &&
-        inputGi === defaultGi) {
-  viewReset.classList.add("u-hidden")
+        inputGi === defaultGi && inputTildeCnull === defaultTildeCnull) {
+  viewReset.classList.add("u-hidden");
 } else {
-  viewReset.classList.remove("u-hidden")
+  viewReset.classList.remove("u-hidden");
+}
+if (inputPresentHeldTonnes === 0) {
+  viewZeroCarbon.classList.add("u-removed")
+  viewTildeCnull.classList.remove("u-removed")
+} else {
+  viewZeroCarbon.classList.remove("u-removed")
+  viewTildeCnull.classList.add("u-removed")
 }
 ```
 
 ```js
-const paramDeltaBarCi_ = inputDeltaTonnes / inputHeldTonnes;
+const paramDeltaBarCi_ = computeDeltaBarCi(
+  inputDeltaTonnes,
+  inputPresentHeldTonnes,
+  inputTildeCnull,
+);
 const paramDeltaA = computeDeltaA(inputAi, inputGi, paramDeltaBarCi_);
 const paramAEmitted = paramDeltaA * inputASupply;
 const paramDeltaBarCiPrice = inputAPrice * paramAEmitted / inputDeltaTonnes;
@@ -1792,7 +1828,7 @@ const stringASupply = inputASupply.toLocaleString(
   "en-GB",
   { maximumFractionDigits: 0 },
 );
-const stringHeldTonnes = inputHeldTonnes.toLocaleString(
+const stringPresentHeldTonnes = inputPresentHeldTonnes.toLocaleString(
   "en-GB",
   { maximumFractionDigits: 0 },
 );
@@ -1817,16 +1853,17 @@ const stringDeltaBarCiPrice = paramDeltaBarCiPrice.toLocaleString(
 #### 6.3.2 Carbon Sold by the AAM While it Burns A Tokens
 
 In this section, the price of Carbon is calculated by dividing the number of
-tonnes of Carbon class ${tex`i`} sold by the AAM by the number of ${tex`A`}
-tokens burnt in exchange.
+${tex`A`} tokens burnt by the AAM by the number of tonnes of Carbon class
+${tex`i`} sold by the AAM in exchange.
 
 |                | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
 | -------------- | ----------------------------:| ---------------------------------------:|
-| **Total**      | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq              |
+| **Total**      | ${stringASupply} KLIMA       | ${stringLiquidHeldTonnes} tCO2eq        |
 | **Variation**  | ${stringABurnt} KLIMA        | ${stringDeltaCiTonnes} tCO2eq           |
 | **Unit Price** | $${stringAPrice}             | $${stringDeltaCiPrice}                  |
 
 ```js
+const defaultLiquidHeldTonnes = 1e5;
 const defaultABurnt = 2e2;
 const defaultGnull = 0.5;
 const defaultA = 0.5;
@@ -1838,10 +1875,10 @@ const viewASupply_ = Inputs.range([2e5, 2e9], {
   value: defaultASupply,
   transform: Math.log,
 });
-const viewHeldTonnes_ = Inputs.range([1e5, 1e9], {
+const viewLiquidHeldTonnes = Inputs.range([1, 1e10], {
   label: tex`\text{Liquid tonnes of class } i \text{ in AAM}`,
-  step: 1e5,
-  value: defaultHeldTonnes,
+  step: 1,
+  value: defaultLiquidHeldTonnes,
   transform: Math.log,
 });
 const viewABurnt = Inputs.range([2e-1, 2e5], {
@@ -1851,7 +1888,7 @@ const viewABurnt = Inputs.range([2e-1, 2e5], {
   transform: Math.log,
 });
 const viewAPrice_ = Inputs.range([1e-3, 1e1], {
-  label: tex`A \text{ token USD price}`,
+  label: tex`A \text{ token unit price}`,
   step: 1e-3,
   value: defaultAPrice,
   transform: Math.log,
@@ -1888,7 +1925,7 @@ const viewS = Inputs.range([0, 1], {
 const viewReset_ = Inputs.button(
   [["Reset", () => {
     setInput(viewASupply, defaultASupply);
-    setInput(viewHeldTonnes, defaultHeldTonnes);
+    setInput(viewLiquidHeldTonnes, defaultLiquidHeldTonnes);
     setInput(viewABurnt, defaultABurnt);
     setInput(viewAPrice, defaultAPrice);
     setInput(viewAi, defaultAi);
@@ -1903,7 +1940,7 @@ const viewReset_ = Inputs.button(
 ```js
 const inputReset = view(viewReset_);
 display(Inputs.bind(viewASupply_, viewASupply));
-display(Inputs.bind(viewHeldTonnes_, viewHeldTonnes));
+const inputLiquidHeldTonnes = view(viewLiquidHeldTonnes);
 const inputABurnt = view(viewABurnt);
 display(Inputs.bind(viewAPrice_, viewAPrice));
 display(Inputs.bind(viewAi_, viewAi));
@@ -1927,7 +1964,8 @@ display(paramDeltaCnullTonnesView);
 ```
 
 ```js
-if (inputASupply === defaultASupply && inputHeldTonnes === defaultHeldTonnes &&
+if (inputASupply === defaultASupply &&
+        inputLiquidHeldTonnes === defaultLiquidHeldTonnes &&
         inputABurnt === defaultABurnt && inputAPrice === defaultAPrice &&
         inputAi === defaultAi && inputGi === defaultGi &&
         inputGnull === defaultGnull && inputS_ === defaultS &&
@@ -1972,11 +2010,15 @@ const paramDeltaCi = computeTrueDeltaCi(
   inputGnull,
   paramDeltaA,
 );
-const paramDeltaCiTonnes = paramDeltaCi * inputHeldTonnes;
+const paramDeltaCiTonnes = paramDeltaCi * inputLiquidHeldTonnes;
 const paramDeltaCnull = computeDeltaCnull(inputAi, inputA, inputS_, inputGi); 
-const paramDeltaCnullTonnes = paramDeltaCnull * inputHeldTonnes;
+const paramDeltaCnullTonnes = paramDeltaCnull * inputLiquidHeldTonnes;
 const paramDeltaCiPrice = inputAPrice * inputABurnt / -paramDeltaCiTonnes;
 
+const stringLiquidHeldTonnes = inputLiquidHeldTonnes.toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+);
 const stringABurnt = (-inputABurnt).toLocaleString(
   "en-GB",
   { minimumFractionDigits: 1, maximumFractionDigits: 1 }
