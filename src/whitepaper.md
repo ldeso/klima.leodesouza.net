@@ -1,4 +1,8 @@
-# Klima 2.0 Interactive Whitepaper
+---
+title: Klima 2.0 Interactive Whitepaper
+---
+
+# Klima 2.0
 
 <p class="u-center">dark_sole<br>ds@darksole.vip
 <p class="u-center">With contributions from scott@klimadao.finance
