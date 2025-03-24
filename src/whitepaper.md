@@ -312,7 +312,9 @@ const vecE = d3.range(0.25, 10.1, 0.25);
 
 const scaleE = d3.scaleLinear(d3.extent(vecE), [-1, 1]);
 
-const vecS = constAreaLinear(vecE, inputS, scaleE(inputD));
+const vecS = constAreaLinear(vecE, 0.55, scaleE(inputD)).map(
+  x => x * inputS / 0.55,
+);
 
 const vecReverseCumsumS = d3.cumsum(vecS.slice().reverse()).reverse();
 ```
@@ -500,11 +502,6 @@ const getRealYield = d => d.key === "Real Yield" ? d.value : NaN;
 const getDiscount = d => d.key === "Discount Curve" ? d.value : NaN;
 const getCumStake = d => d.key === "Cumulative Stake A" ? d.value : NaN;
 
-const yieldDomain = [0, 2.0465335693747546 * d3.max(yieldData, getYieldTerm)];
-const stakeRange = [0, d3.max(yieldData, getStake)];
-const yieldScale = d3.scaleLinear(yieldDomain, stakeRange);
-const mapYieldScale = x => x.map(yieldScale);
-
 const stringS = "Total Stake = " + inputS.toLocaleString(
   "en-GB",
   { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 },
@@ -541,7 +538,13 @@ Plot.plot({
     domain: [0.25, 10.45],
     label: "Time to Expiry (Years)",
   },
-  y: { domain: stakeRange, grid: true },
+  y: {
+    domain: [
+      0,
+      Math.max(d3.max(yieldData, getStake), d3.max(yieldData, getYieldTerm)),
+    ],
+    grid: true,
+  },
   insetTop: 16,
   insetLeft: 8,
   insetRight: 8,
@@ -549,12 +552,7 @@ Plot.plot({
   marks: [
     Plot.frame(),
     Plot.axisY({ anchor: "left", label: "Stake A by Maturity (%)" }),
-    Plot.axisY(yieldScale.ticks(), { 
-      anchor: "right",
-      label: "Yield Rates (%)",
-      y: yieldScale,
-      tickFormat: yieldScale.tickFormat(),
-    }),
+    Plot.axisY({ anchor: "right", label: "Yield Rates (%)" }),
     Plot.rectY(yieldData, {
       x1: d => d.time - 0.45,
       x2: d => d.time + 0.45,
@@ -567,26 +565,10 @@ Plot.plot({
       strokeWidth : 2,
       strokeDasharray: 4,
     }),
-    Plot.lineY(yieldData, Plot.mapY(mapYieldScale, {
-      x: "time",
-      y: getYieldTerm,
-      stroke: "key",
-    })),
-    Plot.dotY(yieldData, Plot.mapY(mapYieldScale, {
-      x: "time",
-      y: getYieldTerm,
-      fill: "key",
-    })),
-    Plot.lineY(yieldData, Plot.mapY(mapYieldScale, {
-      x: "time",
-      y: getRealYield,
-      stroke: "key",
-    })),
-    Plot.dotY(yieldData, Plot.mapY(mapYieldScale, {
-      x: "time",
-      y: getRealYield,
-      fill: "key",
-    })),
+    Plot.lineY(yieldData, { x: "time", y: getYieldTerm, stroke: "key" }),
+    Plot.dotY(yieldData, { x: "time", y: getYieldTerm, fill: "key" }),
+    Plot.lineY(yieldData, { x: "time", y: getRealYield, stroke: "key" }),
+    Plot.dotY(yieldData, { x: "time", y: getRealYield, fill: "key" }),
   ],
 })
 ```
