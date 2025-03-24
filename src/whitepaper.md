@@ -1437,26 +1437,6 @@ const vecG = [inputG1, inputG2, inputG3];
 const paramGnull = weightedArithmeticMean(vecG, vecC0);
 ```
 
-Substituting in [Equation (20)](#equation-20)
-
-```js
-html`<span id="equation-24">${tex.block`\ln(1 + \Delta C_\emptyset) =
-  \frac{\ln(1 - \Delta A)}
-  {\tilde A_\emptyset + \frac 1 2 \tilde A_\emptyset^2 (1 - G_\emptyset)^2}
-  \quad \Delta A \neq 1 \tag{24}`}</span>`
-```
-
-```js
-function computeTrueDeltaCi(Ai, Gi, Anull, Gnull, deltaA) {
-  const trueAi = Ai === 0 ? Anull : Ai;
-  const trueGi = Ai === 0 ? Gnull : Gi;
-  return computeDeltaCi(trueAi, trueGi, deltaA);
-}
-```
-
-The result ${tex`\Delta C_\emptyset`} is applied to the liquid elements of the
-residual portfolio to determine the delivery quantities.
-
 ```js
 const unweightedData = [];
 for (let i = 0; i < vecC0.length; i++) {
@@ -1545,6 +1525,26 @@ const inputC3_0 = view(Inputs.range([0, 1/3], {
   value: 0.2,
 }));
 ```
+
+Substituting in [Equation (20)](#equation-20)
+
+```js
+html`<span id="equation-24">${tex.block`\ln(1 + \Delta C_\emptyset) =
+  \frac{\ln(1 - \Delta A)}
+  {\tilde A_\emptyset + \frac 1 2 \tilde A_\emptyset^2 (1 - G_\emptyset)^2}
+  \quad \Delta A \neq 1 \tag{24}`}</span>`
+```
+
+```js
+function computeTrueDeltaCi(Ai, Gi, Anull, Gnull, deltaA) {
+  const trueAi = Ai === 0 ? Anull : Ai;
+  const trueGi = Ai === 0 ? Gnull : Gi;
+  return computeDeltaCi(trueAi, trueGi, deltaA);
+}
+```
+
+The result ${tex`\Delta C_\emptyset`} is applied to the liquid elements of the
+residual portfolio to determine the delivery quantities.
 
 If ${tex`A = 1:`}
 
