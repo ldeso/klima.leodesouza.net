@@ -1546,7 +1546,7 @@ function computeTrueDeltaCi(Ai, Gi, Anull, Gnull, deltaA) {
 The result ${tex`\Delta C_\emptyset`} is applied to the liquid elements of the
 residual portfolio to determine the delivery quantities.
 
-If ${tex`A = 1:`}
+If ${tex`A = 1`}:
 
 In the event that there is 100% ${tex`A`} staking for price, and the portfolio
 consists of zero-staked Carbon classes with liquid balances, the portfolio
