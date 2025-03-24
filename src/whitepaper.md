@@ -2000,10 +2000,12 @@ if (inputAi === 0) {
     paramDeltaCnullTonnesView.classList.add("u-removed");
   }
   viewA.classList.remove("u-removed");
+  paramTildeAnullView.classList.remove("u-removed");
 } else {
   viewGi_.classList.remove("u-removed");
   viewUnweighed.classList.remove("u-removed");
   viewGnull.classList.add("u-removed");
+  viewFullyStaked.classList.add("u-removed");
   paramTildeAnullView.classList.add("u-removed");
   viewS.classList.add("u-removed");
   paramDeltaCnullTonnesView.classList.add("u-removed");
