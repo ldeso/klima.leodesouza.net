@@ -1682,19 +1682,22 @@ converging to 1 (no spread) as ${tex`A_i`} and ${tex`G_i`} tend to 100%.
 ### 6.3 Interactive Model
 
 This additional section is not present in the original Klima 2.0 whitepaper. It
-presents an interactive model of the AAM where each parameter can be adjusted
-by the reader. In
-[Section 6.3.1](#6-3-1-a-tokens-created-by-the-aam-while-it-purchases-carbon), a Carbon holder sells Carbon to the AAM in exchange for ${tex`A`} tokens; from the
-point of view of the AAM, this represents a Carbon purchase. In
-[Section 6.3.2](#6-3-2-carbon-sold-by-the-aam-while-it-burns-a-tokens), a holder
+presents an interactive model of the AAM where each parameter can be adjusted by
+the reader. In
+[Section 6.3.1](#6-3-1-a-tokens-emitted-when-the-aam-purchases-carbon), a Carbon
+holder sells Carbon to the AAM in exchange for ${tex`A`} tokens; from the point
+of view of the AAM, this represents a Carbon purchase. In
+[Section 6.3.2](#6-3-2-carbon-sold-by-the-aam-when-it-burns-a-tokens), a holder
 of ${tex`A`} tokens burns ${tex`A`} tokens to buy Carbon from the AAM; from the
 point of view of the AAM, this represents a Carbon sale.
 
-#### 6.3.1 A Tokens Created by the AAM While it Purchases Carbon
+#### 6.3.1 A Tokens Emitted When the AAM Purchases Carbon
 
-In this section, the price of a Carbon class ${tex`i`} is calculated by dividing
-the number of ${tex`A`} tokens emitted by the AAM by the number of liquid tonnes
-of Carbon class ${tex`i`} purchased by the AAM in exchange.
+In this section, the reader controls how many present-value tonnes of Carbon
+class ${tex`i`} are purchased by the AAM. The number of ${tex`A`} tokens emitted
+in exchange is calculated in real time. The price of Carbon class ${tex`i`} is
+calculated by dividing the number of ${tex`A`} tokens emitted by the AAM by the
+number of present-value tonnes of Carbon class ${tex`i`} purchased by the AAM.
 
 |                | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
 | -------------- | ----------------------------:| ----------------------------------------------:|
@@ -1850,11 +1853,13 @@ const stringDeltaBarCiPrice = paramDeltaBarCiPrice.toLocaleString(
 );
 ```
 
-#### 6.3.2 Carbon Sold by the AAM While it Burns A Tokens
+#### 6.3.2 Carbon Sold by the AAM When it Burns A Tokens
 
-In this section, the price of Carbon is calculated by dividing the number of
-${tex`A`} tokens burnt by the AAM by the number of tonnes of Carbon class
-${tex`i`} sold by the AAM in exchange.
+In this section, the reader controls how many ${tex`A`} tokens are burnt by the
+AAM. The number of liquid tonnes of Carbon class ${tex`i`} sold by the AAM in
+exchange is calculated in real time. The price of Carbon is calculated by
+dividing the number of ${tex`A`} tokens burnt by the AAM by the number of
+liquid tonnes of Carbon class ${tex`i`} sold by the AAM.
 
 |                | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
 | -------------- | ----------------------------:| ---------------------------------------:|
