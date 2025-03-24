@@ -970,7 +970,7 @@ function computeDeltaA(Ai, Gi, deltaCi) {
 Finally, ${tex`\Delta A`} is applied to the outstanding supply of ${tex`A`} to
 solve for token quantities.
 
-[Figure ](#figure-9) illustrates the ${tex`G`} token capacity to maintain the
+[Figure 9](#figure-9) illustrates the ${tex`G`} token capacity to maintain the
 initial portfolio pricing of the ${tex`A`} token. The data has been normalised
 in [Figure 10](#figure-10) to ${tex`\Delta \bar C_i A_i`}.
 
@@ -1677,24 +1677,23 @@ converging to 1 (no spread) as ${tex`A_i`} and ${tex`G_i`} tend to 100%.
 This additional section is not present in the original Klima 2.0 whitepaper. It
 presents an interactive model of the AAM where each parameter can be adjusted
 by the reader. In
-[Section 6.3.1](#6-3-1-a-tokens-created-by-the-amm-while-purchasing-carbon), a
-carbon holder sells carbon to the AAM in exchange for ${tex`A`} tokens; from the
-point of view of the AAM, this represents a carbon purchase. In
-[Section 6.3.2](#6-3-2-carbon-sold-by-the-amm-while-burning-a-tokens), a holder
-of ${tex`A`} tokens burns ${tex`A`} tokens to buy carbon from the AAM; from the
-point of view of the AAM, this represents a carbon sale.
+[Section 6.3.1](#6-3-1-a-tokens-created-by-the-aam-while-purchasing-carbon), a Carbon holder sells Carbon to the AAM in exchange for ${tex`A`} tokens; from the
+point of view of the AAM, this represents a Carbon purchase. In
+[Section 6.3.2](#6-3-2-carbon-sold-by-the-aam-while-burning-a-tokens), a holder
+of ${tex`A`} tokens burns ${tex`A`} tokens to buy Carbon from the AAM; from the
+point of view of the AAM, this represents a Carbon sale.
 
 #### 6.3.1 A Tokens Created by the AAM While Purchasing Carbon
 
-In this section, the price of a carbon class ${tex`i`} is calculated by dividing
-the number of liquid tonnes of carbon class ${tex`i`} purchased by the AAM by
+In this section, the price of a Carbon class ${tex`i`} is calculated by dividing
+the number of liquid tonnes of Carbon class ${tex`i`} purchased by the AAM by
 the number of ${tex`A`} tokens emitted in exchange.
 
-|               | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
-| ------------- | ----------------------------:| ----------------------------------------------:|
-| **Total**     | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq                     |
-| **Variation** | ${stringAEmitted} KLIMA      | ${stringDeltaTonnes} tCO2eq                    |
-| **Price**     | $${stringAPrice}             | $${stringDeltaBarCiPrice}                      |
+|                | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
+| -------------- | ----------------------------:| ----------------------------------------------:|
+| **Total**      | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq                     |
+| **Variation**  | ${stringAEmitted} KLIMA      | ${stringDeltaTonnes} tCO2eq                    |
+| **Unit Price** | $${stringAPrice}             | $${stringDeltaBarCiPrice}                      |
 
 ```js
 function setInput(input, value) {
@@ -1813,15 +1812,15 @@ const stringDeltaBarCiPrice = paramDeltaBarCiPrice.toLocaleString(
 
 #### 6.3.2 Carbon Sold by the AAM While Burning A Tokens
 
-In this section, the price of carbon is calculated by dividing the number of
-tonnes of carbon class ${tex`i`} sold by the AAM by the number of ${tex`A`}
+In this section, the price of Carbon is calculated by dividing the number of
+tonnes of Carbon class ${tex`i`} sold by the AAM by the number of ${tex`A`}
 tokens burnt in exchange.
 
-|               | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
-| ------------- | ----------------------------:| ---------------------------------------:|
-| **Total**     | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq              |
-| **Variation** | ${stringABurnt} KLIMA        | ${stringDeltaCiTonnes} tCO2eq           |
-| **Price**     | $${stringAPrice}             | $${stringDeltaCiPrice}                  |
+|                | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
+| -------------- | ----------------------------:| ---------------------------------------:|
+| **Total**      | ${stringASupply} KLIMA       | ${stringHeldTonnes} tCO2eq              |
+| **Variation**  | ${stringABurnt} KLIMA        | ${stringDeltaCiTonnes} tCO2eq           |
+| **Unit Price** | $${stringAPrice}             | $${stringDeltaCiPrice}                  |
 
 ```js
 const defaultABurnt = 2e2;
@@ -1915,9 +1914,9 @@ const inputA = view(viewA);
 const paramTildeAnullView = html`<p class="inputs">${tex`\tilde A_\emptyset =
         ${stringTildeAnull} \text{ (implied } A \text{ stake pricing class } i
         \text)`}`;
-const paramDeltaCnullTonnesView = html`<p>Until all carbon is sold, the AAM
-        issues ~${stringDeltaCnullTonnes} tCO2eq of class ${tex`i`} as a liquid
-        daily yield to all bond holders.`;
+const paramDeltaCnullTonnesView = html`<p>Until all Carbon of class ${tex`i`} is
+        sold, the AAM issues ~${stringDeltaCnullTonnes} tCO2eq of class
+        ${tex`i`} as a liquid daily yield to all bond holders.`;
 
 display(paramTildeAnullView);
 display(paramDeltaCnullTonnesView);
