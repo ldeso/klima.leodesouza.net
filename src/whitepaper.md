@@ -1719,7 +1719,8 @@ const viewASupply = Inputs.range([2e5, 2e9], {
   transform: Math.log,
 });
 const viewPresentHeldTonnes = Inputs.range([0, 1e10], {
-  label: tex`\text{Present-value tonnes of class } i \text{ in AAM}`,
+  label: tex`\bar C_i \text{ (present-value tonnes of class } i
+    \text{ in AAM)}`,
   step: 1,
   value: defaultPresentHeldTonnes,
   transform: piecewiseLogTransform,
@@ -1732,7 +1733,7 @@ const viewDeltaTonnes = Inputs.range([1e-1, 1e5], {
   transform: Math.log,
 });
 const viewAPrice = Inputs.range([1e-3, 1e1], {
-  label: tex`A \text{ token unit price}`,
+  label: tex`A \text{ token USD unit price}`,
   step: 1e-3,
   value: defaultAPrice,
   transform: Math.log,
@@ -1751,7 +1752,8 @@ const viewZeroCarbon = Inputs.button(
   [["Zero Carbon Scenario", () => setInput(viewPresentHeldTonnes, 0)]],
 );
 const viewTildeCnull = Inputs.range([1, 1e10], {
-  label: tex`\text{Implied tonnes of class } i \text{ in AAM}`,
+  label: tex`\tilde C_\emptyset \text{ (implied tonnes of class } i
+    \text{ in AAM)}`,
   step: 1,
   value: defaultTildeCnull,
   transform: Math.log,
@@ -1876,7 +1878,7 @@ const viewABurnt = Inputs.range([2e-1, 2e5], {
   transform: Math.log,
 });
 const viewAPrice_ = Inputs.range([1e-3, 1e1], {
-  label: tex`A \text{ token unit price}`,
+  label: tex`A \text{ token USD unit price}`,
   step: 1e-3,
   value: defaultAPrice,
   transform: Math.log,
