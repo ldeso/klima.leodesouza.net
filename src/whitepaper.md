@@ -2045,11 +2045,11 @@ const inputA = view(viewA);
 const paramTildeAnullView = html`<p class="inputs">${tex`\tilde A_\emptyset =
         ${stringTildeAnull} \% \text{ (implied } A \text{ stake pricing class }
         i \text)`}`;
-const paramDeltaCnullTonnesView = html`<p>All **A** tokens are already
-        staked for pricing. If the AAM cannot sell Carbon class ${tex`i`}, it
-        issues ${stringDeltaCnull} of its liquid Carbon balance as a daily
-        liquid yield to all bond holders. On the first day, this represents a
-        total of ${stringDeltaCnullTonnes} tCO2eq.`;
+const paramDeltaCnullTonnesView = html`<p>All <strong>A</strong>&nbsp;tokens are
+        already staked for pricing. If the AAM cannot sell Carbon
+        class&nbsp;${tex`i`}, it issues ${stringDeltaCnull} of its liquid Carbon
+        balance as a daily liquid yield to all bond holders. On the first day,
+        this represents a total of ${stringDeltaCnullTonnes}&nbsp;tCO2eq.`;
 
 display(paramTildeAnullView);
 display(viewFullyStaked);
