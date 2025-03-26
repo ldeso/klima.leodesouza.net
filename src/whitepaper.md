@@ -2,38 +2,43 @@
 title: Klima 2.0 Interactive White Paper
 ---
 
-# Klima 2.0
+# Klima&nbsp;2.0
 
-<p class="u-center">dark_sole<br>ds@darksole.vip
-<p class="u-center">With contributions from scott@klimadao.finance
-<p class="u-center">March 11, 2025
-<p class="u-center"><img src="whitepaper/klimadao.png" height=60>
+<p class="u-center">The Dark Sole Enterprise Ltd<br>
+  <a href="mailto:ds@darksole.vip" class="u-nocolor">ds@darksole.vip</a>
+<p class="u-center">With contributions from
+  <a href="mailto:scott@klimadao.finance"
+     class="u-nocolor">scott@klimadao.finance</a>
+<p class="u-center">March 25, 2025
+<p class="u-center"><img src="klimaprotocol.svg" height=60>
 <p class="u-center">Autonomous Asset Manager, Liquidity and Bond Markets powered
-by a Dual Token structure designed for efficient and rational decentralised
-liquidity in the carbon offset markets.
-<p class="u-center">Version 1.21
+  by a Dual Token structure designed for efficient and rational decentralised
+  liquidity in the carbon offset markets.
+<p class="u-center">Version&nbsp;1.30
 <p class="u-center"><img src="whitepaper/darksole.png" height=60>
 <table class="Copyright">
   <tr class="Copyright-row">
-    <th class="Copyright-cell">Copyright Notice</th>
+    <th class="Copyright-cell">Copyright Notice
   </tr>
   <tr class="Copyright-row">
     <td class="Copyright-cell">This document represents original work by
-    dark_sole ds@darksole.vip. While contributions from others are gratefully
-    acknowledged, all intellectual property rights remain with the author. The
-    models, algorithms, processes, products, methodologies, and concepts
-    described herein are licensed exclusively for commercial use by Klima DAO.
-    No other party may implement, copy, modify, or derive works from these
-    materials without explicit written permission from the author.</td>
+    dark_sole
+    <a href="mailto:ds@darksole.vip" class="u-nocolor">ds@darksole.vip</a>.
+    While contributions from others are gratefully acknowledged, all
+    intellectual property rights remain with the author. The models, algorithms,
+    processes, products, methodologies, and concepts described herein are
+    licensed exclusively for commercial use by Klima DAO. No other party may
+    implement, copy, modify, or derive works from these materials without
+    explicit written permission from the author.
   </tr>
   <tr class="Copyright-row">
-    <td class="Copyright-cell">© 2025 dark_sole. All rights reserved.</td>
+    <td class="Copyright-cell">© 2025 dark_sole. All rights reserved.
   </tr>
 </table>
 
 ## 1 Introduction
 
-Klima DAO was conceived to create market infrastructure driving seamless
+Klima&nbsp;DAO was conceived to create market infrastructure driving seamless
 liquidity for Carbon monetisation and Carbon retirement. It has been constructed
 using decentralised architecture with a token system 'KLIMA' for dynamic
 economic governance. Whilst it has been successful in brand and customer
@@ -41,7 +46,7 @@ acquisition, as well as acquiring real Carbon assets, the current token model
 and processes are unwieldy and will not allow the product to scale to its
 potential given the opportunity.
 
-Hence we present **Klima 2.0** as a fundamental capital, liquidity and execution
+Hence we present **Klima&nbsp;2.0** as a fundamental capital, liquidity and execution
 layer for wholesale Carbon trading.
 
 ### 1.1 Client base
@@ -57,13 +62,13 @@ Forward-delivery trades at various discounts as a function of class and time.
 
 ### 1.2 Automated Asset Manager
 
-Both clients are facilitated through the Automated Asset Manager (**AAM**), a
-smart contract based system that continuously acquires (tokenised) Carbon, as
-well as selling offset certificates from its liquid Carbon portfolio, using the
-native **capital token** as a medium of exchange.
+Both clients are facilitated through the Automated Asset Manager&nbsp;(**AAM**),
+a smart contract based system that continuously acquires
+(tokenised)&nbsp;Carbon, as well as sells offset certificates from its liquid
+Carbon portfolio, using the native **capital token** as a medium of exchange.
 
-<p id="figure-1" class="u-center">Figure 1: Automated Asset Manager (AAM)
-Transaction Flow
+<div id="figure-1" class="u-center">Figure&nbsp;1: Automated Asset
+  Manager&nbsp;(AAM) Transaction Flow</div>
 
 ![Automated Asset Manager (AAM) Transaction Flow](whitepaper/aam_tx_flow.png)
 
@@ -74,203 +79,250 @@ The Klima economy shall be powered by two tokens:
 1. Capital or **Asset token** as detailed above that determines Carbon class
 capital allocation by the AAM and the general forward (discount) curve for
 Carbon assets. These tokens are used to buy and sell Carbon as in
-[Figure 1](#figure-1).
+[Figure&nbsp;1](#figure-1).
 
 2. A **Risk Governance** token that combines with the capital token to shape the
 risk profile of the underlying Carbon portfolio.
 
-The new tokens are named `KLIMA` and `KLIMAX` respectively, noting that the
-original token name carries through to the Asset Token reflecting the original
-utility. For the purposes of the document we shall refer to these tokens as
-${tex`A`} and ${tex`G`} where brevity is required.
+The new tokens are named KLIMA and KLIMAX respectively, noting that the original
+token name carries through to the Asset Token reflecting the original utility.
+For the purposes of the document we shall refer to these tokens as&nbsp;**A**
+and&nbsp;**G** where brevity is required.
 
 ### 1.4 Core Economic Pillars
 
-In addition to the AAM, there are two other tenets of Klima 2.0 that enable the
-model to find equilibrium through continous dynamic feedback loops. Importantly
-these are generated solely from token balances in the smart contracts and there
-is no oversight nor a centralised discretionary actor.
+In addition to the AAM, there are two other tenets of Klima&nbsp;2.0 that enable
+the model to find equilibrium through continous dynamic feedback loops.
+Importantly these are generated solely from token balances in the smart
+contracts and there is no oversight nor a centralised discretionary actor.
 
-1. **AAM**: The Automated Asset Manager swaps its own token ${tex`A`} for Carbon
-${tex`C`} (in) or Carbon offset certificates ${tex`C^∗`} (out) to build a
-portfolio of Carbon.
+1. **AAM**: The AAM swaps its own token&nbsp;**A** for
+Carbon&nbsp;**C**&nbsp;(in) or Carbon offset
+certificates&nbsp;**C\***&nbsp;(out) to build a portfolio of Carbon.
 
-   - Both ${tex`A`} and ${tex`G`} are also used as 'Staking' tokens in the AAM
-   whereby ${tex`A`} determines the weighting of any given Carbon class, and
-   ${tex`G`} determines the rate of acquisition (disposal).
+    - Both&nbsp;**A** and&nbsp;**G** are also used as 'Staking' tokens in the
+    AAM whereby&nbsp;**A** determines the weighting of any given Carbon class,
+    and&nbsp;**G** determines the rate of acquisition&nbsp;(disposal).
 
-   - Forward-delivery Carbon (for a set of fixed dates out to 10 years) is
-   transacted simultaneously with liquid Carbon.
+    - Forward-delivery Carbon&nbsp;(for a set of fixed dates out to 10 years) is
+    transacted simultaneously with liquid Carbon.
 
-2. **Bond Market**: ${tex`A`} holders stake tokens until a set expiry to create
+2. **Bond Market**: **A** holders stake tokens until a set expiry to create
 floating yield bonds.
 
-   - The collective temporal staking pattern produces a yield curve to reward
-   bond-holders as well as price the forward curve for the AAM.
+    - The collective temporal staking pattern produces a yield curve to reward
+    bond-holders as well as price the forward curve for the AAM.
 
-   - Only ${tex`A`} tokens participate in the Bond Market which is responsible
-   for pricing the cost of **illiquidity**.
+    - Only **A**&nbsp;tokens participate in the Bond Market which is responsible
+    for pricing the cost of **illiquidity**.
 
 3. **Liquidity Market**: Here the tokens are traded in 2 core liquidity pairs
-with various incentives available to Liquidity Provider token holders (**LPs**),
-including a **risky-yield** generated by the Bond Market.
+with various incentives available to Liquidity Provider token
+holders&nbsp;(**LPs**), including a **risky-yield** generated by the Bond
+Market.
 
-   - ${tex`\overline{AG}`}: Native token swap ${tex`A`} and ${tex`G`}.
+    1. <span class="u-overline">**AG**</span>: Native token swap&nbsp;**A**
+    and&nbsp;**G**.
 
-   - ${tex`\overline{AQ}`}: The asset token ${tex`A`} with USDC ${tex`Q`}.
+    2. <span class="u-overline">**AQ**</span>: The asset token&nbsp;**A** with
+    USDC&nbsp;**Q**.
 
-   The Liquidity Market provides the complementary facility to the Bond Market
-   and the critical relationship between the native tokens and the hard currency
-   of USDC.
+    The Liquidity Market provides the complementary facility to the Bond Market
+    and the critical relationship between the native tokens and the hard
+    currency of USDC.
 
-<p id="figure-2" class="u-center">Figure 2: Market Architectures, Token Utility
+<div id="figure-2" class="u-center">Figure&nbsp;2: Market Architectures, Token
+  Utility</div>
 
 ![Market Architectures, Token Utility](whitepaper/tok_util.png)
 
-The Klima 2.0 system enables each participant in the various economic pillars to
-act in the (selfish) interests of their own capital and utility, which through
-the harmonic model, enables price discovery, liquidity and stability for Carbon
-trading which feeds back on itself as a catalyst for growth and scale.
+The Klima&nbsp;2.0 system enables each participant in the various economic
+pillars to act in the&nbsp;(selfish) interests of their own capital and utility,
+which through the harmonic model, enables price discovery, liquidity and
+stability for Carbon trading which feeds back on itself as a catalyst for growth
+and scale.
 
-### 1.5 Initialisation of the `KLIMA` Asset Token:
+### 1.5 Initialisation of the&nbsp;KLIMA Asset Token
 
-Klima DAO has approximately 20 million tonnes of **Carbon** credits in its
-treasury as assets which will be used to create the initial issuance of
-${tex`A`} tokens upon launch of Klima 2.0.
+Klima DAO has approximately 20&nbsp;million&nbsp;tonnes of **Carbon** credits in
+its treasury as assets which will be used to create the initial issuance
+of **A**&nbsp;tokens upon launch of Klima&nbsp;2.0.
 
 ### 1.6 User Experience
 
 A summary of user functionality:
 
 - AAM
-   - Tokenise Carbon that is liquid or forward-delivery to create ${tex`C`}
-   tokens.
-   - Swap Carbon ${tex`C`} (liquid and forward) for ${tex`A`} tokens.
-   - Swap ${tex`A`} tokens ${tex`A`} for liquid Carbon offset certificate
-   ${tex`C^∗`}.
-   - Stake ${tex`A`} tokens for specific Carbon classes to contribute to the
-   underlying portfolio weighting and pricing.
-   - Stake ${tex`G`} tokens for specific Carbon classes to contribute to the
-   underlying portfolio pricing and capacity.
+    - Tokenise Carbon that is liquid or forward-delivery to create
+    **C**&nbsp;tokens.
+    - Swap Carbon&nbsp;**C**&nbsp;(liquid and forward) for **A**&nbsp;tokens.
+    - Swap **A**&nbsp;tokens for liquid Carbon offset certificate&nbsp;**C\***.
+    - Stake **A**&nbsp;tokens for specific Carbon classes to contribute to the
+    underlying portfolio weighting and pricing.
+    - Stake **G**&nbsp;tokens for specific Carbon classes to contribute to the
+    underlying portfolio pricing and capacity.
 
 - Bond Market
-   - Stake ${tex`A`} tokens for set maturities to create Bonds and receive
-   yield.
+    - Stake **A**&nbsp;tokens for set maturities to create Bonds and receive
+    yield.
 
 - Liquidity Market
-   - Swap ${tex`A`} tokens for ${tex`G`} or USDC ${tex`Q`} in the Liquidity
-   Market.
-   - Swap ${tex`G`} tokens for ${tex`A`} in the Liquidity Market.
-   - Add ${tex`A`} tokens, ${tex`G`} tokens or USDC ${tex`Q`} to liquidity pools
-   and stake LP tokens to receive fees and a share of ${tex`G`} incentives and
-   ${tex`A`} yield.
+    - Swap **A**&nbsp;tokens for&nbsp;**G** or USDC&nbsp;**Q** in the Liquidity
+    Market.
+    - Swap **G**&nbsp;tokens for&nbsp;**A** in the Liquidity Market.
+    - Add **A**&nbsp;tokens, **G**&nbsp;tokens or USDC&nbsp;**Q** to liquidity
+    pools and stake LP&nbsp;tokens to receive fees and a share of
+    **G**&nbsp;incentives and **A**&nbsp;yield.
 
 ## 2 Economic System
+
 The customer activity is managed through a smart contract asset manager driven
 by staking choices from the token system, the balances of assets held, and the
 discount curves generated by the bond market.
 
-<p id="figure-3" class="u-center">Figure 3: Autonomous Asset Manager - Detailed
-Architecture
+<div id="figure-3" class="u-center">Figure&nbsp;3: Autonomous Asset
+  Manager&nbsp;– Detailed Architecture</div>
 
-![Autonomous Asset Manager - Detailed Architecture](whitepaper/aam_arch.png)
+![Autonomous Asset Manager – Detailed Architecture](whitepaper/aam_arch.png)
 
 The AAM is a smart contract exchange platform that facilitates:
 
-1. The sale of Carbon in return for newly issued ${tex`A`} tokens.
+1. The sale of Carbon in return for newly issued&nbsp;**A** tokens.
 
-2. The issuance of retirement certificates to burn ${tex`A`} tokens.
+2. The issuance of retirement certificates to burn&nbsp;**A** tokens.
 
-The combined staking of ${tex`A`} and ${tex`G`} Tokens creates a dynamic pricing
-matrix by class of Carbon, and by time, enabling spot and forward trading of
-Carbon.
+The combined staking of&nbsp;**A** and&nbsp;**G** Tokens creates a dynamic
+pricing matrix by class of Carbon, and by time, enabling spot and forward
+trading of Carbon.
 
 ## 3 Two Token Model
 
 The current token is deprecated and replaced with two new tokens:
 
-<p id="figure-4" class="u-center">Figure 4: Token Derivation Structure
+<div id="figure-4" class="u-center">Figure&nbsp;4: Token Derivation
+  Structure</div>
 
 ![Token Derivation Structure](whitepaper/tok_deriv.png)
 
-${tex`A`} is issued autonomously to acquire Carbon and is a tokenised
-representation of the underlying Klima Carbon portfolio. It is also minted to
-pay Bond yields and Risky Yield for LPs, and is burnt when Carbon certificates
-are purchased.
+**A** is issued autonomously to acquire Carbon and is a tokenised representation
+of the underlying Klima Carbon portfolio. It is also minted to pay Bond yields
+and Risky Yield for LPs, and is burnt when Carbon certificates are purchased.
 
-The ${tex`A`} token has <span class="u-underline">2 independent</span> staking
+The **A**&nbsp;token has <span class="u-underline">2 independent</span> staking
 functions:
 
-<p id="figure-5" class="u-center">Figure 5: Asset Token Staking Dimensions
+<div id="figure-5" class="u-center">Figure&nbsp;5: Asset Token Staking
+  Dimensions</div>
 
 ![Asset Token Staking Dimensions](whitepaper/a_staking_dims.png)
 
-1. **Price**: Collective selection of Carbon classes by ${tex`A`} staking
-determines the instantaneous price ratio for ${tex`A`} token issuance. This
+1. **Price**: Collective selection of Carbon classes by **A**&nbsp;staking
+determines the instantaneous price ratio for **A**&nbsp;token issuance. This
 stake can be amended and withdrawn at any time to allow price modulation for the
 platform of its Carbon assets.
 
-2. **Time**: The ${tex`A`} token is locked for a specific period of time
+2. **Time**: The **A**&nbsp;token is locked for a specific period of time
 representing a liquidity preference for the holder in return for yield. This
 part of the stake cannot be amended.
 
-The ${tex`G`} token has a <span class="u-underline">single</span> staking
+The **G**&nbsp;token has a <span class="u-underline">single</span> staking
 function that also selects Carbon classes. This determines the rate of issuance
-or price curve of ${tex`A`} for the specified Carbon, as well as the retirement
+or price curve of&nbsp;**A** for the specified Carbon, as well as the retirement
 burning rate.
 
 Both tokens facilitate the Klima Carbon market to function efficiently with the
-${tex`A`} token responsible for portfolio selection and pricing, and the
-${tex`G`} token modulating capacity and risk.
+**A**&nbsp;token responsible for portfolio selection and pricing, and the
+**G**&nbsp;token modulating capacity and risk.
 
-<p class="u-center">Table 1: Token Summary
+<p class="u-center">Table&nbsp;1: Token Summary
 
-| Token                    | Amount      | Notes                                                            |
-|:------------------------ |:----------- |:---------------------------------------------------------------- |
-| `KLIMA` ${tex`A`} Token  | 20 million  | Supply expands and contracts perpetually.                        |
-|                          |             | 87.5% of initial supply available to existing KLIMA holders.     |
-|                          |             | Initially created on 1:1 basis with Carbon Tonnes held.          |
-|                          |             | Issues on Carbon received, and Burns on Carbon retired.          |
-|                          |             | _Sets portfolio weights for Carbon classes_                      |
-|                          |             | _Sets discount curve for foward pricing_                         |
-| `KLIMAX` ${tex`G`} Token | 100 million | Fixed supply                                                     |
-|                          |             | 40% put into programmatic issuance as incentive yield over time. |
-|                          |             | 40% for existing KLIMA holders                                   |
-|                          |             | _Sets capacity-price curve for Carbon classes_                   |
-|                          |             | _Sets retirement spread for Carbon offsets_                      |
+<table>
+  <thead>
+    <tr>
+      <th>Token
+      <th>Amount
+      <th>Notes
+  </thead>
+  <tbody>
+    <tr>
+      <td>KLIMA <strong>A</strong>&nbsp;Token
+      <td>20&nbsp;million
+      <td>Supply expands and contracts perpetually.
+    <tr>
+      <td>
+      <td>
+      <td>87.5% of initial supply available to existing KLIMA holders.
+    <tr>
+      <td>
+      <td>
+      <td>Initially created on 1:1&nbsp;basis with Carbon Tonnes held.
+    <tr>
+      <td>
+      <td>
+      <td>Issues on Carbon received, and Burns on Carbon retired.
+    <tr>
+      <td>
+      <td>
+      <td class="u-gray">Sets portfolio weights for Carbon classes
+    <tr>
+      <td>
+      <td>
+      <td class="u-gray">Sets discount curve for foward pricing
+    <tr>
+      <td>KLIMAX <strong>G</strong>&nbsp;Token
+      <td>100&nbsp;million
+      <td>Fixed supply
+    <tr>
+      <td>
+      <td>
+      <td>40% put into programmatic issuance as incentive yield over time.
+    <tr>
+      <td>
+      <td>
+      <td>40% for existing KLIMA holders
+    <tr>
+      <td>
+      <td>
+      <td class="u-gray">Sets capacity-price curve for Carbon classes
+    <tr>
+      <td>
+      <td>
+      <td class="u-gray">Sets retirement spread for Carbon offsets
+  </tbody>
+</table>
 
 ## 4 Bond Market
 
-Holders of ${tex`A`} can stake (select) a bond maturity from the set of
-**standard maturities**. Bonds expire every 90 days on a rolling basis. There
-are always 40 maturities extending out to approximately 10 years for bond
-staking.
+Holders of&nbsp;**A** can stake&nbsp;(select) a bond maturity from the set of
+**standard maturities**. Bonds expire every 90&nbsp;days on a rolling basis.
+There are always 40&nbsp;maturities extending out to approximately 10&nbsp;years
+for bond staking.
 
 - Collective Bond staking detemines the shape of the discount curve of the
-${tex`A`} token with regards to its purchasing rate of forward Carbon
+**A**&nbsp;token with regards to its purchasing rate of forward Carbon.
 
-- Bondholders receive a floating yield of new ${tex`A`} tokens on their stake
+- Bondholders receive a floating yield of new **A**&nbsp;tokens on their stake
 following the shape of this discount curve. Yield is calculated daily and
 accumulates to the principal stake.
 
 - There is no un-staking and all principal and accumulated yield is released at
 bond maturity.
 
-${tex`G`} Tokens are not involved in the bond market and the forward curve is
+**G**&nbsp;Tokens are not involved in the bond market and the forward curve is
 agnostic to Carbon class (as Carbon selection for portfolio weighting is an
-independent utility function of ${tex`A`}).
+independent utility function of&nbsp;**A**).
 
 ### 4.1 Bond Market Calculations
 
 Defining:
 
-- ${tex`S`}: Total ${tex`A`} tokens staked for Bonds expressed as a proportion
-of outstanding supply of ${tex`A`}.
+- ${tex`S`}: Total **A**&nbsp;tokens staked for Bonds expressed as a proportion
+of outstanding supply of&nbsp;**A**.
 
-- ${tex`S_t`}: Total ${tex`A`} tokens staked for each Bond maturity bucket
-${tex`t`}, expressed as a proportion of outstanding supply of ${tex`A`}, where
-${tex`\sum S_t = S`}, and ${tex`t`} is the index of standard maturities
-${tex`t \in \{ 1, 2, \dots, 40 \}.`}
+- ${tex`S_t`}: Total **A**&nbsp;tokens staked for each Bond maturity
+bucket&nbsp;${tex`t`}, expressed as a proportion of outstanding supply
+of&nbsp;**A**, where&nbsp;${tex`\sum S_t = S`}, and ${tex`t`} is the index of
+standard maturities&nbsp;${tex`t \in \{ 1, 2, \dots, 40 \}`}.
 
 - ${tex`E_t`}: Time to expiry expressed in years.
 
@@ -319,10 +371,10 @@ const vecS = constAreaLinear(vecE, 0.55, scaleE(inputD)).map(
 const vecReverseCumsumS = d3.cumsum(vecS.slice().reverse()).reverse();
 ```
 
-Calculating curve parameters ${tex`D`}, ${tex`C`}:
+Calculating curve parameters&nbsp;${tex`D`}, ${tex`C`}:
 
 ```js
-html`<span id="equation-1">${tex.block`D = \frac 1 S \sum_{t=1}^{40} S_t E_t
+html`<span id="equation-1">${tex.block`D = \frac 1 S \sum_{t=1}^{40} S_t \, E_t
   \tag{1}`}</span>`
 ```
 
@@ -344,19 +396,19 @@ const paramD = weightedArithmeticMean(vecE, vecS);
 ```
 
 ```js
-html`<span id="equation-2">${tex.block`C = \frac 1 S \sum_{t=1}^{40} S_t E_t^2
-  \tag{2}`}</span>`
+html`<span id="equation-2">${tex.block`C = \frac 1 S \sum_{t=1}^{40} S_t \,
+  E_t^2 \tag{2}`}</span>`
 ```
 
 ```js
 const paramC = weightedArithmeticMean(vecE.map(e => e * e), vecS);
 ```
 
-The shape of the yield curve ${tex`\gamma_t`} is produced:
+The shape of the yield curve&nbsp;${tex`\gamma_t`} is produced:
 
 ```js
 html`<span id="equation-3">${tex.block`\gamma_t = \max
-  \left( \frac{E_t}{D} - \frac{E_t^2}{2 C}, 0 \right) \tag{3}`}</span>`
+  \left( \frac{E_t}{D} - \frac{E_t^2}{2 \, C}, 0 \right) \tag{3}`}</span>`
 ```
 
 ```js
@@ -370,7 +422,7 @@ function computeGamma(vecE, paramD, paramC) {
 const vecGamma = computeGamma(vecE, paramD, paramC);
 ```
 
-Normalising ${tex`\gamma_t`} to ${tex`\hat\gamma_t`}:
+Normalising&nbsp;${tex`\gamma_t`} to&nbsp;${tex`\hat\gamma_t`}:
 
 ```js
 html`<span id="equation-4">${tex.block`\hat\gamma_t =
@@ -388,8 +440,8 @@ function normalize(v) {
 const vecNormGamma = normalize(vecGamma);
 ```
 
-With the cumulative sum of the normalised values be expressed as
-${tex`\Gamma_t`}:
+With the cumulative sum of the normalised values expressed
+as&nbsp;${tex`\Gamma_t`}:
 
 ```js
 html`<span id="equation-5">${tex.block`\Gamma_t = \sum_{i=1}^t \hat\gamma_i
@@ -400,10 +452,10 @@ html`<span id="equation-5">${tex.block`\Gamma_t = \sum_{i=1}^t \hat\gamma_i
 const vecCumSumGamma = d3.cumsum(vecNormGamma);
 ```
 
-The zero coupon yield curve ${tex`Z_t`} is solved:
+The zero coupon yield curve&nbsp;${tex`Z_t`} is solved:
 
 ```js
-html`<span id="equation-6">${tex.block`Z_t = (1-S) \frac{\Gamma_t}{E_t}
+html`<span id="equation-6">${tex.block`Z_t = (1 - S) \, \frac{\Gamma_t}{E_t}
   \tag{6}`}</span>`
 ```
 
@@ -417,7 +469,7 @@ function computeZ(paramS, vecCumSumGamma, vecE) {
 const vecZ = computeZ(inputS, vecCumSumGamma, vecE);
 ```
 
-Finally, the Bond discount rate ${tex`B_t`} is derived:
+Finally, the Bond discount rate&nbsp;${tex`B_t`} is derived:
 
 ```js
 html`<span id="equation-7">${tex.block`B_t = \exp(-Z_t E_t) \tag{7}`}</span>`
@@ -433,9 +485,9 @@ function computeB(vecZ, vecE) {
 const vecB = computeB(vecZ, vecE);
 ```
 
-The yield due on ${tex`A`} bonds is calculated daily and added to staked
-principal, hence the daily yield for each time bucket is calculated as
-${tex`Y_t`}:
+The yield due on **A**&nbsp;bonds is calculated daily and added to staked
+principal, hence the daily yield for each time bucket is calculated
+as&nbsp;${tex`Y_t`}:
 
 ```js
 html`<span id="equation-8">${tex.block`Y_t = \exp \left( \frac{Z_t}{365} \right)
@@ -452,20 +504,21 @@ function computeY(vecZ) {
 const vecY = computeY(vecZ);
 ```
 
-Hence, any bond stake ${tex`A_t`} will increase by ${tex`\Delta A_t`}
+Hence, any bond stake&nbsp;${tex`A_t`} will increase by&nbsp;${tex`\Delta A_t`}:
 
 ```js
-html`<span id="equation-9">${tex.block`\Delta A_t = A_t Y_t \tag{9}`}</span>`
+html`<span id="equation-9">${tex.block`\Delta A_t = A_t \, Y_t \tag{9}`}</span>`
 ```
 
-The total tokens created on a daily basis for Bond inflation ${tex`R`}:
+The total tokens created on a daily basis for Bond inflation&nbsp;${tex`R`} is:
 
 ```js
 html`<span id="equation-10">${tex.block`R = \sum_{t=1}^{40} \Delta A_t
   \tag{10}`}</span>`
 ```
 
-<p id="figure-6" class="u-center">Figure 6: Example of Bond Market State
+<div id="figure-6" class="u-center">Figure&nbsp;6: Example of Bond Market
+  State</div>
 
 ```js
 const yieldData = [];
@@ -631,51 +684,55 @@ Plot.plot({
 })
 ```
 
-For visualising the sensitivity of ${tex`A`} overall inflation rates with
-respect to staking and duration, [Figure 7](#figure-7) assumes a single maturity
-over the staking range to provide an approximation of inflation
-${tex`\Delta A \approx Z S`}.
+For visualising the sensitivity of **A**&nbsp;overall inflation rates with
+respect to staking and duration, [Figure&nbsp;7](#figure-7) assumes a single
+maturity over the staking range to provide an approximation of inflation
+${tex`\Delta A \approx Z \, S`}.
 
-<p id="figure-7" class="u-center">Figure 7: Range of ${tex`A`} Inflation
+<div id="figure-7" class="u-center">Figure&nbsp;7: Range of
+  <strong>A</strong>&nbsp;Inflation</div>
 
 ![Range of A Inflation](whitepaper/a_inflation.png)
 
 ## 5 Governance
 
-Governance rights, for example the whitelisting (blacklisting) of Carbon
+Governance rights, for example the whitelisting&nbsp;(blacklisting) of Carbon
 classes, and any other matter requiring token stakeholder voting, are allocated
 to two cohorts:
 
 1. Bond staking: ${tex`S_t`}
 
-2. Locked liquidity in the ${tex`A`} – ${tex`G`} pair ${tex`\overline{AG}`} (see
-[Section 7](#7-liquidity)) defined here as ${tex`A_{Gt}`} representing the
-quantity of ${tex`A`} tokens held in the liquidity pool expressed as a
+2. Locked liquidity in the
+**A**–**G**&nbsp;pair&nbsp;<span class="u-overline">**AG**</span>&nbsp;(see
+[Section&nbsp;7](#7-liquidity)) defined here as&nbsp;${tex`A_{Gt}`} representing
+the quantity of **A**&nbsp;tokens held in the liquidity pool expressed as a
 proportion of circulating supply.
 
-Voting power is allocated by time and applied to the respective balance of
-${tex`A`}:
+Voting power is allocated by time and applied to the respective balance
+of&nbsp;**A**:
 
-1. Initial voting weights for Bonds ${tex`v_t`}:
-
-```js
-html`<span id="equation-11">${tex.block`v_t = Z_t S_t B_t \tag{11}`}</span>`
-```
-
-2. Initial voting weights for LPs ${tex`w_t`}:
+1. Initial voting weights for Bonds&nbsp;${tex`v_t`}:
 
 ```js
-html`<span id="equation-12">${tex.block`w_t = Z_t A_{Gt} B_t \tag{12}`}</span>`
+html`<span id="equation-11">${tex.block`v_t =
+  Z_t \, S_t \, B_t \tag{11}`}</span>`
 ```
 
-1. Final voting weights Bonds ${tex`V_t`}:
+2. Initial voting weights for LPs&nbsp;${tex`w_t`}:
+
+```js
+html`<span id="equation-12">${tex.block`w_t =
+  Z_t \, A_{Gt} \, B_t \tag{12}`}</span>`
+```
+
+1. Final voting weights Bonds&nbsp;${tex`V_t`}:
 
 ```js
 html`<span id="equation-13">${tex.block`V_t = \frac{v_t}
   {\sum_{j=1}^{40} (v_j + 2 w_j)} \tag{13}`}</span>`
 ```
 
-2. Final voting weights LPs ${tex`W_t`}:
+2. Final voting weights LPs&nbsp;${tex`W_t`}:
 
 ```js
 html`<span id="equation-14">${tex.block`W_t = \frac{w_t}{\sum_{j=1}^{40}
@@ -684,51 +741,54 @@ html`<span id="equation-14">${tex.block`W_t = \frac{w_t}{\sum_{j=1}^{40}
 
 ## 6 Automated Asset Manager
 
-### 6.1 Carbon Sales (AAM Purchase)
+### 6.1 Carbon Sales&nbsp;(AAM Purchase)
 
 #### 6.1.1 Existing Carbon in the Portfolio
 
-Carbon classes ${tex`i \in \{1, 2, 3, \dots, n\}`} are whitelisted through
-governance by the ${tex`A`} token and the ${tex`\overline{AG}`} LP holders (see
-[Section 5](#5-governance)).
+Carbon classes&nbsp;${tex`i \in \{1, 2, 3, \dots, n\}`} are whitelisted through
+governance by the **A**&nbsp;token and the
+<span class="u-overline">**AG**</span>&nbsp;LP&nbsp;holders (see
+[Section&nbsp;5](#5-governance)).
 
-For Carbon pricing, both the ${tex`A`} tokens and the ${tex`G`} tokens may stake
-for specific Carbon classes ${tex`C_i`} and these are independent stakes between
-the two token systems.
+For Carbon pricing, both the **A**&nbsp;tokens and the **G**&nbsp;tokens may
+stake for specific Carbon classes&nbsp;${tex`C_i`} and these are independent
+stakes between the two token systems.
 
-<p id="figure-8" class="u-center">Figure 8: Token Staking Class Structure
+<div id="figure-8" class="u-center">Figure&nbsp;8: Token Staking Class
+  Structure</div>
 
 ![Token Staking Class Structure](whitepaper/staking_struct.png)
 
 For a Carbon class quantity to be sold to the AAM, it must have a strictly
-positive quantity of ${tex`A`} tokens staked for that Carbon class, otherwise
+positive quantity of **A**&nbsp;tokens staked for that Carbon class, otherwise
 there is no price, and the Carbon cannot be sold.
 
 Defining:
 
-- ${tex`A`}: Total ${tex`A`} tokens staked for pricing of Carbon classes,
-expressed as a proportion of outstanding supply of ${tex`A`} Tokens.
+- ${tex`A`}: Total **A**&nbsp;tokens staked for pricing of Carbon classes,
+expressed as a proportion of outstanding supply of **A**&nbsp;tokens.
 
-- ${tex`C_i`}: Total tonnes of Carbon class ${tex`i`} currently held in the
+- ${tex`C_i`}: Total tonnes of Carbon class&nbsp;${tex`i`} currently held in the
 portfolio.
 
-- ${tex`A_i`}: ${tex`A`} tokens staked for Carbon class ${tex`i`} expressed as a
-proportion of outstanding supply of ${tex`A`} Tokens where ${tex`\sum A_i = A`}.
+- ${tex`A_i`}: **A**&nbsp;tokens staked for Carbon class&nbsp;${tex`i`}
+expressed as a proportion of outstanding supply of **A** tokens
+where&nbsp;${tex`\sum A_i = A`}.
 
-- ${tex`G_i`}: ${tex`G`} tokens staked for class ${tex`i`} expressed as a
-proportion of outstanding supply of ${tex`G`} Tokens.
+- ${tex`G_i`}: **G** tokens staked for class&nbsp;${tex`i`} expressed as a
+proportion of outstanding supply of **G**&nbsp;tokens.
 
-- ${tex`C_{it}`}: The quantity of Carbon class ${tex`i`} held in the AAM
-deliverable per maturity ${tex`t`} where ${tex`C_{i0}`} reflects the liquid
-quantity.
+- ${tex`C_{it}`}: The quantity of Carbon class&nbsp;${tex`i`} held in the AAM
+deliverable per maturity&nbsp;${tex`t`} where&nbsp;${tex`C_{i0}`} reflects the
+liquid quantity.
 
 In order to determine the present-value quantity of Carbon, ${tex`\bar C_i`}, we
-apply the discount curve from [Equation (7)](#equation-7) to the liquidity
+apply the discount curve from [Equation&nbsp;(7)](#equation-7) to the liquidity
 schedule and sum the discounted holdings:
 
 ```js
 html`<span id="equation-15">${tex.block`\bar C_i = C_{i0} +
-  \sum_{t=1}^{40} B_t C_{it} \tag{15}`}</span>`
+  \sum_{t=1}^{40} B_t \, C_{it} \tag{15}`}</span>`
 ```
 
 ```js
@@ -810,8 +870,8 @@ const inputLiqShape = view(Inputs.range([-1, 1], {
 }));
 ```
 
-Similarly, taking ${tex`\Delta C_{it}`} as the quantity of Carbon ${tex`i`} to
-be sold with a specific maturity index ${tex`t`}.
+Similarly, taking&nbsp;${tex`\Delta C_{it}`} as the quantity of
+Carbon&nbsp;${tex`i`} to be sold with a specific maturity index&nbsp;${tex`t`}:
 
 ```js
 html`<span id="equation-16">${tex.block`\Delta \bar C_i = \Delta C_{i0} +
@@ -926,19 +986,19 @@ const inputEt = view(Inputs.range([0, 10], {
 }));
 ```
 
-Where ${tex`\Delta \bar C_i`} is expressed as the relative increment to its
-respective pool balance, the amount of ${tex`A`} tokens issued to pay for
+Where&nbsp;${tex`\Delta \bar C_i`} is expressed as the relative increment to its
+respective pool balance, the amount of **A**&nbsp;tokens issued to pay for
 Carbon, ${tex`\Delta A`}, expressed as a proportion of current supply, is
 determined as:
 
 ```js
 html`<span id="equation-17">${tex.block`\ln(1 + \Delta A) =
-  \left( A_i - \frac{A_i^2 (1 - G_i)^2}{2} \right) \ln(1 + \Delta \bar C_i)
+  \left( A_i - \frac{A_i^2 \, (1 - G_i)^2}{2} \right) \ln(1 + \Delta \bar C_i)
   \tag{17}`}</span>`
 ```
 
 For completeness, denoting the expression on the right hand side of
-[Equation (17)](#equation-17) as ${tex`\mathsf{RHS}`}:
+[Equation&nbsp;(17)](#equation-17) as&nbsp;${tex`\mathsf{RHS}`}:
 
 ```js
 html`<span id="equation-18">${tex.block`\Delta A = \exp(\mathsf{RHS}) − 1
@@ -951,19 +1011,20 @@ function computeDeltaA(Ai, Gi, deltaCi) {
 }
 ```
 
-Finally, ${tex`\Delta A`} is applied to the outstanding supply of ${tex`A`} to
+Finally, ${tex`\Delta A`} is applied to the outstanding supply of&nbsp;**A** to
 solve for token quantities.
 
-[Figure 9](#figure-9) illustrates the ${tex`G`} token capacity to maintain the
-initial portfolio pricing of the ${tex`A`} token. The data has been normalised
-in [Figure 10](#figure-10) to ${tex`\Delta \bar C_i A_i`}.
+[Figure&nbsp;9](#figure-9) illustrates the **G**&nbsp;token capacity to maintain
+the initial portfolio pricing of the **A**&nbsp;token. The data has been
+normalised in [Figure&nbsp;10](#figure-10) to&nbsp;${tex`\Delta \bar C_i A_i`}.
 
-<p id="figure-9" class="u-center">Figure 9: ${tex`A`} Price Curves
-(${tex`\Delta A`}) when
-${tex`\Delta \bar C_i = ${(100 * inputDeltaBarCi).toLocaleString(
-  "en-GB",
-  { maximumFractionDigits: 0 },
-)} \, \%`}
+<div id="figure-9" class="u-center">Figure&nbsp;9: <strong>A</strong>&nbsp;Price
+  Curves&nbsp;(${tex`\Delta A`}) when ${tex`\Delta \bar C_i = ${
+    (100 * inputDeltaBarCi).toLocaleString(
+      "en-GB",
+      { maximumFractionDigits: 0 },
+    )
+  } \%`}</div>
 
 ```js
 function contrastingTextColor(backgroundColor) {
@@ -1014,7 +1075,7 @@ Plot.plot({
           ${tex`\Delta \bar C_i = ${(100 * inputDeltaBarCi).toLocaleString(
             "en-GB",
             { maximumFractionDigits: 0 },
-          )} \, \%`}`,
+          )} \%`}`,
   color: { legend: true, scheme: "Spectral", type: "sequential", label: "ΔA" },
   x: { ticks: d3.range(0, 1.01, 0.1), label: "Aᵢ" },
   y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Gᵢ" },
@@ -1056,17 +1117,19 @@ const inputDeltaBarCi = view(Inputs.range([0.01, 1], {
 }));
 ```
 
-<p id="figure-10" class="u-center">Figure 10: Normalised ${tex`A`} Price Curves
-(${tex`\Delta A`}) when
-${tex`\Delta \bar C_i = ${(100 * inputDeltaBarCi).toFixed()} \, \%`}
+<div id="figure-10" class="u-center">Figure&nbsp;10: Normalised
+  <strong>A</strong>&nbsp;Price Curves&nbsp;(${tex`\Delta A`})
+  when&nbsp;${
+    tex`\Delta \bar C_i = ${(100 * inputDeltaBarCi).toFixed()} \%`
+  }</div>
 
 ```js
 Plot.plot({
-  caption: html`Normalised map of ${tex`\Delta A`} with
+  caption: html`Normalised Map of ${tex`\Delta A`} with
           ${tex`\Delta \bar C_i = ${(100 * inputDeltaBarCi).toLocaleString(
             "en-GB",
             { maximumFractionDigits: 0 },
-          )} \, \%`}`,
+          )} \%`}`,
   color: {
     legend: true,
     scheme: "Spectral",
@@ -1105,30 +1168,29 @@ Plot.plot({
 })
 ```
 
-Noting that the sensitivity to ${tex`G`} increases as ${tex`A`} increases and
-the effects become more pronounced as ${tex`\Delta \bar C_i`} increases.
-
-Examples can be seen in Apppendix B.
+Noting that the sensitivity to&nbsp;${tex`G_i`} increases as&nbsp;${tex`A_i`}
+increases and the effects become more pronounced
+as&nbsp;${tex`\Delta \bar C_i`} increases.
 
 #### 6.1.2 Zero Carbon scenario
 
 There is the circumstance when there is zero Carbon held in the portfolio for a
-particular class, i.e. ${tex`C_i = 0`} which invalidates the calculation of
-${tex`\Delta \bar C_i`}. This is dealt with by computing an _implied_ portfolio
-balance ${tex`\tilde C_i`}.
+particular class, i.e.&nbsp;${tex`C_i = 0`} which invalidates the calculation
+of&nbsp;${tex`\Delta \bar C_i`}. This is dealt with by computing an _implied_
+portfolio balance&nbsp;${tex`\tilde C_i`}.
 
-Defining ${tex`\bar C_j`} as the Carbon balances under
-[Equation (15)](#equation-15) for the whole portfolio of ${tex`J`} Carbon
-classes with strictly positive Carbon balances and ${tex`A_j`} as the respective
-price stakes expressed as the proportion of outstanding ${tex`A`} tokens; and
-with ${tex`C_\emptyset`} as any Carbon class with a zero Carbon balances with a
-strictly positive ${tex`A`} price stake.
+Defining&nbsp;${tex`\bar C_j`} as the Carbon balances under
+[Equation&nbsp;(15)](#equation-15) for the whole portfolio of&nbsp;${tex`J`}
+Carbon classes with strictly positive Carbon balances and&nbsp;${tex`A_j`} as
+the respective price stakes expressed as the proportion of outstanding
+**A**&nbsp;tokens; and with&nbsp;${tex`C_\emptyset`} as any Carbon class with a
+zero Carbon balance with a strictly positive&nbsp;**A** price stake.
 
 The implied balance for any zero carbon asset is given as:
 
 ```js
 html`<span id="equation-19">${tex.block`\tilde C_\emptyset =
-  \left( \prod_{j=1}^J \bar C_j^{A_j} \right)^{1 / \sum_1^J A_j}
+  \left( \prod_{j=1}^J \bar C_j^{A_j} \right)^\frac{1}{\sum_1^J A_j}
   \tag{19}`}</span>`
 ```
 
@@ -1153,8 +1215,9 @@ const vecA = [inputA1, inputA2, inputA3];
 const paramTildeCnull = weightedGeometricMean(vecBarC, vecA);
 ```
 
-Hence ${tex`\tilde C_\emptyset`} can be substituted in
-[Equation (16)](#equation-16) for ${tex`\bar C_i`} and the process can compute.
+Hence&nbsp;${tex`\tilde C_\emptyset`} can be substituted in
+[Equation&nbsp;(16)](#equation-16) for&nbsp;${tex`\bar C_i`} and the process can
+compute.
 
 ```js
 function computeDeltaBarCi(deltaBarCiTonnes, barCi, tildeCnull) {
@@ -1269,23 +1332,23 @@ const inputA3 = view(Inputs.range([0.0, 1/3], {
 }));
 ```
 
-### 6.2 Carbon Retirement (AAM Sells)
+### 6.2 Carbon Retirement&nbsp;(AAM Sells)
 
 #### 6.2.1 Weighted Carbon Class
 
 For retiring Carbon that is _weighted_, that is there is a strictly positive
-${tex`A`} token stake for that class, an ${tex`A`} token holder can extract the
-Carbon class offset of their choice ${tex`C_i`} but the available pool is only
-the liquid balance, namely the element ${tex`C_{i0}`}
+**A**&nbsp;token stake for that class, an **A**&nbsp;token holder can extract
+the Carbon class offset of their choice&nbsp;${tex`C_i`} but the available pool
+is only the liquid balance, namely the element&nbsp;${tex`C_{i0}`}:
 
 ```js
 html`<span id="equation-20">${tex.block`\ln(1 + \Delta C_i) =
-  \frac{\ln(1 - \Delta A)}{A_i + \frac 1 2 A_i^2(1 - G_i)^2} \quad \Delta A
+  \frac{\ln(1 - \Delta A)}{A_i + \frac 1 2 A_i^2 \, (1 - G_i)^2} \quad \Delta A
   \neq 1 \tag{20}`}</span>`
 ```
 
 As before denoting the expression on the right hand side of
-[Equation (20)](#equation-20) as ${tex`\mathsf{RHS}`}:
+[Equation&nbsp;(20)](#equation-20) as&nbsp;${tex`\mathsf{RHS}`}:
 
 ```js
 html`<span id="equation-21">${tex.block`\Delta C_i = \exp(\mathsf{RHS}) - 1
@@ -1298,11 +1361,13 @@ function computeDeltaCi(Ai, Gi, deltaA) {
 }
 ```
 
-<p id="figure-11" class="u-center">Figure 11: Proportion of Carbon Retired when
-${tex`\Delta A = ${(100 * inputDeltaA).toLocaleString(
-  "en-GB",
-  { minimumFractionDigits: 1, maximumFractionDigits: 1 },
-)} \, \%`}
+<div id="figure-11" class="u-center">Figure&nbsp;11: Proportion of Carbon Retired
+  when&nbsp;${tex`\Delta A = ${
+    (100 * inputDeltaA).toLocaleString(
+      "en-GB",
+      { minimumFractionDigits: 1, maximumFractionDigits: 1 },
+    )
+  } \%`}</div>
 
 ```js
 const retirementData = [];
@@ -1330,7 +1395,7 @@ Plot.plot({
           ${tex`\Delta A = ${(100 * inputDeltaA).toLocaleString(
             "en-GB",
             { minimumFractionDigits: 1, maximumFractionDigits: 1 },
-          )} \, \%`}`,
+          )} \%`}`,
   color: {
     legend: true,
     scheme: "Spectral",
@@ -1377,22 +1442,23 @@ const inputDeltaA = view(Inputs.range([0.001, 0.999], {
 }));
 ```
 
-[Figure 11](#figure-11) shows the cost of Carbon increasing with ${tex`A_i`} and
-decreasing with ${tex`G_i`}.
+[Figure&nbsp;11](#figure-11) shows the cost of Carbon increasing
+with&nbsp;${tex`A_i`} and decreasing with&nbsp;${tex`G_i`}.
 
 #### 6.2.2 Unweighted Carbon Class
 
-When a Carbon class is included in the portfolio but currently has no weighting
-(${tex`A_i = 0`}) some modifications are required. An important distinction is
-the retirement of zero-weighted Carbon is as a portfolio and not for specified
-Carbon classes. The ${tex`A`} token burnt will receive a portion of the
-underlying residual portfolio weighted by tons of liquid Carbon.
+When a Carbon class is included in the portfolio but currently has no
+weighting&nbsp;(${tex`A_i = 0`}) some modifications are required. An important
+distinction is the retirement of zero-weighted Carbon is as a portfolio and not
+for specified Carbon classes. The **A**&nbsp;token burnt will receive a portion
+of the underlying residual portfolio weighted by tons of liquid Carbon.
 
 Assuming ${tex`A \neq 1`}:
 
-${tex`A_i`} is replaced in [Equation (20)](#equation-20) for the residual
-portfolio of unweighted Carbon, ${tex`C_\emptyset`}, with an implied weighting
-${tex`\tilde A_\emptyset`} derived from the total liquid Carbon assets
+${tex`A_i`} is replaced in [Equation&nbsp;(20)](#equation-20) for the residual
+portfolio of unweighted Carbon, ${tex`C_\emptyset`}, with an implied
+weighting&nbsp;${tex`\tilde A_\emptyset`} derived from the total liquid Carbon
+assets:
 
 ```js
 html`<span id="equation-22">${tex.block`\tilde A_\emptyset = (1 - A)^2
@@ -1405,13 +1471,13 @@ function computeTildeAnull(A) {
 }
 ```
 
-With ${tex`K`} classes of Carbon existing in the residual portfolio, noting that
-${tex`C_{\emptyset 0} = \sum_{k=1}^K C_{k0}`}, with ${tex`G_k`} similarly
-defined, we can determine an average for ${tex`G_\emptyset`}:
+With&nbsp;${tex`K`} classes of Carbon existing in the residual portfolio, noting
+that&nbsp;${tex`C_{\emptyset 0} = \sum_{k=1}^K C_{k0}`}, with&nbsp;${tex`G_k`}
+similarly defined, we can determine an average for&nbsp;${tex`G_\emptyset`}:
 
 ```js
 html`<span id="equation-23">${tex.block`G_\emptyset = \frac{1}{C_{\emptyset 0}}
-  \sum_{k=1}^K G_k C_{k0} \tag{23}`}</span>`
+  \sum_{k=1}^K G_k \, C_{k0} \tag{23}`}</span>`
 ```
 
 ```js
@@ -1511,12 +1577,12 @@ const inputC3_0 = view(Inputs.range([0, 1/3], {
 }));
 ```
 
-Substituting in [Equation (20)](#equation-20)
+Substituting in [Equation&nbsp;(20)](#equation-20):
 
 ```js
 html`<span id="equation-24">${tex.block`\ln(1 + \Delta C_\emptyset) =
   \frac{\ln(1 - \Delta A)}
-  {\tilde A_\emptyset + \frac 1 2 \tilde A_\emptyset^2 (1 - G_\emptyset)^2}
+  {\tilde A_\emptyset + \frac 1 2 \tilde A_\emptyset^2 \, (1 - G_\emptyset)^2}
   \quad \Delta A \neq 1 \tag{24}`}</span>`
 ```
 
@@ -1528,20 +1594,20 @@ function computeTrueDeltaCi(Ai, Gi, Anull, Gnull, deltaA) {
 }
 ```
 
-The result ${tex`\Delta C_\emptyset`} is applied to the liquid elements of the
-residual portfolio to determine the delivery quantities.
+The result&nbsp;${tex`\Delta C_\emptyset`} is applied to the liquid elements of
+the residual portfolio to determine the delivery quantities.
 
-If ${tex`A = 1`}:
+If&nbsp;${tex`A = 1`}:
 
-In the event that there is 100% ${tex`A`} staking for price, and the portfolio
-consists of zero-staked Carbon classes with liquid balances, the portfolio
-begins to issue these balances
+In the event that there is 100%&nbsp;**A**&nbsp;staking for price, and the
+portfolio consists of zero-staked Carbon classes with liquid balances, the
+portfolio begins to issue these balances
 <span class="u-underline">to all A Bond holders</span> as a daily liquid yield
-using the governance-based weightings ${tex`V`} in [Section 5](#5-governance),
-[Equation (13)](#equation-13).
+using the governance-based weightings&nbsp;${tex`V`} in
+[Section&nbsp;5](#5-governance), [Equation&nbsp;(13)](#equation-13).
 
-With ${tex`S`} as previously defined as the total ${tex`A`} tokens staked as
-bonds (Time staking):
+With&nbsp;${tex`S`} as previously defined as the total **A**&nbsp;tokens staked
+as bonds (time staking):
 
 ```js
 html`<span id="equation-25">${tex.block`\Delta C_\emptyset = \frac{1}{365} \,
@@ -1560,13 +1626,13 @@ function computeDeltaCnull(Ai, A, S, Gnull) {
 
 #### 6.2.3 Liquidation: ${tex`\Delta A = 1`}
 
-In the event that 100% of ${tex`A`} tokens are placed into the burn mechanism
+In the event that 100% of **A**&nbsp;tokens are placed into the burn mechanism
 for Carbon offsets, the following occurs:
 
-- The portfolio of liquid tokens is distributed to the ${tex`A`} token sellers
-pro-rata to ${tex`A`} contribution
+- The portfolio of liquid tokens is distributed to the **A**&nbsp;token sellers
+pro-rata to **A**&nbsp;contribution
 
-- A new set of nominal ${tex`A`} tokens are issued to locked ${tex`G`} token
+- A new set of nominal **A**&nbsp;tokens are issued to locked **G**&nbsp;token
 holders on a pro-rata basis
 
 ```js
@@ -1577,10 +1643,10 @@ function computeSpread(Ai, Gi, deltaCinitial) {
 }
 ```
 
-[Figure 12](#figure-12) below shows the spread captured on a 'round trip' by the
-system where ${tex`\varepsilon`} is the proportion retained:
+[Figure&nbsp;12](#figure-12) below shows the spread captured on a 'round trip'
+by the system where&nbsp;${tex`\varepsilon`} is the proportion retained.
 
-<p id="figure-12" class="u-center">Figure 12: Carbon ‘Spread’
+<div id="figure-12" class="u-center">Figure&nbsp;12: Carbon ‘Spread’</div>
 
 ```js
 const spreadData = [];
@@ -1609,7 +1675,7 @@ Plot.plot({
           ${tex`\Delta C = ${(100 * inputDeltaCinitial).toLocaleString(
             "en-GB",
             { minimumFractionDigits: 1, maximumFractionDigits: 1 },
-          )} \, \%`}`,
+          )} \%`}`,
   color: {
     legend: true,
     scheme: "Spectral",
@@ -1654,44 +1720,45 @@ const inputDeltaCinitial = view(Inputs.range([0.001, 1], {
 }));
 ```
 
-[Figure 13](#figure-13) shows the component spread parts on a Carbon sale and purchase
-converging to 1 (no spread) as ${tex`A_i`} and ${tex`G_i`} tend to 100%.
+[Figure&nbsp;13](#figure-13) shows the component spread parts on a Carbon sale
+and purchase converging to&nbsp;1&nbsp;(no spread) as&nbsp;${tex`A_i`}
+and&nbsp;${tex`G_i`} tend to&nbsp;100%.
 
-<p id="figure-13" class="u-center">Figure 13: Carbon ‘Spread’ Components
+<div id="figure-13" class="u-center">Figure&nbsp;13: Carbon ‘Spread’
+  Components</div>
 
 ![Carbon ‘Spread’ Components](whitepaper/carbon_spread_components.png)
 
 ### 6.3 Interactive Model
 
-This additional section is not in the original Klima 2.0 white paper. It
-presents an interactive model of the AAM where each parameter of interest can be
-adjusted by the reader.
+This section presents an interactive model of the AAM where each parameter of
+interest can be adjusted by the reader.
 
-In [Section 6.3.1](#6-3-1-a-tokens-emitted-when-the-aam-purchases-carbon), a
-Carbon holder sells Carbon to the AAM in exchange for ${tex`A`} tokens; from the
-point of view of the AAM, this represents a Carbon purchase. In
-[Section 6.3.2](#6-3-2-carbon-sold-by-the-aam-when-it-burns-a-tokens), a holder
-of ${tex`A`} tokens burns ${tex`A`} tokens to buy Carbon from the AAM; from the
-point of view of the AAM, this represents a Carbon sale.
+In [Section&nbsp;6.3.1](#6-3-1-a-tokens-emitted-when-the-aam-purchases-carbon),
+a Carbon holder sells Carbon to the AAM in exchange for **A**&nbsp;tokens; from
+the point of view of the AAM, this represents a Carbon purchase. In
+[Section&nbsp;6.3.2](#6-3-2-carbon-sold-by-the-aam-when-it-burns-a-tokens), a
+holder of **A**&nbsp;tokens burns **A**&nbsp;tokens to buy Carbon from the AAM;
+from the point of view of the AAM, this represents a Carbon sale.
 
 #### 6.3.1 A Tokens Emitted When the AAM Purchases Carbon
 
 In this section, the reader controls how many present-value tonnes of Carbon
-class ${tex`i`} are purchased by the AAM. The number of ${tex`A`} tokens emitted
-in exchange is calculated in real time. The price of Carbon class ${tex`i`} is
-calculated by dividing the number of ${tex`A`} tokens emitted by the AAM by the
-number of present-value tonnes of Carbon class ${tex`i`} purchased by the AAM.
+class&nbsp;${tex`i`} are purchased by the AAM. The number of **A**&nbsp;tokens
+emitted in exchange is calculated in real time. The price of Carbon
+class&nbsp;${tex`i`} is calculated by dividing the number of **A**&nbsp;tokens
+emitted by the AAM by the number of present-value tonnes of Carbon
+class&nbsp;${tex`i`} purchased by the AAM.
 
-|                   | Circulating ${tex`A`} tokens | Present-value tonnes of class ${tex`i`} in AAM |
-| ----------------- | ----------------------------:| ----------------------------------------------:|
-| **Current value** | $${stringAValue}             | $${stringBarCiValue}                           |
-| **Total**         | ${stringASupply} KLIMA       | ${stringPresentHeldTonnes} tCO2eq              |
-| **Variation**     | ${stringAEmitted} KLIMA      | ${stringDeltaTonnes} tCO2eq                    |
-| **Unit price**    | $${stringAPrice}             | $${stringBarCiPrice}                           |
+|                   | Circulating **A**&nbsp;tokens | Present-value tonnes of class&nbsp;${tex`i`} in AAM |
+| ----------------- | -----------------------------:| ---------------------------------------------------:|
+| **Current value** | $${stringAValue}              | $${stringBarCiValue}                                |
+| **Total**         | ${stringASupply} KLIMA        | ${stringPresentHeldTonnes} tCO2eq                   |
+| **Variation**     | ${stringAEmitted} KLIMA       | ${stringDeltaTonnes} tCO2eq                         |
+| **Unit price**    | $${stringAPrice}              | $${stringBarCiPrice}                                |
 
 ```js
 function numberOfDigits(x) {
-  // return x === 0 ? 1 : 2;
   return x === 0 ? 1 : (1 + Math.floor(Math.log10(x)));
 }
 
@@ -1814,6 +1881,7 @@ const paramDeltaBarCi_ = computeDeltaBarCi(
   inputTildeCnull,
 );
 const paramDeltaA = computeDeltaA(inputAi, inputGi, paramDeltaBarCi_);
+const paramDeltaTonnes = paramDeltaA === 0 ? 0 : inputDeltaTonnes;
 const paramAEmitted = paramDeltaA * inputASupply;
 const paramAPrice = inputAValue / inputASupply;
 const paramBarCiPrice = inputAValue * paramDeltaA / inputDeltaTonnes;
@@ -1848,11 +1916,11 @@ const stringAEmitted = "+" + paramAEmitted.toLocaleString(
     maximumSignificantDigits: Math.max(2, numberOfDigits(paramAEmitted)),
   },
 );
-const stringDeltaTonnes = "+" + inputDeltaTonnes.toLocaleString(
+const stringDeltaTonnes = "+" + paramDeltaTonnes.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, numberOfDigits(inputDeltaTonnes)),
-    maximumSignificantDigits: Math.max(2, numberOfDigits(inputDeltaTonnes)),
+    minimumSignificantDigits: Math.max(2, numberOfDigits(paramDeltaTonnes)),
+    maximumSignificantDigits: Math.max(2, numberOfDigits(paramDeltaTonnes)),
   },
 );
 const stringAPrice = paramAPrice.toLocaleString(
@@ -1873,18 +1941,18 @@ const stringBarCiPrice = paramBarCiPrice.toLocaleString(
 
 #### 6.3.2 Carbon Sold by the AAM When it Burns A Tokens
 
-In this section, the reader controls how many ${tex`A`} tokens are burnt by the
-AAM. The number of liquid tonnes of Carbon class ${tex`i`} sold by the AAM in
-exchange is calculated in real time. The price of Carbon is calculated by
-dividing the number of ${tex`A`} tokens burnt by the AAM by the number of
-liquid tonnes of Carbon class ${tex`i`} sold by the AAM.
+In this section, the reader controls how many **A**&nbsp;tokens are burnt by the
+AAM. The number of liquid tonnes of Carbon class&nbsp;${tex`i`} sold by the AAM
+in exchange is calculated in real time. The price of Carbon is calculated by
+dividing the number of **A**&nbsp;tokens burnt by the AAM by the number of
+liquid tonnes of Carbon class&nbsp;${tex`i`} sold by the AAM.
 
-|                   | Circulating ${tex`A`} tokens | Liquid tonnes of class ${tex`i`} in AAM |
-| ----------------- | ----------------------------:| ---------------------------------------:|
-| **Current value** | $${stringAValue}             | $${stringCiValue}                       |
-| **Total**         | ${stringASupply} KLIMA       | ${stringLiquidHeldTonnes} tCO2eq        |
-| **Variation**     | ${stringABurnt} KLIMA        | ${stringDeltaCiTonnes} tCO2eq           |
-| **Unit price**    | $${stringAPrice}             | $${stringCiPrice}                       |
+|                   | Circulating **A**&nbsp;tokens | Liquid tonnes of class&nbsp;${tex`i`} in AAM |
+| ----------------- | -----------------------------:| --------------------------------------------:|
+| **Current value** | $${stringAValue}              | $${stringCiValue}                            |
+| **Total**         | ${stringASupply} KLIMA        | ${stringLiquidHeldTonnes} tCO2eq             |
+| **Variation**     | ${stringABurnt} KLIMA         | ${stringDeltaCiTonnes} tCO2eq                |
+| **Unit price**    | $${stringAPrice}              | $${stringCiPrice}                            |
 
 ```js
 const defaultLiquidHeldTonnes = 1e5;
@@ -1980,9 +2048,9 @@ const inputA = view(viewA);
 
 ```js
 const paramTildeAnullView = html`<p class="inputs">${tex`\tilde A_\emptyset =
-        ${stringTildeAnull} \, \% \text{ (implied } A
-        \text{ stake pricing class } i \text)`}`;
-const paramDeltaCnullTonnesView = html`<p>All ${tex`A`} tokens are already
+        ${stringTildeAnull} \% \text{ (implied } A \text{ stake pricing class }
+        i \text)`}`;
+const paramDeltaCnullTonnesView = html`<p>All **A** tokens are already
         staked for pricing. If the AAM cannot sell Carbon class ${tex`i`}, it
         issues ${stringDeltaCnull} of its liquid Carbon balance as a daily
         liquid yield to all bond holders. On the first day, this represents a
@@ -2111,37 +2179,37 @@ const stringCiPrice = paramCiPrice.toLocaleString(
 
 ## 7 Liquidity
 
-Both ${tex`A`} and ${tex`G`} tokens can be used independently of price (and
+Both **A** and **G**&nbsp;tokens can be used independently of price&nbsp;(and
 time) staking for providing liquidity.
 
-<p id="figure-14" class="u-center">Figure 14: Token Liquidity and Pricing
-Structure
+<div id="figure-14" class="u-center">Figure&nbsp;14: Token Liquidity and Pricing
+  Structure</div>
 
 ![Token Liquidity and Pricing Structure](whitepaper/tok_liq_pri_struct.png)
 
 There are two core liquidity pools:
 
-1. An AAM 50:50 pairing of ${tex`A`} and ${tex`G`} tokens; pool
-${tex`\overline{AG}`}.
+1. An AAM 50:50 pairing of **A** and **G**&nbsp;tokens;
+pool&nbsp;<span class="u-overline">**AG**</span>.
 
-2. A hard currency USDC denoted as ${tex`Q`} paired with ${tex`A`}; pool
-${tex`\overline{AQ}`}.
+2. A hard currency USDC denoted as&nbsp;**Q** paired with&nbsp;**A**;
+pool&nbsp;<span class="u-overline">**AQ**</span>.
 
 ### 7.1 Liquidity Fees
 
-The ${tex`\overline{AQ}`} pool will have its own set of fees in the normal
-way.[^1]
+The <span class="u-overline">**AQ**</span>&nbsp;pool will have its own set of
+fees in the normal way.[^1]
 
-The ${tex`\overline{AG}`} pool has different economics as the assets are highly
-correlated since they represent the same economy. For this reason, the fees are
-extremely low.
+The <span class="u-overline">**AG**</span>&nbsp;pool has different economics as
+the assets are highly correlated since they represent the same economy. For this
+reason, the fees are extremely low.
 
-By locking liquidity (LP tokens) to the **standard maturities**, both pools may
-receive a distribution of ${tex`A`} tokens determined from the Risky Yield
-calculation below. This is an <span class="u-underline">additional</span>
+By locking liquidity&nbsp;(LP&nbsp;tokens) to the **standard maturities**, both
+pools may receive a distribution of&nbsp;**A** tokens determined from the Risky
+Yield calculation below. This is an <span class="u-underline">additional</span>
 primary issuance to the Bond yields already discussed.
 
-[^1]: Note the development of LP pricing functionality may be applicable
+[^1]: Note the development of LP&nbsp;pricing functionality may be applicable
 
 ## 8 Risky Yield
 
@@ -2149,19 +2217,20 @@ primary issuance to the Bond yields already discussed.
 
 We can consider the Bond market yield as the system _risk-free_ rate. In
 addition to this mechanism, a _risky_ spread is determined that is ultimately
-paid to the liquidity providers of the ${tex`A`} and ${tex`G`} tokens as
+paid to the liquidity providers of the **A** and **G**&nbsp;tokens as
 compensation for the risk levels assumed.
 
-As we have seen, the ${tex`G`} token has an impact on risk-pricing of ${tex`A`}.
-As ${tex`G`} staking increases, the relationship between the Carbon class
-selected under ${tex`G_i`} and the portfolio token ${tex`A`} strengthens. We can
-consider ${tex`G_i`} staking as an estimate of residual or idiosyncratic risk in
-the carbon-class and this allows us to calculate a portfolio beta ${tex`\beta`}
-from the implied betas of each carbon class ${tex`i`}.
+As we have seen, the **G**&nbsp;token has an impact on risk-pricing
+of&nbsp;**A**. As **G**&nbsp;staking increases, the relationship between the
+Carbon class selected under&nbsp;${tex`G_i`} and the portfolio token&nbsp;**A**
+strengthens. We can consider&nbsp;${tex`G_i`} staking as an estimate of residual
+or idiosyncratic risk in the carbon-class and this allows us to calculate a
+portfolio beta&nbsp;${tex`\beta`} from the implied betas of each carbon
+class&nbsp;${tex`i`}.
 
 ```js
 html`<span id="equation-26">${tex.block`\beta =
-  \sqrt{\sum_{i=1}^n A_i - A_i (1 - G_i)^2} \tag{26}`}</span>`
+  \sqrt{\sum_{i=1}^n A_i - A_i \, (1 - G_i)^2} \tag{26}`}</span>`
 ```
 
 ```js
@@ -2173,10 +2242,11 @@ function computeBeta(Ai, Gi) {
 The portfolio ${tex`\beta`} determines a yield factor for the liquidity pools of
 A to compensate for the implied risk levels.
 
-For intuition, the map in [Figure 15](#figure-15) shows the various outputs of the function
-per Class.
+For intuition, the map in [Figure&nbsp;15](#figure-15) shows the various outputs
+of the function per Class.
 
-<p id="figure-15" class="u-center">Figure 15: Range of ${tex`\beta_i`}
+<div id="figure-15" class="u-center">Figure&nbsp;15: Range
+  of&nbsp;${tex`\beta_i`}</div>
 
 ```js
 const betaData = [];
@@ -2231,13 +2301,13 @@ Plot.plot({
 })
 ```
 
-The table and figure below shows an example of the effects on ${tex`\beta`} on
-allocating large ${tex`G`} values to small ${tex`A`} values where the shift in
-${tex`G`} results in a lower ${tex`\beta`} (0.11 from 0.37) with no change to
-total ${tex`G`} and ${tex`A`} staking.
+The table and figure below shows an example of the effects on&nbsp;${tex`\beta`}
+on allocating large **G**&nbsp;values to small **A**&nbsp;values where the shift
+in **G**&nbsp;results in a lower&nbsp;${tex`\beta`}&nbsp;(0.11 from 0.37) with
+no change to total **G** and **A**&nbsp;staking.
 
-<p class="u-center">Table 2: Effect on ${tex`\beta`} from outsized ${tex`G`}
-Staking
+<p class="u-center">Table&nbsp;2: Effect on&nbsp;${tex`\beta`} from outsized
+  <strong>G</strong>&nbsp;Staking
 
 | Class                     | 1                                | 2                                | 3                                | 4                                | ${tex`\beta`}                      |
 |:------------------------- |:--------------------------------:|:--------------------------------:|:--------------------------------:|:--------------------------------:|:----------------------------------:|
@@ -2245,47 +2315,53 @@ Staking
 | Initial ${tex`G_i`}       | <span class="u-blue">0.30</span> | <span class="u-blue">0.10</span> | <span class="u-blue">0.05</span> | <span class="u-blue">0.01</span> |                                    |
 | Initial ${tex`\beta_i^2`} | 0.2550                           | 0.0380                           | 0.0098                           | 0.0010                           | <span class="u-blue">0.5511</span> |
 | New ${tex`G_i`}           | <span class="u-red">0.01</span>  | <span class="u-red">0.05</span>  | <span class="u-red">0.10</span>  | <span class="u-red">0.30</span>  |                                    |
-| ${tex`\Delta G_i`}        | (0.29)                           | (0.05)                           | 0.05                             | 0.29                             |                                    |
 | New ${tex`\beta_i^2`}     | 0.0100                           | 0.0195                           | 0.0190                           | 0.0255                           | <span class="u-red">0.2719</span>  |
+| ${tex`\Delta G_i`}        | (0.29)                           | (0.05)                           | 0.05                             | 0.29                             |                                    |
 | ${tex`\Delta \beta_i^2`}  | (0.2451)                         | (0.0185)                         | 0.0092                           | 0.0245                           |                                    |
 
-<p id="figure-16" class="u-center">Figure 16: Example of ${tex`G`} Stake on
-${tex`\beta`}
+<div id="figure-16" class="u-center">Figure&nbsp;16: Example of
+  <strong>G</strong>&nbsp;Stake on&nbsp;${tex`\beta`}</div>
 
 ![Example of G Stake on β](whitepaper/g_stake.png)
 
-[Figure 16](#figure-16) shows the ${tex`\beta`} sensitivity to ${tex`G`} staking
-as a function of ${tex`A`} stake; that is to say that a large ${tex`G`} stake on
-a small ${tex`A`} stake has limited effects (notwithstanding other consequential
-factors).
+[Figure&nbsp;16](#figure-16) shows the&nbsp;${tex`\beta`} sensitivity to
+**G**&nbsp;staking as a function of **A**&nbsp;stake; that is to say that a
+large **G**&nbsp;stake on a small **A**&nbsp;stake has limited
+effects&nbsp;(notwithstanding other consequential factors).
 
 ### 8.2 Allocation of Risk Premium
 
-The full issuance of ${tex`A`} tokens is depicted below including now the risky
+The full issuance of **A**&nbsp;tokens is depicted below including now the risky
 premium for the liquidity pools accordingly.
 
-<p id="figure-17" class="u-center">Figure 17: A Token Flow Structure
+<div id="figure-17" class="u-center">Figure&nbsp;17:
+  <strong>A</strong>&nbsp;Token Flow Structure</div>
 
 ![A Token Flow Structure](whitepaper/a_tok_flow.png)
 
 ### 8.3 Share of Risky Premium
 
-The risky premium allocation is shared between ${tex`G`} staking,
-${tex`\overline{AG}`} and ${tex`\overline{AQ}`} pools with shares
-${tex`\lambda_{GG}`}, ${tex`\lambda_G`} and ${tex`\lambda_Q`} respectively.
+The risky premium allocation is shared between **G**&nbsp;staking,
+<span class="u-overline">**AG**</span> and
+<span class="u-overline">**AQ**</span>&nbsp;pools with
+shares&nbsp;${tex`\lambda_{GG}`}, ${tex`\lambda_G`} and&nbsp;${tex`\lambda_Q`}
+respectively.
 
 Defining:
 
-- ${tex`G_G`}: Total ${tex`G`} tokens in the ${tex`\overline{AG}`} pool,
-expressed as a proportion of outstanding supply of ${tex`G`}.
+- ${tex`G_G`}: Total **G**&nbsp;tokens in the
+<span class="u-overline">**AG**</span>&nbsp;pool, expressed as a proportion of
+outstanding supply of&nbsp;**G**.
 
-- ${tex`A_G`}: Total ${tex`A`} tokens in the ${tex`\overline{AG}`} pool,
-expressed as a proportion of outstanding supply of ${tex`A`}.
+- ${tex`A_G`}: Total **A**&nbsp;tokens in the
+<span class="u-overline">**AG**</span>&nbsp;pool, expressed as a proportion of
+outstanding supply of&nbsp;**A**.
 
-- ${tex`A_Q`}: Total ${tex`A`} tokens in the ${tex`\overline{AQ}`} pool,
-expressed as a proportion of outstanding supply of ${tex`A`}.
+- ${tex`A_Q`}: Total **A**&nbsp;tokens in the
+<span class="u-overline">**AQ**</span>&nbsp;pool, expressed as a proportion of
+outstanding supply of&nbsp;**A**.
 
-The allocation to ${tex`G`} token staking, ${tex`\lambda_{GG}`}:
+The allocation to **G**&nbsp;token staking, ${tex`\lambda_{GG}`}:
 
 ```js
 html`<span id="equation-27">${tex.block`\lambda_{GG} = \frac{1 - A_Q}
@@ -2298,8 +2374,9 @@ function computeLambda(AQ, Gi) {
 }
 ```
 
-<p id="figure-18" class="u-center">Figure 18: ${tex`G`} Stake Allocation
-(assuming ${tex`G_G = 1 − G_i`})
+<div id="figure-18" class="u-center">Figure&nbsp;18:
+  <strong>G</strong>&nbsp;Stake
+  Allocation&nbsp;(assuming&nbsp;${tex`G_G = 1 − G_i`})</div>
 
 ```js
 const lambdaData = [];
@@ -2325,7 +2402,7 @@ Plot.plot({
     type: "sequential",
     label: "λ",
   },
-  x: { ticks: d3.range(0, 1.01, 0.1), label: "Aᵢ" },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "AQ" },
   y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Gᵢ" },
   marks: [
     Plot.frame(),
@@ -2351,14 +2428,14 @@ Plot.plot({
 })
 ```
 
-Noting the relationship between ${tex`G`} and ${tex`\beta`}, and particularly if
-${tex`G = 0`}, ${tex`\beta = 0`}.
+Noting the relationship between&nbsp;${tex`G_i`} and&nbsp;${tex`\beta`}, and
+particularly if&nbsp;${tex`G_i = 0`}, ${tex`\beta = 0`}.
 
 The residual share, ${tex`1 − λ_{GG}`}, is split between the liquidity pools:
 
 ```js
 html`<span id="equation-28">${tex.block`\lambda_G =
-  \frac{2 A_G}{2 A_G + A_Q \sqrt 2} \tag{28}`}</span>`
+  \frac{2 \, A_G}{2 \, A_G + A_Q \sqrt 2} \tag{28}`}</span>`
 ```
 
 For completeness:
@@ -2368,109 +2445,154 @@ html`<span id="equation-29">${tex.block`\lambda_Q = 1 - \lambda_G
   \tag{29}`}</span>`
 ```
 
-<p id="figure-19" class="u-center">Figure 19: Liquidity Pool Split
-${tex`\lambda_G, \lambda_Q`}
+<div id="figure-19" class="u-center">Figure&nbsp;19: Liquidity Pool
+  Split&nbsp;${tex`\lambda_G, \lambda_Q`}</div>
 
 ![Liquidity Pool Split λ_G, λ_A](whitepaper/liq_pool_split.png)
 
 ### 8.4 Risky Premium Distribution
 
-For ${tex`\lambda_{GG}`}, ${tex`\lambda_G`}, ${tex`\lambda_Q`} we apply
-${tex`\beta`}:
+For&nbsp;${tex`\lambda_{GG}`}, ${tex`\lambda_G`}, ${tex`\lambda_Q`} we
+apply&nbsp;${tex`\beta`}:
 
 ```js
-html`<span id="equation-30">${tex.block`\Lambda_X = \lambda_X \beta, \quad
+html`<span id="equation-30">${tex.block`\Lambda_X = \lambda_X \, \beta, \quad
   \text{for } X \in \{GG, G, Q\} \tag{30}`}</span>`
 ```
 
-Taking ${tex`b`} as a discount parameter:
+Taking&nbsp;${tex`b`} as a discount parameter:
 
 ```js
 html`<span id="equation-31">${tex.block`b =
-  \frac{\sum_1^{40} Z_t S_t B_t}{\sum_1^{40} Z_t S_t } \tag{31}`}</span>`
+  \frac{\sum_1^{40} Z_t \, S_t \, B_t}{\sum_1^{40} Z_t \, S_t }
+  \tag{31}`}</span>`
 ```
 
-The total Risky Yield tokens ${tex`R_\lambda`}:
+The total Risky Yield tokens&nbsp;${tex`R_\lambda`}:
 
 ```js
 html`<span id="equation-32">${tex.block`R_\lambda = b \, R \,
   (\Lambda_3 + \Lambda_4 + \Lambda_5) \tag{32}`}</span>`
 ```
 
-The allocations of ${tex`R_\lambda`} are pro-rata to ${tex`\Lambda_3`},
-${tex`\Lambda_4`}, ${tex`\Lambda_5`} and thereafter:
+The allocations of&nbsp;${tex`R_\lambda`} are pro-rata
+to&nbsp;${tex`\Lambda_3`}, ${tex`\Lambda_4`}, ${tex`\Lambda_5`} and thereafter:
 
-1. Locked ${tex`G`}: ${tex`\Lambda_3`} in proportion to ${tex`G`}.
+1. Locked **G**: ${tex`\Lambda_3`} in proportion to **G**.
 
-2. Locked ${tex`\overline{AG}`}, ${tex`\overline{AQ}`} tokens are allocated a
-weighting ${tex`G_t`}, ${tex`Q_t`} depending on their time bucket ${tex`t`}:
+2. Locked <span class="u-overline">**AG**</span>, <span class="u-overline">**AQ**</span> tokens are allocated a
+weighting&nbsp;${tex`G_t`}, ${tex`Q_t`} depending on their time
+bucket&nbsp;${tex`t`}:
 
 ```js
 html`<span id="equation-33">${tex.block`G_t =
-  \frac{Z_t L_{Gt} B_t}{\sum Z_t L_{Gt} B_t} \tag{33}`}</span>`
+  \frac{Z_t \, L_{Gt} \, B_t}{\sum Z_t \, L_{Gt} \, B_t} \tag{33}`}</span>`
 ```
 
 ```js
 html`<span id="equation-34">${tex.block`Q_t =
-  \frac{Z_t L_{Qt} B_t}{\sum Z_t L_{Qt} B_t} \tag{34}`}</span>`
+  \frac{Z_t \, L_{Qt} \, B_t}{\sum Z_t \, L_{Qt} \, B_t} \tag{34}`}</span>`
 ```
 
-Where ${tex`L_{Gt}`}, ${tex`L_{Qt}`} are the proportion of all liquidity locked
-in each time bucket for ${tex`\overline{AG}`} and ${tex`\overline{AQ}`}
-respectively.
+Where&nbsp;${tex`L_{Gt}`}, ${tex`L_{Qt}`} are the proportion of all liquidity
+locked in each time bucket for&nbsp;<span class="u-overline">**AG**</span>
+and&nbsp;<span class="u-overline">**AQ**</span> respectively.
 
-Thereafter each time bucket allocation is proportionate to LP holdings.
+Thereafter each time bucket allocation is proportionate to LP&nbsp;holdings.
 
 ## 9 Distribution
 
 ### 9.1 Planned Allocations
 
-<p class="u-center">Table 3: <code>KLIMA</code> Token
+<p class="u-center">Table&nbsp;3: KLIMA Token
 
-| Cohort         | Proportion | Quantity (m) |
-|:-------------- |:----------:|:------------:|
-| Klima Holders  | 87.5%      | 17.5         |
-| DAO / Treasury | 10%        | 2.0          |
-| 01X            | 2.5%       | 0.5          |
-| Total          |            | 20           |
+| Cohort         | Proportion | Quantity&nbsp;(m) |
+|:-------------- |:----------:|:-----------------:|
+| Klima Holders  | 87.5%      | 17.5              |
+| DAO / Treasury | 10%        | 2.0               |
+| 01X            | 2.5%       | 0.5               |
+| Total          |            | 20                |
 
-<p class="u-center">Table 4: <code>KLIMAX</code> Token
+<p class="u-center">Table&nbsp;4: KLIMAX Token
 
-| Cohort                         | Proportion | Quantity (m) | Liquidity                                   |
-|:------------------------------ |:----------:|:------------:|:------------------------------------------- |
-| Klima Holders                  | 40%        | 4O           | Logistic Vesting 48 months                  |
-| Ecosystem Grant                | 5%         | 5            | Logistic Vesting 48 months                  |
-| _Programmatic Incentives_      | _40%_      | _40_         | _Incentive Curve_                           |
-| pKlima Holders                 | 3.0%       | 3            | Logistic Vesting 48 months                  |
-| DAO / Treasury                 | 4.5%       | 4.5          | 24 month locked LP of ${tex`\overline{AG}`} |
-| 01X                            | 2.5%       | 2.5          | 24 month locked LP of ${tex`\overline{AG}`} |
-| Product design and development | 5%         | 5            | Logistic Vesting 48 months                  |
-| Total                          |            | 100          |                                             |
+<table>
+  <thead>
+    <tr>
+      <th>Cohort
+      <th class="u-center">Proportion
+      <th class="u-center">Quantity&nbsp;(m)
+      <th>Liquidity
+  </thead>
+  <tbody>
+    <tr>
+      <td>Klima Holders
+      <td class="u-center">40%
+      <td class="u-center">4O
+      <td>Logistic Vesting 48&nbsp;months
+    <tr>
+      <td>Ecosystem Grant
+      <td class="u-center">5%
+      <td class="u-center">5
+      <td>Logistic Vesting 48&nbsp;months
+    <tr class="u-gray">
+      <td>Programmatic Incentives
+      <td class="u-center">40%
+      <td class="u-center">40
+      <td>Incentive Curve
+    <tr>
+      <td>pKlima Holders
+      <td class="u-center">3.0%
+      <td class="u-center">3
+      <td>Logistic Vesting 48&nbsp;months
+    <tr>
+      <td>DAO / Treasury
+      <td class="u-center">4.5%
+      <td class="u-center">4.5
+      <td>24&nbsp;month locked&nbsp;LP
+        of&nbsp;<span class="u-overline"><strong>AG</strong></span>
+    <tr>
+      <td>01X
+      <td class="u-center">2.5%
+      <td class="u-center">2.5
+      <td>24&nbsp;month locked&nbsp;LP
+        of&nbsp;<span class="u-overline"><strong>AG</strong></span>
+    <tr>
+      <td>Product design and development
+      <td class="u-center">5%
+      <td class="u-center">5
+      <td>Logistic Vesting 48&nbsp;months
+    <tr>
+      <td>Total
+      <td>
+      <td class="u-center">100
+      <td>
+  </tbody>
+</table>
 
-<p id="figure-20" class="u-center">Figure 20: Allocations: <code>KLIMAX</code>
-Token
+<div id="figure-20" class="u-center">Figure&nbsp;20: Allocations: KLIMAX
+  Token</div>
 
 ![Allocations: KLIMAX Token](whitepaper/alloc_klimax.png)
 
 ### 9.2 Programmatic Incentive Curve
 
-The incentive issuance is built on a sigmoid curve, ${tex`P`}, to generate total
-proportion of supply in issue. It is calibrated from the initial issuance at
-TGE, ${tex`P_0`} and the inflection point time ${tex`T`} where 50% of ${tex`G`}
-token incentives have been released.
+The incentive issuance is built on a logistic function, ${tex`P`}, to generate
+total proportion of supply in issue. It is calibrated from the initial issuance
+at&nbsp;TGE&nbsp;${tex`P_0`} and the inflection point time&nbsp;${tex`T`}
+where&nbsp;50% of **G**&nbsp;token incentives have been released.
 
-Initiating ${tex`x_0`} from the initial issuance parameter:
+Setting&nbsp;${tex`x_0`} from the initial supply parameter:
 
 ```js
 html`<span id="equation-35">${tex.block`x_0 =
   \ln\left( \frac{P_0}{1 - P_0} \right) \tag{35}`}</span>`
 ```
 
-with ${tex`x_t`} at time point ${tex`t`}, ${tex`(t \in (0, \infty))`}:
+With ${tex`x_t`} at time point&nbsp;${tex`t \in (0, \infty)`}:
 
 ```js
-html`<span id="equation-36">${tex.block`x_t = x_0 \left( 1 - \frac t T \right)
-  \tag{36}`}</span>`
+html`<span id="equation-36">${tex.block`x_t = x_0 \,
+  \left( 1 - \frac t T \right) \tag{36}`}</span>`
 ```
 
 Giving supply function ${tex`P_t`} as:
@@ -2480,16 +2602,14 @@ html`<span id="equation-37">${tex.block`P_t = \frac{\exp(x_t)}{\exp(x_t) + 1}
   \tag{37}`}</span>`
 ```
 
-Setting ${tex`P_0`} at 7.0%:
+${tex`P_0`} set at&nbsp;7.0% and&nbsp;${tex`T`} at 24&nbsp;months:
 
-<p id="figure-21" class="u-center">Figure 21: Incentive Issuance
+<div id="figure-21" class="u-center">Figure&nbsp;21: Incentive Issuance</div>
 
 ![Incentive Issuance](whitepaper/incentive_issuance.png)
 
-The inflection point (${tex`T`}) is set at 24 months.
-
-<p id="figure-22" class="u-center">Figure 22: <code>KLIMAX</code> Token Supply
-Over Time
+<div id="figure-22" class="u-center">Figure&nbsp;22: KLIMAX Token Supply Over
+  Time</div>
 
 ![KLIMAX Token Supply Over Time, Cohort: Circulating Supply (Stacked)](whitepaper/klimax_supp_circ.png)
 
@@ -2497,105 +2617,109 @@ Over Time
 
 ![KLIMAX Token Supply Over Time, Class: Total Supply (Unstacked)](whitepaper/klimax_supp_unstaked.png)
 
-<p id="figure-23" class="u-center">Figure 23: <code>KLIMAX</code> Token Supply
-Risk Metrics
+<div id="figure-23" class="u-center">Figure&nbsp;23: KLIMAX Token Supply
+  Risk Metrics</div>
 
 ![KLIMAX Token Supply Risk Metrics](whitepaper/klimax_risk_metrics.png)
 
 ### 9.3 Incentive Allocations
 
-<p id="figure-24" class="u-center">Figure 24: ${tex`G`} Token Incentive
-Distribution Structure
+<div id="figure-24" class="u-center">Figure&nbsp;24:
+  <strong>G</strong>&nbsp;Token Incentive Distribution Structure</div>
 
 ![G Token Incentive Distribution Structure](whitepaper/g_tok_incentive.png)
 
-The **relative utilisation** measurement factor ${tex`\upsilon`} is applied as
-follows:
+The **relative utilisation** measurement factor&nbsp;${tex`\upsilon`} is
+calculated as follows.
 
 Defining initially:
 
-- ${tex`G`}: Total ${tex`G`} tokens staked expressed as a proportion of
+- ${tex`G`}: Total **G** tokens staked expressed as a proportion of
 circulating supply, ${tex`G \in [0, 1]`}.
 
-- ${tex`L`}: Total ${tex`G`} tokens held in the ${tex`\overline{AG}`} pool
+- ${tex`L`}: Total **G** tokens held in the <span class="u-overline">**AG**</span> pool
 expressed as a proportion of circulating supply, ${tex`L \in (0, 1]`}.
 
-Where ${tex`\upsilon = 0`} if ${tex`G + L = 0`} otherwise:
+Where ${tex`\upsilon = 0`} if ${tex`G + L = 0`}, otherwise:
 
 ```js
 html`<span id="equation-38">${tex.block`\upsilon =
   \left( \frac{2 G L}{G^2 + L^2} \right)^2 \tag{38}`}</span>`
 ```
 
-<p id="figure-25" class="u-center">Figure 25: Upsilon ${tex`\upsilon`} range of
-value
+<div id="figure-25" class="u-center">Figure&nbsp;25:
+  Upsilon&nbsp;${tex`\upsilon`} range of value</div>
 
 ![Upsilon υ range of value](whitepaper/upsilon_range.png)
 
-The **absolute utilisation** parameter ${tex`\sigma`} is defined as:
+The **absolute utilisation** parameter&nbsp;${tex`\eta`} is defined
+as&nbsp;${tex`\eta = 0`} if ${tex`S + L = 0`}, otherwise:
 
 ```js
-html`<span id="equation-39">${tex.block`\sigma = \sqrt{G^2 + L^2}
+html`<span id="equation-39">${tex.block`\eta = \frac{1}{1 - \log(S + L)}
   \tag{39}`}</span>`
 ```
 
-Incentives ${tex`I`} are allocated as follows:
+Incentives&nbsp;${tex`I`} are allocated as follows:
 
 **Treasury**
 
-The allocation to the Treasury ${tex`I_T`} is the imbalance generated from
-${tex`\upsilon`}:
+The allocation to the Treasury&nbsp;${tex`I_T`} is the imbalance generated
+from&nbsp;${tex`\upsilon`}:
 
 ```js
-html`<span id="equation-40">${tex.block`I_T = 1 - \upsilon \, \sigma
+html`<span id="equation-40">${tex.block`I_T = 1 - \upsilon \, \eta
   \tag{40}`}</span>`
 ```
 
-The residual post Treasury allocation is shared four ways within 2 buckets:
+The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
 
-**(1) A Bonds & G Staking**
+1. **A Bonds & G Staking**
 
-Where ${tex`S`} is the proportion of ${tex`A`} tokens that are staked for Bonds
-(as defined previously in [Section 4](#4-bond-market)):
+    Where&nbsp;${tex`S`} is the proportion of **A**&nbsp;tokens that are staked
+    for Bonds&nbsp;(as defined previously in [Section&nbsp;4](#4-bond-market)):
 
-1. ${tex`A`} Bonds, ${tex`I_S`}:
+    1. **A** Bonds, ${tex`I_S`}:
 
-```js
-html`<span id="equation-41">${tex.block`I_S = S \, \frac{L^2}{G^2 + L^2}
-  \tag{41}`}</span>`
-```
+    ```js
+    html`<span id="equation-41">${tex.block`I_S = S \, \frac{L^2}{G^2 + L^2}
+      \tag{41}`}</span>`
+    ```
 
-2. G Staking, ${tex`I_G`}:
+    2. G Staking, ${tex`I_G`}:
 
-```js
-html`<span id="equation-42">${tex.block`I_G = (1 − S) \, \frac{L^2}{G^2 + L^2}
-  \tag{42}`}</span>`
-```
+    ```js
+    html`<span id="equation-42">${tex.block`I_G = (1 − S) \,
+      \frac{L^2}{G^2 + L^2} \tag{42}`}</span>`
+    ```
 
-**(2) Liquidity**
+2. **Liquidity**
 
-With ${tex`\lambda_G`}, ${tex`\lambda_Q`}, ${tex`\lambda_{GG}`} as defined in
-[Section 8.3](#8-3-share-of-risky-premium):
+    With&nbsp;${tex`\lambda_G`}, ${tex`\lambda_Q`}, ${tex`\lambda_{GG}`} as
+    defined in [Section&nbsp;8.3](#8-3-share-of-risky-premium):
 
-3. ${tex`\overline{AG}`} Pool ${tex`I_{AG}`}:
+    3. <span class="u-overline">**AG**</span> Pool&nbsp;${tex`I_{AG}`}:
 
-```js
-html`<span id="equation-43">${tex.block`I_{AG} =
-  \frac{\lambda_G}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2} \tag{43}`}</span>`
-```
+    ```js
+    html`<span id="equation-43">${tex.block`I_{AG} =
+      \frac{\lambda_G}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2}
+      \tag{43}`}</span>`
+    ```
 
-4. ${tex`\overline{AQ}`} Pool ${tex`I_{AQ}`}:
+    4. <span class="u-overline">**AQ**</span> Pool&nbsp;${tex`I_{AQ}`}:
 
-```js
-html`<span id="equation-44">${tex.block`I_{AQ} =
-  \frac{\lambda_Q}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2} \tag{44}`}</span>`
-```
+    ```js
+    html`<span id="equation-44">${tex.block`I_{AQ} =
+      \frac{\lambda_Q}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2}
+      \tag{44}`}</span>`
+    ```
 
-<p id="figure-26" class="u-center">Figure 26: Share of Non-Treasury Incentives
-(1)(2)
+<div id="figure-26" class="u-center">Figure&nbsp;26: Share of Non-Treasury
+  Incentives&nbsp;(1)(2)</div>
 
 ![Share of Non-Treasury Incentives](whitepaper/incentives_non_treasury.png)
 
-<p id="figure-27" class="u-center">Figure 27: Treasury Incentives ${tex`I_T`}
+<div id="figure-27" class="u-center">Figure&nbsp;27: Treasury
+  Incentives&nbsp;${tex`I_T`}</div>
 
 ![Treasury Incentives I_T](whitepaper/incentives_treasury.png)

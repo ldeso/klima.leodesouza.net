@@ -1,6 +1,27 @@
 @import url("observablehq:default.css");
 @import url("observablehq:theme-air.css");
 
+:root {
+  --serif: "Inter", "Iowan Old Style", "Apple Garamond", "Palatino Linotype",
+    "Times New Roman", "Droid Serif", Times, serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  --sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "avenir next",
+    avenir, helvetica, "helvetica neue", ubuntu, roboto, noto, "segoe ui",
+    arial, sans-serif !important;
+}
+
+ol > li > ol {
+  list-style-type: lower-roman;
+}
+
+ul > li > ul {
+  list-style-type: "\2013\2002";
+}
+
+th, td {
+  padding: 3px 6.5px;
+}
+
 figcaption {
   text-align: center;
 }
@@ -51,6 +72,10 @@ input[type="number"] {
   padding: 3px 6.5px;
 }
 
+.u-gray {
+  background-color: #eaeaea;
+}
+
 .u-blue {
   color: blue;
 }
@@ -59,12 +84,20 @@ input[type="number"] {
   color: red;
 }
 
+.u-nocolor {
+  color: inherit !important;
+}
+
 .u-center {
   text-align: center;
 }
 
 .u-underline {
   text-decoration: underline;
+}
+
+.u-overline {
+  text-decoration: overline;
 }
 
 .u-hidden {
