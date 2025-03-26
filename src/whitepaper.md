@@ -2672,14 +2672,14 @@ The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
     Where&nbsp;${tex`S`} is the proportion of **A**&nbsp;tokens that are staked
     for Bonds&nbsp;(as defined previously in [Section&nbsp;4](#4-bond-market)):
 
-    1. **A** Bonds, ${tex`I_S`}:
+    1. **A**&nbsp;Bonds, ${tex`I_S`}:
 
     ```js
     html`<span id="equation-41">${tex.block`I_S = S \, \frac{L^2}{G^2 + L^2}
       \tag{41}`}</span>`
     ```
 
-    2. G Staking, ${tex`I_G`}:
+    2. **G**&nbsp;Staking, ${tex`I_G`}:
 
     ```js
     html`<span id="equation-42">${tex.block`I_G = (1 − S) \,
