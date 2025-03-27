@@ -84,7 +84,7 @@ Carbon assets. These tokens are used to buy and sell Carbon as in
 2. A **Risk Governance** token that combines with the capital token to shape the
 risk profile of the underlying Carbon portfolio.
 
-The new tokens are named KLIMA and KLIMAX respectively, noting that the original
+The new tokens are named KLIMA and KlimaX respectively, noting that the original
 token name carries through to the Asset Token reflecting the original utility.
 For the purposes of the document we shall refer to these tokens as&nbsp;**A**
 and&nbsp;**G** where brevity is required.
@@ -267,7 +267,7 @@ Both tokens facilitate the Klima Carbon market to function efficiently with the
       <td>
       <td class="u-gray">Sets discount curve for foward pricing
     <tr>
-      <td>KLIMAX <strong>G</strong>&nbsp;Token
+      <td>KlimaX <strong>G</strong>&nbsp;Token
       <td>100&nbsp;million
       <td>Fixed supply
     <tr>
@@ -1900,15 +1900,15 @@ const stringTruePresentTonnes = inputPresentTonnes.toLocaleString(
     maximumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
   },
 ) + " tCO2eq";
-const stringTildeCnull = inputTildeCnull.toLocaleString(
+const stringTildeCnull_ = inputTildeCnull.toLocaleString(
   "en-GB",
   {
     minimumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
     maximumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
   },
 ) + " tCO2eq";
-const isImplied = inputPresentTonnes === 0;
-const stringPresentTonnes = (isImplied ? `(${stringTildeCnull} implied) `: "") +
+const isImpl = inputPresentTonnes === 0;
+const stringPresentTonnes = (isImpl ? `(${stringTildeCnull_} implied) `: "") +
         stringTruePresentTonnes;
 const stringAEmitted = "+" + paramAEmitted.toLocaleString(
   "en-GB",
@@ -2522,7 +2522,7 @@ Thereafter each time bucket allocation is proportionate to LP&nbsp;holdings.
 | 01X            | 2.5%       | 0.5               |
 | Total          |            | 20                |
 
-<p class="u-center">Table&nbsp;4: KLIMAX Token
+<p class="u-center">Table&nbsp;4: KlimaX Token
 
 <table>
   <thead>
@@ -2578,9 +2578,9 @@ Thereafter each time bucket allocation is proportionate to LP&nbsp;holdings.
   </tbody>
 </table>
 
-<p id="figure-20" class="u-center">Figure&nbsp;20: Allocations: KLIMAX Token
+<p id="figure-20" class="u-center">Figure&nbsp;20: Allocations: KlimaX Token
 
-![Allocations: KLIMAX Token](whitepaper/figure-20.webp)
+![Allocations: KlimaX Token](whitepaper/figure-20.webp)
 
 ### 9.2 Programmatic Incentive Curve
 
@@ -2616,15 +2616,15 @@ ${tex`P_0`} set at&nbsp;7.0% and&nbsp;${tex`T`} at 24&nbsp;months:
 
 ![Incentive Issuance](whitepaper/figure-21.webp)
 
-<p id="figure-22" class="u-center">Figure&nbsp;22: KLIMAX Token Supply Over Time
+<p id="figure-22" class="u-center">Figure&nbsp;22: KlimaX Token Supply Over Time
 
-![KLIMAX Token Supply Over Time, Cohort: Circulating Supply (Stacked)](whitepaper/figure-22a.webp)
+![KlimaX Token Supply Over Time, Cohort: Circulating Supply (Stacked)](whitepaper/figure-22a.webp)
 
-![KLIMAX Token Supply Over Time, Class: Total Supply (Stacked)](whitepaper/figure-22b.webp)
+![KlimaX Token Supply Over Time, Class: Total Supply (Stacked)](whitepaper/figure-22b.webp)
 
-![KLIMAX Token Supply Over Time, Class: Total Supply (Unstacked)](whitepaper/figure-22c.webp)
+![KlimaX Token Supply Over Time, Class: Total Supply (Unstacked)](whitepaper/figure-22c.webp)
 
-<p id="figure-23" class="u-center">Figure&nbsp;23: KLIMAX Token Supply Risk
+<p id="figure-23" class="u-center">Figure&nbsp;23: KlimaX Token Supply Risk
   Metrics
 
 ![Cohort: Total Supply Differential (Stacked)](whitepaper/figure-23a.webp)
