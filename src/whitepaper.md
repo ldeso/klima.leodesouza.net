@@ -1726,8 +1726,9 @@ and&nbsp;${tex`G_i`} tend to&nbsp;100%.
 
 ### 6.3 Interactive Model
 
-This section presents an interactive model of the AAM where each parameter of
-interest can be adjusted by the reader.
+This additional section is not is the original PDF version of the whitepaper. It
+presents an interactive model of the AAM where each parameter of interest can be
+adjusted by the reader.
 
 In [Section&nbsp;6.3.1](#6-3-1-a-tokens-emitted-when-the-aam-purchases-carbon),
 a Carbon holder sells Carbon to the AAM in exchange for **A**&nbsp;tokens; from
