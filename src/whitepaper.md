@@ -1748,21 +1748,21 @@ class&nbsp;${tex`i`} purchased by the AAM.
 
 |                   | Circulating **A**&nbsp;tokens | Present-value tonnes of class&nbsp;${tex`i`} in AAM |
 | ----------------- | -----------------------------:| ---------------------------------------------------:|
-| **Total**         | ${stringASupply} KLIMA        | ${stringPresentHeldTonnes} tCO2eq                   |
-| **Variation**     | +${stringAEmitted} KLIMA      | +${stringDeltaTonnes} tCO2eq                        |
-| **Unit price**    | $${stringAPrice}          | $${stringBarCiPrice}                                |
+| **Total**         | ${stringASupply}              | ${stringPresentTonnes}                              |
+| **Variation**     | ${stringAEmitted}             | ${stringDeltaTonnes}                                |
+| **Unit price**    | ${stringAPrice}               | ${stringBarCiPrice}                                 |
 
 ```js
 function numberOfDigits(x) {
   return x === 0 ? 1 : (1 + Math.floor(Math.log10(x)));
 }
 
-function piecewiseLogTransform(x, cutoff=1) {
-  return x > cutoff ? Math.log(x) : x;
+function piecewiseLogTransform(x, cutoff = 1) {
+  return x > cutoff ? Math.log(x) : x - cutoff + Math.log(cutoff);
 }
 
-function piecewiseLogInvert(x, cutoff=1) {
-  return x > cutoff ? Math.exp(x) : x;
+function piecewiseLogInvert(y, cutoff = 1) {
+  return y > Math.log(cutoff) ? Math.exp(y) : y - Math.log10(cutoff) + cutoff;
 }
 
 function setInput(input, value) {
@@ -1774,52 +1774,56 @@ function setInput(input, value) {
 ```js
 const defaultAValue = 2e6;
 const defaultASupply = 2e7;
-const defaultPresentHeldTonnes = 1e5;
-const defaultDeltaTonnes = 1e3;
+const defaultPresentTonnes = 1e7;
+const defaultDeltaTonnes = 1e2;
 const defaultAi = 0.5;
 const defaultGi = 0.5;
-const defaultTildeCnull = 1e5;
+const defaultTildeCnull = 1e7;
 
-const viewASupply = Inputs.range([2e4, 2e10], {
+const viewASupply = Inputs.range([1e5, 1e10], {
   label: tex`\text{Circulating \textbf{A}~tokens}`,
   step: 1,
   value: defaultASupply,
   transform: Math.log,
 });
-const viewAValue = Inputs.range([2e3, 2e9], {
+const viewAValue = Inputs.range([1e5, 1e10], {
   label: tex`\text{\textbf{A}~token USD market capitalization}`,
   step: 1,
   value: defaultAValue,
   transform: Math.log,
 });
-const viewPresentHeldTonnes = Inputs.range([0, 1e10], {
+const viewPresentTonnes = Inputs.range([0, 1e9], {
   label: tex`\bar C_i \text{ (present-value tonnes of class } i
     \text{ in AAM)}`,
   step: 1,
-  value: defaultPresentHeldTonnes,
+  value: defaultPresentTonnes,
   transform: piecewiseLogTransform,
   invert: piecewiseLogInvert,
 });
-const viewDeltaTonnes = Inputs.range([1, 1e6], {
+const viewDeltaTonnes = Inputs.range([1e-1, 1e7], {
   label: tex`\text{Present-value tonnes bought by the AAM}`,
-  step: 1,
+  step: 1e-1,
   value: defaultDeltaTonnes,
   transform: Math.log,
 });
 const viewAi = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
-  step: 0.001,
+  step: 1e-3,
   value: defaultAi,
+  transform: x => piecewiseLogTransform(x, 1e-3),
+  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewGi = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
-  step: 0.001,
+  step: 1e-3,
   value: defaultGi,
+  transform: x => piecewiseLogTransform(x, 1e-3),
+  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewZeroCarbon = Inputs.button(
-  [["Zero Carbon Scenario", () => setInput(viewPresentHeldTonnes, 0)]],
+  [["Zero Carbon Scenario", () => setInput(viewPresentTonnes, 0)]],
 );
-const viewTildeCnull = Inputs.range([1, 1e10], {
+const viewTildeCnull = Inputs.range([1, 1e9], {
   label: tex`\tilde C_\emptyset \text{ (implied tonnes of class } i
     \text{ in AAM)}`,
   step: 1,
@@ -1830,7 +1834,7 @@ const viewReset = Inputs.button(
   [["Reset", () => {
     setInput(viewASupply, defaultASupply);
     setInput(viewAValue, defaultAValue);
-    setInput(viewPresentHeldTonnes, defaultPresentHeldTonnes);
+    setInput(viewPresentTonnes, defaultPresentTonnes);
     setInput(viewDeltaTonnes, defaultDeltaTonnes);
     setInput(viewAi, defaultAi);
     setInput(viewGi, defaultGi);
@@ -1843,7 +1847,7 @@ const viewReset = Inputs.button(
 const inputReset = view(viewReset);
 const inputASupply = view(viewASupply);
 const inputAValue = view(viewAValue);
-const inputPresentHeldTonnes = view(viewPresentHeldTonnes);
+const inputPresentTonnes = view(viewPresentTonnes);
 const inputDeltaTonnes = view(viewDeltaTonnes);
 const inputAi = view(viewAi);
 const inputGi = view(viewGi);
@@ -1853,14 +1857,14 @@ const inputTildeCnull = view(viewTildeCnull);
 
 ```js
 if (inputASupply === defaultASupply && inputAValue === defaultAValue &&
-        inputPresentHeldTonnes === defaultPresentHeldTonnes &&
+        inputPresentTonnes === defaultPresentTonnes &&
         inputDeltaTonnes === defaultDeltaTonnes && inputAi === defaultAi &&
         inputGi === defaultGi && inputTildeCnull === defaultTildeCnull) {
   viewReset.classList.add("u-hidden");
 } else {
   viewReset.classList.remove("u-hidden");
 }
-if (inputPresentHeldTonnes === 0) {
+if (inputPresentTonnes === 0) {
   viewZeroCarbon.classList.add("u-removed")
   viewTildeCnull.classList.remove("u-removed")
 } else {
@@ -1872,7 +1876,7 @@ if (inputPresentHeldTonnes === 0) {
 ```js
 const paramDeltaBarCi_ = computeDeltaBarCi(
   inputDeltaTonnes,
-  inputPresentHeldTonnes,
+  inputPresentTonnes,
   inputTildeCnull,
 );
 const paramDeltaA = computeDeltaA(inputAi, inputGi, paramDeltaBarCi_);
@@ -1880,7 +1884,7 @@ const paramDeltaTonnes = paramDeltaA === 0 ? 0 : inputDeltaTonnes;
 const paramAEmitted = paramDeltaA * inputASupply;
 const paramAPrice = inputAValue / inputASupply;
 const paramBarCiPrice = inputAValue * paramDeltaA / inputDeltaTonnes;
-const paramDeltaBarCiValue = paramBarCiPrice * inputPresentHeldTonnes;
+const paramDeltaBarCiValue = paramBarCiPrice * inputPresentTonnes;
 
 const stringASupply = inputASupply.toLocaleString(
   "en-GB",
@@ -1888,30 +1892,46 @@ const stringASupply = inputASupply.toLocaleString(
     minimumFractionDigits: Math.max(0, 2 - numberOfDigits(paramAEmitted)),
     maximumFractionDigits: Math.max(0, 2 - numberOfDigits(paramAEmitted)),
   },
-);
-const stringPresentHeldTonnes = inputPresentHeldTonnes.toLocaleString(
+) + " KLIMA";
+const stringTruePresentTonnes = inputPresentTonnes.toLocaleString(
   "en-GB",
-  { minimumFractionDigits: 0, maximumFractionDigits: 0 },
-);
-const stringAEmitted = paramAEmitted.toLocaleString(
+  {
+    minimumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
+    maximumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
+  },
+) + " tCO2eq";
+const stringTildeCnull = inputTildeCnull.toLocaleString(
+  "en-GB",
+  {
+    minimumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
+    maximumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
+  },
+) + " tCO2eq";
+const isImplied = inputPresentTonnes === 0;
+const stringPresentTonnes = (isImplied ? `(${stringTildeCnull} implied) `: "") +
+        stringTruePresentTonnes;
+const stringAEmitted = "+" + paramAEmitted.toLocaleString(
   "en-GB",
   {
     minimumSignificantDigits: Math.max(2, numberOfDigits(paramAEmitted)),
     maximumSignificantDigits: Math.max(2, numberOfDigits(paramAEmitted)),
   },
-);
-const stringDeltaTonnes = paramDeltaTonnes.toLocaleString(
+) + " KLIMA";
+const stringDeltaTonnes = "+" + paramDeltaTonnes.toLocaleString(
   "en-GB",
-  { minimumFractionDigits: 0, maximumFractionDigits: 0 },
-);
-const stringAPrice = paramAPrice.toLocaleString(
+  {
+    minimumSignificantDigits: Math.max(1, numberOfDigits(paramDeltaTonnes)),
+    maximumSignificantDigits: Math.max(1, numberOfDigits(paramDeltaTonnes)),
+  },
+) + " tCO2eq";
+const stringAPrice = "$" + paramAPrice.toLocaleString(
   "en-GB",
   {
     minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice)),
     maximumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice)),
   },
 );
-const stringBarCiPrice = paramBarCiPrice.toLocaleString(
+const stringBarCiPrice = "$" + paramBarCiPrice.toLocaleString(
   "en-GB",
   {
     minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramBarCiPrice)),
@@ -1930,36 +1950,36 @@ liquid tonnes of Carbon class&nbsp;${tex`i`} sold by the AAM.
 
 |                   | Circulating **A**&nbsp;tokens | Liquid tonnes of class&nbsp;${tex`i`} in AAM |
 | ----------------- | -----------------------------:| --------------------------------------------:|
-| **Total**         | ${stringASupply_} KLIMA       | ${stringLiquidHeldTonnes} tCO2eq             |
-| **Variation**     | ${stringABurnt} KLIMA         | ${stringDeltaCiTonnes} tCO2eq                |
-| **Unit price**    | $${stringAPrice_}             | $${stringCiPrice}                            |
+| **Total**         | ${stringASupply_}             | ${stringLiquidTonnes}                        |
+| **Variation**     | ${stringABurnt}               | ${stringDeltaCiTonnes}                       |
+| **Unit price**    | ${stringAPrice_}              | ${stringCiPrice}                             |
 
 ```js
-const defaultLiquidHeldTonnes = 1e5;
-const defaultABurnt = 2e2;
+const defaultLiquidTonnes = 1e7;
+const defaultABurnt = 1e2;
 const defaultGnull = 0.5;
 const defaultA = 0.5;
 const defaultS = 0.5;
 
-const viewASupply_ = Inputs.range([2e4, 2e10], {
+const viewASupply_ = Inputs.range([1e5, 1e10], {
   label: tex`\text{Circulating \textbf{A}~tokens}`,
   step: 1,
   value: defaultASupply,
   transform: Math.log,
 });
-const viewAValue_ = Inputs.range([2e3, 2e9], {
+const viewAValue_ = Inputs.range([1e5, 1e10], {
   label: tex`\text{\textbf{A}~token USD market capitalization}`,
   step: 1,
   value: defaultAValue,
   transform: Math.log,
 });
-const viewLiquidHeldTonnes = Inputs.range([1, 1e10], {
+const viewLiquidTonnes = Inputs.range([1, 1e9], {
   label: tex`\text{Liquid tonnes of class } i \text{ in AAM}`,
   step: 1,
-  value: defaultLiquidHeldTonnes,
+  value: defaultLiquidTonnes,
   transform: Math.log,
 });
-const viewABurnt = Inputs.range([2, 2e4], {
+const viewABurnt = Inputs.range([1, 1e5], {
   label: tex`\text{\textbf{A}~tokens burnt by the AAM}`,
   step: 1,
   value: defaultABurnt,
@@ -1967,41 +1987,51 @@ const viewABurnt = Inputs.range([2, 2e4], {
 });
 const viewAi_ = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
-  step: 0.001,
+  step: 1e-3,
   value: defaultAi,
+  transform: x => piecewiseLogTransform(x, 1e-3),
+  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewGi_ = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
-  step: 0.001,
+  step: 1e-3,
   value: defaultGi,
+  transform: x => piecewiseLogTransform(x, 1e-3),
+  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewGnull = Inputs.range([0, 1], {
   label: tex`G_\emptyset \text{ (implied \textbf{G}~stake pricing class }
           i \text)`,
-  step: 0.001,
+  step: 1e-3,
   value: defaultGnull,
+  transform: x => piecewiseLogTransform(x, 1e-3),
+  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewUnweighed = Inputs.button(
   [["Unweighed Carbon Class", () => setInput(viewAi, 0)]],
 );
 const viewA = Inputs.range([0, 1], {
   label: tex`A \text{ (share of \textbf{A}~tokens staked for pricing)}`,
-  step: 0.001,
+  step: 1e-3,
   value: defaultA,
+  transform: x => piecewiseLogTransform(x, 1e-3),
+  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewFullyStaked = Inputs.button(
   [["Implied Zero Stake", () => setInput(viewA, 1)]],
 );
 const viewS = Inputs.range([0, 1], {
   label: tex`S \text{ (share of \textbf{A}~tokens staked for bonds)}`,
-  step: 0.001,
+  step: 1e-3,
   value: defaultS,
+  transform: x => piecewiseLogTransform(x, 1e-3),
+  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewReset_ = Inputs.button(
   [["Reset", () => {
     setInput(viewASupply_, defaultASupply);
     setInput(viewAValue_, defaultAValue);
-    setInput(viewLiquidHeldTonnes, defaultLiquidHeldTonnes);
+    setInput(viewLiquidTonnes, defaultLiquidTonnes);
     setInput(viewABurnt, defaultABurnt);
     setInput(viewAi, defaultAi);
     setInput(viewGi, defaultGi);
@@ -2016,7 +2046,7 @@ const viewReset_ = Inputs.button(
 const inputReset = view(viewReset_);
 const inputASupply_ = view(viewASupply_);
 const inputAValue_ = view(viewAValue_);
-const inputLiquidHeldTonnes = view(viewLiquidHeldTonnes);
+const inputLiquidTonnes = view(viewLiquidTonnes);
 const inputABurnt = view(viewABurnt);
 display(Inputs.bind(viewAi_, viewAi));
 display(Inputs.bind(viewGi_, viewGi));
@@ -2043,7 +2073,7 @@ display(paramDeltaCnullTonnesView);
 
 ```js
 if (inputASupply_ === defaultASupply && inputAValue_ === defaultAValue &&
-        inputLiquidHeldTonnes === defaultLiquidHeldTonnes &&
+        inputLiquidTonnes === defaultLiquidTonnes &&
         inputABurnt === defaultABurnt && inputAi === defaultAi &&
         inputGi === defaultGi && inputGnull === defaultGnull &&
         inputS_ === defaultS && inputA === defaultA) {
@@ -2089,33 +2119,30 @@ const paramDeltaCi = computeTrueDeltaCi(
   inputGnull,
   paramDeltaA_,
 );
-const paramDeltaCiTonnes = -paramDeltaCi * inputLiquidHeldTonnes;
+const paramDeltaCiTonnes = -paramDeltaCi * inputLiquidTonnes;
 const paramDeltaCnull = computeDeltaCnull(inputAi, inputA, inputS_, inputGi); 
-const paramDeltaCnullTonnes = paramDeltaCnull * inputLiquidHeldTonnes;
+const paramDeltaCnullTonnes = paramDeltaCnull * inputLiquidTonnes;
 const paramAPrice_ = inputAValue_ / inputASupply_;
 const paramCiPrice = inputAValue_ * paramDeltaA_ / paramDeltaCiTonnes;
 
 const stringASupply_ = inputASupply_.toLocaleString(
   "en-GB",
   { minimumFractionDigits: 0, maximumFractionDigits: 0 },
-);
-const stringLiquidHeldTonnes = inputLiquidHeldTonnes.toLocaleString(
+) + " KLIMA";
+const stringLiquidTonnes = inputLiquidTonnes.toLocaleString(
   "en-GB",
   {
     minimumFractionDigits: Math.max(0, 2 - numberOfDigits(paramDeltaCiTonnes)),
     maximumFractionDigits: Math.max(0, 2 - numberOfDigits(paramDeltaCiTonnes)),
   },
-);
+) + " tCO2eq";
 const stringABurnt = "−" + inputABurnt.toLocaleString(
   "en-GB",
   { minimumFractionDigits: 0, maximumFractionDigits: 0 }
-);
+) + " KLIMA";
 const stringTildeAnull = (100 * paramTildeAnull).toLocaleString(
   "en-GB",
-  {
-    minimumFractionDigits: Math.max(0, -numberOfDigits(paramTildeAnull)),
-    maximumFractionDigits: Math.max(0, -numberOfDigits(paramTildeAnull)),
-  },
+  { minimumSignificantDigits: 2, maximumSignificantDigits: 2 },
 );
 const stringDeltaCiTonnes = "−" + paramDeltaCiTonnes.toLocaleString(
   "en-GB",
@@ -2123,7 +2150,7 @@ const stringDeltaCiTonnes = "−" + paramDeltaCiTonnes.toLocaleString(
     minimumSignificantDigits: Math.max(2, numberOfDigits(paramDeltaCiTonnes)),
     maximumSignificantDigits: Math.max(2, numberOfDigits(paramDeltaCiTonnes)),
   },
-);
+) + " tCO2eq";
 const stringDeltaCnull = paramDeltaCnull.toLocaleString(
   "en-GB",
   {
@@ -2145,14 +2172,14 @@ const stringDeltaCnullTonnes = paramDeltaCnullTonnes.toLocaleString(
     ),
   },
 );
-const stringAPrice_ = paramAPrice_.toLocaleString(
+const stringAPrice_ = "$" + paramAPrice_.toLocaleString(
   "en-GB",
   {
     minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice_)),
     maximumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice_)),
   },
 );
-const stringCiPrice = paramCiPrice.toLocaleString(
+const stringCiPrice = "$" + paramCiPrice.toLocaleString(
   "en-GB",
   {
     minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramCiPrice)),
