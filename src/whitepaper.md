@@ -1780,13 +1780,13 @@ const defaultAi = 0.5;
 const defaultGi = 0.5;
 const defaultTildeCnull = 1e7;
 
-const viewAValue = Inputs.range([1e5, 1e10], {
+const viewAValue = Inputs.range([1e5, 1e9], {
   label: tex`\text{\textbf{A}~token USD market capitalization}`,
   step: 1,
   value: defaultAValue,
   transform: Math.log,
 });
-const viewASupply = Inputs.range([1e5, 1e10], {
+const viewASupply = Inputs.range([1e6, 1e10], {
   label: tex`\text{Circulating \textbf{A}~tokens}`,
   step: 1,
   value: defaultASupply,
@@ -1817,8 +1817,6 @@ const viewGi = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
   step: 1e-3,
   value: defaultGi,
-  transform: x => piecewiseLogTransform(x, 1e-3),
-  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewZeroCarbon = Inputs.button(
   [["Zero Carbon Scenario", () => setInput(viewPresentTonnes, 0)]],
@@ -1961,13 +1959,13 @@ const defaultGnull = 0.5;
 const defaultA = 0.5;
 const defaultS = 0.5;
 
-const viewAValue_ = Inputs.range([1e5, 1e10], {
+const viewAValue_ = Inputs.range([1e5, 1e9], {
   label: tex`\text{\textbf{A}~token USD market capitalization}`,
   step: 1,
   value: defaultAValue,
   transform: Math.log,
 });
-const viewASupply_ = Inputs.range([1e5, 1e10], {
+const viewASupply_ = Inputs.range([1e6, 1e10], {
   label: tex`\text{Circulating \textbf{A}~tokens}`,
   step: 1,
   value: defaultASupply,
@@ -1979,9 +1977,9 @@ const viewLiquidTonnes = Inputs.range([1, 1e9], {
   value: defaultLiquidTonnes,
   transform: Math.log,
 });
-const viewABurnt = Inputs.range([1, 1e5], {
+const viewABurnt = Inputs.range([1e-1, 1e6], {
   label: tex`\text{\textbf{A}~tokens burnt by the AAM}`,
-  step: 1,
+  step: 1e-1,
   value: defaultABurnt,
   transform: Math.log,
 });
@@ -1996,16 +1994,12 @@ const viewGi_ = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
   step: 1e-3,
   value: defaultGi,
-  transform: x => piecewiseLogTransform(x, 1e-3),
-  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewGnull = Inputs.range([0, 1], {
   label: tex`G_\emptyset \text{ (implied \textbf{G}~stake pricing class }
           i \text)`,
   step: 1e-3,
   value: defaultGnull,
-  transform: x => piecewiseLogTransform(x, 1e-3),
-  invert: x => piecewiseLogInvert(x, 1e-3),
 });
 const viewUnweighed = Inputs.button(
   [["Unweighed Carbon Class", () => setInput(viewAi, 0)]],
@@ -2014,8 +2008,8 @@ const viewA = Inputs.range([0, 1], {
   label: tex`A \text{ (share of \textbf{A}~tokens staked for pricing)}`,
   step: 1e-3,
   value: defaultA,
-  transform: x => piecewiseLogTransform(x, 1e-3),
-  invert: x => piecewiseLogInvert(x, 1e-3),
+  transform: x => 1 - piecewiseLogTransform(1 - Math.sqrt(x), 1e-3),
+  invert: x => (1 - piecewiseLogInvert(1 - x, 1e-3))**2,
 });
 const viewFullyStaked = Inputs.button(
   [["Implied Zero Stake", () => setInput(viewA, 1)]],
@@ -2127,7 +2121,10 @@ const paramCiPrice = inputAValue_ * paramDeltaA_ / paramDeltaCiTonnes;
 
 const stringASupply_ = inputASupply_.toLocaleString(
   "en-GB",
-  { minimumFractionDigits: 0, maximumFractionDigits: 0 },
+  {
+    minimumFractionDigits: Math.max(0, 1 - numberOfDigits(inputABurnt)),
+    maximumFractionDigits: Math.max(0, 1 - numberOfDigits(inputABurnt)),
+  },
 ) + " KLIMA";
 const stringLiquidTonnes = inputLiquidTonnes.toLocaleString(
   "en-GB",
@@ -2138,7 +2135,10 @@ const stringLiquidTonnes = inputLiquidTonnes.toLocaleString(
 ) + " tCO2eq";
 const stringABurnt = "−" + inputABurnt.toLocaleString(
   "en-GB",
-  { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+  {
+    minimumSignificantDigits: Math.max(1, numberOfDigits(inputABurnt)),
+    maximumSignificantDigits: Math.max(1, numberOfDigits(inputABurnt)),
+  },
 ) + " KLIMA";
 const stringTildeAnull = (100 * paramTildeAnull).toLocaleString(
   "en-GB",
