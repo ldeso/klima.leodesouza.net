@@ -1,10 +1,13 @@
 name: Publish
+
 on:
   workflow_dispatch:
   push:
     branches: ["master"]
+
 permissions:
   contents: write
+
 jobs:
   build:
     concurrency: ci-${{ github.ref }}
