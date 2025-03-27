@@ -1780,16 +1780,16 @@ const defaultAi = 0.5;
 const defaultGi = 0.5;
 const defaultTildeCnull = 1e7;
 
-const viewASupply = Inputs.range([1e5, 1e10], {
-  label: tex`\text{Circulating \textbf{A}~tokens}`,
-  step: 1,
-  value: defaultASupply,
-  transform: Math.log,
-});
 const viewAValue = Inputs.range([1e5, 1e10], {
   label: tex`\text{\textbf{A}~token USD market capitalization}`,
   step: 1,
   value: defaultAValue,
+  transform: Math.log,
+});
+const viewASupply = Inputs.range([1e5, 1e10], {
+  label: tex`\text{Circulating \textbf{A}~tokens}`,
+  step: 1,
+  value: defaultASupply,
   transform: Math.log,
 });
 const viewPresentTonnes = Inputs.range([0, 1e9], {
@@ -1832,8 +1832,8 @@ const viewTildeCnull = Inputs.range([1, 1e9], {
 });
 const viewReset = Inputs.button(
   [["Reset", () => {
-    setInput(viewASupply, defaultASupply);
     setInput(viewAValue, defaultAValue);
+    setInput(viewASupply, defaultASupply);
     setInput(viewPresentTonnes, defaultPresentTonnes);
     setInput(viewDeltaTonnes, defaultDeltaTonnes);
     setInput(viewAi, defaultAi);
@@ -1845,8 +1845,8 @@ const viewReset = Inputs.button(
 
 ```js
 const inputReset = view(viewReset);
-const inputASupply = view(viewASupply);
 const inputAValue = view(viewAValue);
+const inputASupply = view(viewASupply);
 const inputPresentTonnes = view(viewPresentTonnes);
 const inputDeltaTonnes = view(viewDeltaTonnes);
 const inputAi = view(viewAi);
@@ -1856,7 +1856,7 @@ const inputTildeCnull = view(viewTildeCnull);
 ```
 
 ```js
-if (inputASupply === defaultASupply && inputAValue === defaultAValue &&
+if (inputAValue === defaultAValue && inputASupply === defaultASupply &&
         inputPresentTonnes === defaultPresentTonnes &&
         inputDeltaTonnes === defaultDeltaTonnes && inputAi === defaultAi &&
         inputGi === defaultGi && inputTildeCnull === defaultTildeCnull) {
@@ -1961,16 +1961,16 @@ const defaultGnull = 0.5;
 const defaultA = 0.5;
 const defaultS = 0.5;
 
-const viewASupply_ = Inputs.range([1e5, 1e10], {
-  label: tex`\text{Circulating \textbf{A}~tokens}`,
-  step: 1,
-  value: defaultASupply,
-  transform: Math.log,
-});
 const viewAValue_ = Inputs.range([1e5, 1e10], {
   label: tex`\text{\textbf{A}~token USD market capitalization}`,
   step: 1,
   value: defaultAValue,
+  transform: Math.log,
+});
+const viewASupply_ = Inputs.range([1e5, 1e10], {
+  label: tex`\text{Circulating \textbf{A}~tokens}`,
+  step: 1,
+  value: defaultASupply,
   transform: Math.log,
 });
 const viewLiquidTonnes = Inputs.range([1, 1e9], {
@@ -2029,8 +2029,8 @@ const viewS = Inputs.range([0, 1], {
 });
 const viewReset_ = Inputs.button(
   [["Reset", () => {
-    setInput(viewASupply_, defaultASupply);
     setInput(viewAValue_, defaultAValue);
+    setInput(viewASupply_, defaultASupply);
     setInput(viewLiquidTonnes, defaultLiquidTonnes);
     setInput(viewABurnt, defaultABurnt);
     setInput(viewAi, defaultAi);
@@ -2044,8 +2044,8 @@ const viewReset_ = Inputs.button(
 
 ```js
 const inputReset = view(viewReset_);
-const inputASupply_ = view(viewASupply_);
 const inputAValue_ = view(viewAValue_);
+const inputASupply_ = view(viewASupply_);
 const inputLiquidTonnes = view(viewLiquidTonnes);
 const inputABurnt = view(viewABurnt);
 display(Inputs.bind(viewAi_, viewAi));
@@ -2072,7 +2072,7 @@ display(paramDeltaCnullTonnesView);
 ```
 
 ```js
-if (inputASupply_ === defaultASupply && inputAValue_ === defaultAValue &&
+if (inputAValue_ === defaultAValue && inputASupply_ === defaultASupply &&
         inputLiquidTonnes === defaultLiquidTonnes &&
         inputABurnt === defaultABurnt && inputAi === defaultAi &&
         inputGi === defaultGi && inputGnull === defaultGnull &&
