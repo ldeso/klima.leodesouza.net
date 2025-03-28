@@ -710,31 +710,31 @@ of&nbsp;**A**:
 
 1. Initial voting weights for Bonds&nbsp;${tex`v_t`}:
 
-```js
-html`<span id="equation-11">${tex.block`v_t =
-  Z_t \, S_t \, B_t \tag{11}`}</span>`
-```
+    ```js
+    html`<span id="equation-11">${tex.block`v_t =
+      Z_t \, S_t \, B_t \tag{11}`}</span>`
+    ```
 
 2. Initial voting weights for LPs&nbsp;${tex`w_t`}:
 
-```js
-html`<span id="equation-12">${tex.block`w_t =
-  Z_t \, A_{Gt} \, B_t \tag{12}`}</span>`
-```
+    ```js
+    html`<span id="equation-12">${tex.block`w_t =
+      Z_t \, A_{Gt} \, B_t \tag{12}`}</span>`
+    ```
 
 1. Final voting weights Bonds&nbsp;${tex`V_t`}:
 
-```js
-html`<span id="equation-13">${tex.block`V_t = \frac{v_t}
-  {\sum_{j=1}^{40} (v_j + 2 w_j)} \tag{13}`}</span>`
-```
+    ```js
+    html`<span id="equation-13">${tex.block`V_t = \frac{v_t}
+      {\sum_{j=1}^{40} (v_j + 2 w_j)} \tag{13}`}</span>`
+    ```
 
 2. Final voting weights LPs&nbsp;${tex`W_t`}:
 
-```js
-html`<span id="equation-14">${tex.block`W_t = \frac{w_t}{\sum_{j=1}^{40}
-  \left( \frac 1 2 v_j + w_j \right)} \tag{14}`}</span>`
-```
+    ```js
+    html`<span id="equation-14">${tex.block`W_t = \frac{w_t}{\sum_{j=1}^{40}
+      \left( \frac 1 2 v_j + w_j \right)} \tag{14}`}</span>`
+    ```
 
 ## 6 Automated Asset Manager
 
@@ -2493,19 +2493,20 @@ to&nbsp;${tex`\Lambda_3`}, ${tex`\Lambda_4`}, ${tex`\Lambda_5`} and thereafter:
 weighting&nbsp;${tex`G_t`}, ${tex`Q_t`} depending on their time
 bucket&nbsp;${tex`t`}:
 
-```js
-html`<span id="equation-33">${tex.block`G_t =
-  \frac{Z_t \, L_{Gt} \, B_t}{\sum Z_t \, L_{Gt} \, B_t} \tag{33}`}</span>`
-```
+    ```js
+    html`<span id="equation-33">${tex.block`G_t =
+      \frac{Z_t \, L_{Gt} \, B_t}{\sum Z_t \, L_{Gt} \, B_t} \tag{33}`}</span>`
+    ```
 
-```js
-html`<span id="equation-34">${tex.block`Q_t =
-  \frac{Z_t \, L_{Qt} \, B_t}{\sum Z_t \, L_{Qt} \, B_t} \tag{34}`}</span>`
-```
+    ```js
+    html`<span id="equation-34">${tex.block`Q_t =
+      \frac{Z_t \, L_{Qt} \, B_t}{\sum Z_t \, L_{Qt} \, B_t} \tag{34}`}</span>`
+    ```
 
-Where&nbsp;${tex`L_{Gt}`}, ${tex`L_{Qt}`} are the proportion of all liquidity
-locked in each time bucket for&nbsp;<span class="u-overline">**AG**</span>
-and&nbsp;<span class="u-overline">**AQ**</span> respectively.
+    Where&nbsp;${tex`L_{Gt}`}, ${tex`L_{Qt}`} are the proportion of all
+    liquidity locked in each time bucket
+    for&nbsp;<span class="u-overline">**AG**</span>
+    and&nbsp;<span class="u-overline">**AQ**</span> respectively.
 
 Thereafter each time bucket allocation is proportionate to LP&nbsp;holdings.
 
@@ -2690,17 +2691,17 @@ The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
 
     1. **A**&nbsp;Bonds, ${tex`I_S`}:
 
-    ```js
-    html`<span id="equation-41">${tex.block`I_S = S \, \frac{L^2}{G^2 + L^2}
-      \tag{41}`}</span>`
-    ```
+        ```js
+        html`<span id="equation-41">${tex.block`I_S = S \, \frac{L^2}{G^2 + L^2}
+          \tag{41}`}</span>`
+        ```
 
     2. **G**&nbsp;Staking, ${tex`I_G`}:
 
-    ```js
-    html`<span id="equation-42">${tex.block`I_G = (1 − S) \,
-      \frac{L^2}{G^2 + L^2} \tag{42}`}</span>`
-    ```
+        ```js
+        html`<span id="equation-42">${tex.block`I_G = (1 − S) \,
+          \frac{L^2}{G^2 + L^2} \tag{42}`}</span>`
+        ```
 
 2. **Liquidity**
 
@@ -2709,19 +2710,19 @@ The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
 
     3. <span class="u-overline">**AG**</span> Pool&nbsp;${tex`I_{AG}`}:
 
-    ```js
-    html`<span id="equation-43">${tex.block`I_{AG} =
-      \frac{\lambda_G}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2}
-      \tag{43}`}</span>`
-    ```
+        ```js
+        html`<span id="equation-43">${tex.block`I_{AG} =
+          \frac{\lambda_G}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2}
+          \tag{43}`}</span>`
+        ```
 
     4. <span class="u-overline">**AQ**</span> Pool&nbsp;${tex`I_{AQ}`}:
 
-    ```js
-    html`<span id="equation-44">${tex.block`I_{AQ} =
-      \frac{\lambda_Q}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2}
-      \tag{44}`}</span>`
-    ```
+        ```js
+        html`<span id="equation-44">${tex.block`I_{AQ} =
+          \frac{\lambda_Q}{1 - \lambda_{GG}} \, \frac{G^2}{G^2 + L^2}
+          \tag{44}`}</span>`
+        ```
 
 <p id="figure-26" class="u-center">Figure&nbsp;26: Share of Non-Treasury
   Incentives&nbsp;(1)(2)
