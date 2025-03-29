@@ -1019,7 +1019,7 @@ normalised in [Figure&nbsp;10](#figure-10) to&nbsp;${tex`\Delta \bar C_i A_i`}.
     (100 * inputDeltaBarCi).toLocaleString(
       "en-GB",
       { maximumFractionDigits: 0 },
-    )
+    );
   } \%`}
 
 ```js
@@ -1038,27 +1038,27 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
     ai: 0,
     gi: paramGi,
     value: NaN,
-  })
+  });
   pricingData.push({
     key: "Normalised ΔA",
     ai: 0,
     gi: paramGi,
     value: NaN,
-  })
+  });
   for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     pricingData.push({
       key: "ΔA",
       ai: paramAi,
       gi: paramGi,
       value: computeDeltaA(paramAi, paramGi, inputDeltaBarCi),
-    })
+    });
     pricingData.push({
       key: "Normalised ΔA",
       ai: paramAi,
       gi: paramGi,
       value: computeDeltaA(paramAi, paramGi, inputDeltaBarCi) /
               (inputDeltaBarCi * paramAi),
-    })
+    });
   }
 }
 const getDeltaA = d => d.key === "ΔA" ? d.value : NaN;
@@ -1100,7 +1100,7 @@ Plot.plot({
           d3.interpolateSpectral,
         )(d.value),
       ),
-    })
+    }),
   ],
 })
 ```
@@ -1157,9 +1157,9 @@ Plot.plot({
             computeDeltaA(1, 1, inputDeltaBarCi) / inputDeltaBarCi,
           ],
           d3.interpolateSpectral,
-        )(d.value)
+        )(d.value),
       ),
-    })
+    }),
   ],
 })
 ```
@@ -1362,7 +1362,7 @@ function computeDeltaCi(Ai, Gi, deltaA) {
     (100 * inputDeltaA).toLocaleString(
       "en-GB",
       { minimumFractionDigits: 1, maximumFractionDigits: 1 },
-    )
+    );
   } \%`}
 
 ```js
@@ -1373,14 +1373,14 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
     ai: 0,
     gi: paramGi,
     value: NaN,
-  })
+  });
   for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     retirementData.push({
       key: "-ΔCᵢ",
       ai: paramAi,
       gi: paramGi,
       value: -computeDeltaCi(paramAi, paramGi, inputDeltaA),
-    })
+    });
   }
 }
 ```
@@ -1425,7 +1425,7 @@ Plot.plot({
           d3.interpolateSpectral,
         )(d.value),
       ),
-    })
+    }),
   ],
 })
 ```
@@ -1633,8 +1633,8 @@ holders on a pro-rata basis
 
 ```js
 function computeSpread(Ai, Gi, deltaCinitial) {
-  const deltaA = computeDeltaA(Ai, Gi, deltaCinitial)
-  const deltaCfinal = -computeDeltaCi(Ai, Gi, deltaA)
+  const deltaA = computeDeltaA(Ai, Gi, deltaCinitial);
+  const deltaCfinal = -computeDeltaCi(Ai, Gi, deltaA);
   return (deltaCinitial - deltaCfinal) / deltaCinitial;
 }
 ```
@@ -1652,14 +1652,14 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
     ai: 0,
     gi: paramGi,
     value: NaN,
-  })
+  });
   for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     spreadData.push({
       key: "spread",
       ai: paramAi,
       gi: paramGi,
       value: computeSpread(paramAi, paramGi, inputDeltaCinitial),
-    })
+    });
   }
 }
 const getSpread = d => d.key === "spread" ? d.value : NaN;
@@ -1703,7 +1703,7 @@ Plot.plot({
           d3.interpolateSpectral,
         )(d.value),
       ),
-    })
+    }),
   ],
 })
 ```
@@ -1863,11 +1863,11 @@ if (inputAValue === defaultAValue && inputASupply === defaultASupply &&
   viewReset.classList.remove("u-hidden");
 }
 if (inputPresentTonnes === 0) {
-  viewZeroCarbon.classList.add("u-removed")
-  viewTildeCnull.classList.remove("u-removed")
+  viewZeroCarbon.classList.add("u-removed");
+  viewTildeCnull.classList.remove("u-removed");
 } else {
-  viewZeroCarbon.classList.remove("u-removed")
-  viewTildeCnull.classList.add("u-removed")
+  viewZeroCarbon.classList.remove("u-removed");
+  viewTildeCnull.classList.add("u-removed");
 }
 ```
 
@@ -2071,9 +2071,9 @@ if (inputAValue_ === defaultAValue && inputASupply_ === defaultASupply &&
         inputABurnt === defaultABurnt && inputAi === defaultAi &&
         inputGi === defaultGi && inputGnull === defaultGnull &&
         inputS_ === defaultS && inputA === defaultA) {
-  viewReset_.classList.add("u-hidden")
+  viewReset_.classList.add("u-hidden");
 } else {
-  viewReset_.classList.remove("u-hidden")
+  viewReset_.classList.remove("u-hidden");
 }
 if (inputAi === 0) {
   viewGi_.classList.add("u-removed");
@@ -2266,14 +2266,14 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
     ai: 0,
     gi: paramGi,
     value: NaN,
-  })
+  });
   for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     betaData.push({
       key: "βᵢ",
       ai: paramAi,
       gi: paramGi,
       value: computeBeta(paramAi, paramGi),
-    })
+    });
   }
 }
 ```
@@ -2306,7 +2306,7 @@ Plot.plot({
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
       fill: d => contrastingTextColor(d3.interpolateSpectral(d.value)),
-    })
+    }),
   ],
 })
 ```
@@ -2396,7 +2396,7 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       ai: paramAi,
       gi: paramGi,
       value: computeLambda(paramAi, paramGi),
-    })
+    });
   }
 }
 ```
@@ -2432,7 +2432,7 @@ Plot.plot({
       fill: d => contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
-    })
+    }),
   ],
 })
 ```
@@ -2659,7 +2659,7 @@ html`<span id="equation-38">${tex.block`\upsilon =
 
 ```js
 function computeUpsilon(G, L) {
-  if (L === 0 && G === 0) {
+  if (G === 0 && L === 0) {
     return 0;
   } else {
     return (2 * G * L / (G**2 + L**2))**2;
@@ -2674,13 +2674,13 @@ function computeUpsilon(G, L) {
 const upsilonData = [];
 for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
   for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
-    if (paramL + paramG < 1.01) {
+    if (paramG + paramL < 1.01) {
       upsilonData.push({
         key: "υ",
         l: paramL,
         g: paramG,
         value: computeUpsilon(paramG, paramL),
-      })
+      });
     }
   }
 }
@@ -2718,40 +2718,40 @@ Plot.plot({
       fill: d => contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
-    })
+    }),
   ],
 })
 ```
 
 The **absolute utilisation** parameter&nbsp;${tex`\eta`} is defined
-as&nbsp;${tex`\eta = 0`} if ${tex`S + L = 0`}, otherwise:
+as&nbsp;${tex`\eta = 0`} if ${tex`G + L = 0`}, otherwise:
 
 ```js
-html`<span id="equation-39">${tex.block`\eta = \frac{1}{1 - \log(S + L)}
+html`<span id="equation-39">${tex.block`\eta = \frac{1}{1 - \log(G + L)}
   \tag{39}`}</span>`
 ```
 
 ```js
-function computeEta(S, L) {
-  if (S === 0 && L === 0) {
+function computeEta(G, L) {
+  if (G === 0 && L === 0) {
     return 0;
   } else {
-    return 1 / (1 - Math.log(S + L));
+    return 1 / (1 - Math.log(G + L));
   }
 }
 ```
 
 ```js
 const etaData = [];
-for (let paramS = 0; paramS < 1.01; paramS += 0.05) {
+for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
   for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
-    if (paramL + paramS < 1.01) {
+    if (paramG + paramL < 1.01) {
       etaData.push({
         key: "η",
         l: paramL,
-        s: paramS,
-        value: computeEta(paramS, paramL),
-      })
+        g: paramG,
+        value: computeEta(paramG, paramL),
+      });
     }
   }
 }
@@ -2769,19 +2769,19 @@ Plot.plot({
     label: "η",
   },
   x: { ticks: d3.range(0, 1.01, 0.2), label: "L" },
-  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "S" },
+  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "G" },
   marks: [
     Plot.frame(),
     Plot.rect(etaData, {
       x1: d => d.l - 0.025,
       x2: d => d.l + 0.025,
-      y1: d => d.s - 0.025,
-      y2: d => d.s + 0.025,
+      y1: d => d.g - 0.025,
+      y2: d => d.g + 0.025,
       fill: "value",
     }),
     Plot.text(etaData, {
       x: "l",
-      y: "s",
+      y: "g",
       text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
@@ -2789,7 +2789,7 @@ Plot.plot({
       fill: d => contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
-    })
+    }),
   ],
 })
 ```
@@ -2804,6 +2804,65 @@ from&nbsp;${tex`\upsilon`}:
 ```js
 html`<span id="equation-40">${tex.block`I_T = 1 - \upsilon \, \eta
   \tag{40}`}</span>`
+```
+
+```js
+function computeTreasury(G, L) {
+  return Math.max(0, 1 - computeUpsilon(G, L) * computeEta(G, L));
+}
+```
+
+```js
+const treasuryData = [];
+for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
+  for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
+    if (paramG + paramL < 1.01) {
+      treasuryData.push({
+        key: "I_T",
+        l: paramL,
+        g: paramG,
+        value: computeTreasury(paramG, paramL),
+      });
+    }
+  }
+}
+```
+
+```js
+Plot.plot({
+  caption: html`Range of ${tex`I_T`}`,
+  aspectRatio: 1,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "I_T",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.2), domain: [-0.025, 1.025], label: "L" },
+  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "G" },
+  marks: [
+    Plot.frame(),
+    Plot.rect(treasuryData, {
+      x1: d => d.l - 0.025,
+      x2: d => d.l + 0.025,
+      y1: d => d.g - 0.025,
+      y2: d => d.g + 0.025,
+      fill: "value",
+    }),
+    Plot.text(treasuryData, {
+      x: "l",
+      y: "g",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => contrastingTextColor(
+        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
+      ),
+    }),
+  ],
+})
 ```
 
 The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
