@@ -2051,18 +2051,18 @@ const inputA = view(viewA);
 ```
 
 ```js
-const paramTildeAnullView = html`<p class="inputs">${tex`\tilde A_\emptyset =
+const viewTildeAnull = html`<p class="inputs">${tex`\tilde A_\emptyset =
         ${stringTildeAnull} \% \text{ (implied \textbf{A}~stake pricing class }
         i \text)`}`;
-const paramDeltaCnullTonnesView = html`<p>All <strong>A</strong>&nbsp;tokens are
+const viewDeltaCnullTonnes = html`<p>All <strong>A</strong>&nbsp;tokens are
         already staked for pricing. If the AAM cannot sell Carbon
         class&nbsp;${tex`i`}, it issues ${stringDeltaCnull} of its liquid Carbon
         balance as a daily liquid yield to all bond holders. On the first day,
         this represents a total of ${stringDeltaCnullTonnes}&nbsp;tCO2eq.`;
 
-display(paramTildeAnullView);
+display(viewTildeAnull);
 display(viewFullyStaked);
-display(paramDeltaCnullTonnesView);
+display(viewDeltaCnullTonnes);
 ```
 
 ```js
@@ -2082,23 +2082,23 @@ if (inputAi === 0) {
     viewGnull.classList.add("u-removed");
     viewFullyStaked.classList.add("u-removed");
     viewS.classList.remove("u-removed");
-    paramDeltaCnullTonnesView.classList.remove("u-removed");
+    viewDeltaCnullTonnes.classList.remove("u-removed");
   } else {
     viewGnull.classList.remove("u-removed");
     viewFullyStaked.classList.remove("u-removed");
     viewS.classList.add("u-removed");
-    paramDeltaCnullTonnesView.classList.add("u-removed");
+    viewDeltaCnullTonnes.classList.add("u-removed");
   }
   viewA.classList.remove("u-removed");
-  paramTildeAnullView.classList.remove("u-removed");
+  viewTildeAnull.classList.remove("u-removed");
 } else {
   viewGi_.classList.remove("u-removed");
   viewUnweighed.classList.remove("u-removed");
   viewGnull.classList.add("u-removed");
   viewFullyStaked.classList.add("u-removed");
-  paramTildeAnullView.classList.add("u-removed");
+  viewTildeAnull.classList.add("u-removed");
   viewS.classList.add("u-removed");
-  paramDeltaCnullTonnesView.classList.add("u-removed");
+  viewDeltaCnullTonnes.classList.add("u-removed");
   viewA.classList.add("u-removed");
 }
 ```
@@ -2841,6 +2841,24 @@ The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
           \frac{L^2}{G^2 + L^2} \tag{42}`}</span>`
         ```
 
+```js
+function computeIBonds(G, L, S) {
+  if (G === 0 && L === 0) {
+    return 0;
+  } else {
+    return S * L**2 / (G**2 + L**2);
+  }
+}
+
+function computeIStaking(G, L, S) {
+  if (G === 0 && L === 0) {
+    return 0;
+  } else {
+    return (1 - S) * L**2 / (G**2 + L**2);
+  }
+}
+```
+
 2. **Liquidity**
 
     With&nbsp;${tex`\lambda_G`}, ${tex`\lambda_Q`}, ${tex`\lambda_{GG}`} as
@@ -2862,10 +2880,175 @@ The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
           \tag{44}`}</span>`
         ```
 
+```js
+function computeIPool(G, L, weight) {
+  if (G === 0 && L === 0) {
+    return 0;
+  } else {
+    return weight * G**2 / (G**2 + L**2);
+  }
+}
+```
+
 <p id="figure-26" class="u-center">Figure&nbsp;26: Share of Non-Treasury
   Incentives&nbsp;(1)(2)
 
-![Share of Non-Treasury Incentives](whitepaper/figure-26.webp)
+```js
+const allocationSQData = [];
+for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
+  for (let paramL = 0; paramL < 1.01; paramL += 0.1) {
+    if (paramG + paramL < 1.01) {
+      allocationSQData.push({
+        key: "𝗔 Bonds Allocation",
+        l: paramL,
+        g: paramG,
+        value: computeIBonds(paramG, paramL, inputS__),
+      });
+      allocationSQData.push({
+        key: "𝗚 Staking Allocation",
+        l: paramL,
+        g: paramG,
+        value: computeIStaking(paramG, paramL, inputS__),
+      });
+    }
+  }
+}
+```
+
+```js
+Plot.plot({
+  caption: html`1. <strong>A</strong>&nbsp;Bonds and
+    <strong>G</strong>&nbsp;Staking Allocations&nbsp;${tex`I_S`}
+    and&nbsp;${tex`I_G`}`,
+  aspectRatio: 1,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "Allocation I",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "Liquidity L" },
+  y: {
+    ticks: d3.range(0, 1.01, 0.1),
+    domain: [1.05, -0.05],
+    label: "Stake G",
+  },
+  fx: { label: null },
+  marks: [
+    Plot.frame(),
+    Plot.rect(allocationSQData, {
+      x1: d => d.l - 0.05,
+      x2: d => d.l + 0.05,
+      y1: d => d.g - 0.05,
+      y2: d => d.g + 0.05,
+      fx: "key",
+      fill: "value",
+    }),
+    Plot.text(allocationSQData, {
+      x: "l",
+      y: "g",
+      fx: "key",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => contrastingTextColor(
+        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
+      ),
+    }),
+  ],
+})
+```
+
+```js
+const inputS__ = view(Inputs.range([1, 0], {
+  label: tex`S \text{ (share of } A \text{ tokens staked for bonds)}`,
+  step: 0.01,
+  value: 0.5,
+}));
+```
+
+```js
+const allocationPoolData = [];
+for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
+  for (let paramL = 0; paramL < 1.01; paramL += 0.1) {
+    if (paramG + paramL < 1.01) {
+      allocationPoolData.push({
+        key: "𝗔𝗚 Pool Allocation",
+        l: paramL,
+        g: paramG,
+        value: computeIPool(paramG, paramL, inputWeightAG),
+      });
+      allocationPoolData.push({
+        key: "𝗔𝗤 Pool Allocation",
+        l: paramL,
+        g: paramG,
+        value: computeIPool(paramG, paramL, paramWeightAQ),
+      });
+    }
+  }
+}
+```
+
+```js
+Plot.plot({
+  caption: html`2. <span class="u-overline"><strong>AG</strong></span>&nbsp;Pool
+    and <span class="u-overline"><strong>AQ</strong></span>&nbsp;Pool
+    Allocations&nbsp;${tex`I_{AG}`} and&nbsp;${tex`I_{AQ}`}`,
+  aspectRatio: 1,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "Allocation I",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "Liquidity L" },
+  y: {
+    ticks: d3.range(0, 1.01, 0.1),
+    domain: [1.05, -0.05],
+    label: "Stake G",
+  },
+  fx: { label: null },
+  marks: [
+    Plot.frame(),
+    Plot.rect(allocationPoolData, {
+      x1: d => d.l - 0.05,
+      x2: d => d.l + 0.05,
+      y1: d => d.g - 0.05,
+      y2: d => d.g + 0.05,
+      fx: "key",
+      fill: "value",
+    }),
+    Plot.text(allocationPoolData, {
+      x: "l",
+      y: "g",
+      fx: "key",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => contrastingTextColor(
+        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
+      ),
+    }),
+  ],
+})
+```
+
+```js
+const inputWeightAG = view(Inputs.range([1, 0], {
+  label: tex`\text{Relative share of \textbf{A}~tokens held in }
+    \overline{\textbf{AG}}~\text{pool}`,
+  step: 0.01,
+  value: 0.5,
+}));
+```
+
+```js
+const paramWeightAQ = 1 - inputWeightAG
+```
 
 <p id="figure-27" class="u-center">Figure&nbsp;27: Treasury
   Incentives&nbsp;${tex`I_T`}
