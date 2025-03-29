@@ -1019,7 +1019,7 @@ normalised in [Figure&nbsp;10](#figure-10) to&nbsp;${tex`\Delta \bar C_i A_i`}.
     (100 * inputDeltaBarCi).toLocaleString(
       "en-GB",
       { maximumFractionDigits: 0 },
-    );
+    )
   } \%`}
 
 ```js
@@ -1362,7 +1362,7 @@ function computeDeltaCi(Ai, Gi, deltaA) {
     (100 * inputDeltaA).toLocaleString(
       "en-GB",
       { minimumFractionDigits: 1, maximumFractionDigits: 1 },
-    );
+    )
   } \%`}
 
 ```js
