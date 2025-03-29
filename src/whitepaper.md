@@ -2731,6 +2731,69 @@ html`<span id="equation-39">${tex.block`\eta = \frac{1}{1 - \log(S + L)}
   \tag{39}`}</span>`
 ```
 
+```js
+function computeEta(S, L) {
+  if (S === 0 && L === 0) {
+    return 0;
+  } else {
+    return 1 / (1 - Math.log(S + L));
+  }
+}
+```
+
+```js
+const etaData = [];
+for (let paramS = 0; paramS < 1.01; paramS += 0.05) {
+  for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
+    if (paramL + paramS < 1.01) {
+      etaData.push({
+        key: "η",
+        l: paramL,
+        s: paramS,
+        value: computeEta(paramS, paramL),
+      })
+    }
+  }
+}
+```
+
+```js
+Plot.plot({
+  caption: html`Range of ${tex`\eta`}`,
+  aspectRatio: 1,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "η",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.2), label: "L" },
+  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "S" },
+  marks: [
+    Plot.frame(),
+    Plot.rect(etaData, {
+      x1: d => d.l - 0.025,
+      x2: d => d.l + 0.025,
+      y1: d => d.s - 0.025,
+      y2: d => d.s + 0.025,
+      fill: "value",
+    }),
+    Plot.text(etaData, {
+      x: "l",
+      y: "s",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => contrastingTextColor(
+        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
+      ),
+    })
+  ],
+})
+```
+
 Incentives&nbsp;${tex`I`} are allocated as follows:
 
 **Treasury**
