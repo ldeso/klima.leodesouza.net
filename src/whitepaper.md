@@ -2697,8 +2697,8 @@ Plot.plot({
     type: "sequential",
     label: "υ",
   },
-  x: { ticks: d3.range(0, 1.01, 0.2), label: "L" },
-  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "G" },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "L" },
+  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.025, -0.025], label: "G" },
   marks: [
     Plot.frame(),
     Plot.rect(upsilonData, {
@@ -2768,8 +2768,8 @@ Plot.plot({
     type: "sequential",
     label: "η",
   },
-  x: { ticks: d3.range(0, 1.01, 0.2), label: "L" },
-  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "G" },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "L" },
+  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.025, -0.025], label: "G" },
   marks: [
     Plot.frame(),
     Plot.rect(etaData, {
@@ -2839,8 +2839,8 @@ Plot.plot({
     type: "sequential",
     label: "I_T",
   },
-  x: { ticks: d3.range(0, 1.01, 0.2), domain: [-0.025, 1.025], label: "L" },
-  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "G" },
+  x: { ticks: d3.range(0, 1.01, 0.1), domain: [-0.025, 1.025], label: "L" },
+  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.025, -0.025], label: "G" },
   marks: [
     Plot.frame(),
     Plot.rect(treasuryData, {
