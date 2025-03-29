@@ -2695,10 +2695,14 @@ Plot.plot({
     scheme: "Spectral",
     domain: [0, 1],
     type: "sequential",
-    label: "υ",
+    label: "Relative Utilisation υ",
   },
-  x: { ticks: d3.range(0, 1.01, 0.1), label: "L" },
-  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.025, -0.025], label: "G" },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "Liquidity L" },
+  y: {
+    ticks: d3.range(0, 1.01, 0.1),
+    domain: [1.025, -0.025],
+    label: "Stake G",
+  },
   marks: [
     Plot.frame(),
     Plot.rect(upsilonData, {
@@ -2766,10 +2770,14 @@ Plot.plot({
     scheme: "Spectral",
     domain: [0, 1],
     type: "sequential",
-    label: "η",
+    label: "Absolute Utilisation η",
   },
-  x: { ticks: d3.range(0, 1.01, 0.1), label: "L" },
-  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.025, -0.025], label: "G" },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "Liquidity L" },
+  y: {
+    ticks: d3.range(0, 1.01, 0.1),
+    domain: [1.025, -0.025],
+    label: "Stake G",
+  },
   marks: [
     Plot.frame(),
     Plot.rect(etaData, {
@@ -2810,59 +2818,6 @@ html`<span id="equation-40">${tex.block`I_T = 1 - \upsilon \, \eta
 function computeTreasury(G, L) {
   return Math.max(0, 1 - computeUpsilon(G, L) * computeEta(G, L));
 }
-```
-
-```js
-const treasuryData = [];
-for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
-  for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
-    if (paramG + paramL < 1.01) {
-      treasuryData.push({
-        key: "I_T",
-        l: paramL,
-        g: paramG,
-        value: computeTreasury(paramG, paramL),
-      });
-    }
-  }
-}
-```
-
-```js
-Plot.plot({
-  caption: html`Range of ${tex`I_T`}`,
-  aspectRatio: 1,
-  color: {
-    legend: true,
-    scheme: "Spectral",
-    domain: [0, 1],
-    type: "sequential",
-    label: "I_T",
-  },
-  x: { ticks: d3.range(0, 1.01, 0.1), domain: [-0.025, 1.025], label: "L" },
-  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.025, -0.025], label: "G" },
-  marks: [
-    Plot.frame(),
-    Plot.rect(treasuryData, {
-      x1: d => d.l - 0.025,
-      x2: d => d.l + 0.025,
-      y1: d => d.g - 0.025,
-      y2: d => d.g + 0.025,
-      fill: "value",
-    }),
-    Plot.text(treasuryData, {
-      x: "l",
-      y: "g",
-      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
-        "en-GB",
-        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
-      ),
-      fill: d => contrastingTextColor(
-        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
-      ),
-    }),
-  ],
-})
 ```
 
 The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
@@ -2915,4 +2870,59 @@ The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
 <p id="figure-27" class="u-center">Figure&nbsp;27: Treasury
   Incentives&nbsp;${tex`I_T`}
 
-![Treasury Incentives I_T](whitepaper/figure-27.webp)
+```js
+const treasuryData = [];
+for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
+  for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
+    if (paramG + paramL < 1.01) {
+      treasuryData.push({
+        key: "I_T",
+        l: paramL,
+        g: paramG,
+        value: computeTreasury(paramG, paramL),
+      });
+    }
+  }
+}
+```
+
+```js
+Plot.plot({
+  caption: html`Treasury Allocation ${tex`I_T`}`,
+  aspectRatio: 1,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "Treasury Allocation I",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "Liquidity L" },
+  y: {
+    ticks: d3.range(0, 1.01, 0.1),
+    domain: [1.025, -0.025],
+    label: "Stake G",
+  },
+  marks: [
+    Plot.frame(),
+    Plot.rect(treasuryData, {
+      x1: d => d.l - 0.025,
+      x2: d => d.l + 0.025,
+      y1: d => d.g - 0.025,
+      y2: d => d.g + 0.025,
+      fill: "value",
+    }),
+    Plot.text(treasuryData, {
+      x: "l",
+      y: "g",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => contrastingTextColor(
+        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
+      ),
+    }),
+  ],
+})
+```
