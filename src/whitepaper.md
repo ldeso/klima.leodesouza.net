@@ -1032,7 +1032,7 @@ function contrastingTextColor(backgroundColor) {
 }
 
 const pricingData = [];
-for (let paramGi = 0; paramGi <= 1; paramGi += 0.1) {
+for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
   pricingData.push({
     key: "ΔA",
     ai: 0,
@@ -1045,7 +1045,7 @@ for (let paramGi = 0; paramGi <= 1; paramGi += 0.1) {
     gi: paramGi,
     value: NaN,
   })
-  for (let paramAi = 0.1; paramAi <= 1; paramAi += 0.1) {
+  for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     pricingData.push({
       key: "ΔA",
       ai: paramAi,
@@ -1367,14 +1367,14 @@ function computeDeltaCi(Ai, Gi, deltaA) {
 
 ```js
 const retirementData = [];
-for (let paramGi = 0; paramGi <= 1; paramGi += 0.1) {
+for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
   retirementData.push({
     key: "-ΔCᵢ",
     ai: 0,
     gi: paramGi,
     value: NaN,
   })
-  for (let paramAi = 0.1; paramAi <= 1; paramAi += 0.1) {
+  for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     retirementData.push({
       key: "-ΔCᵢ",
       ai: paramAi,
@@ -1646,14 +1646,14 @@ by the system where&nbsp;${tex`\varepsilon`} is the proportion retained.
 
 ```js
 const spreadData = [];
-for (let paramGi = 0; paramGi <= 1; paramGi += 0.1) {
+for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
   spreadData.push({
     key: "spread",
     ai: 0,
     gi: paramGi,
     value: NaN,
   })
-  for (let paramAi = 0.1; paramAi <= 1; paramAi += 0.1) {
+  for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     spreadData.push({
       key: "spread",
       ai: paramAi,
@@ -1667,7 +1667,7 @@ const getSpread = d => d.key === "spread" ? d.value : NaN;
 
 ```js
 Plot.plot({
-  caption: html`Heatmap of Carbon Spread ${tex`\varepsilon`} with initial
+  caption: html`Heatmap of Carbon Spread ${tex`\varepsilon`} with Initial
           ${tex`\Delta C = ${(100 * inputDeltaCinitial).toLocaleString(
             "en-GB",
             { minimumFractionDigits: 1, maximumFractionDigits: 1 },
@@ -2260,14 +2260,14 @@ of the function per Class.
 
 ```js
 const betaData = [];
-for (let paramGi = 0; paramGi <= 1; paramGi += 0.1) {
+for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
   betaData.push({
     key: "βᵢ",
     ai: 0,
     gi: paramGi,
     value: NaN,
   })
-  for (let paramAi = 0.1; paramAi <= 1; paramAi += 0.1) {
+  for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
     betaData.push({
       key: "βᵢ",
       ai: paramAi,
@@ -2389,8 +2389,8 @@ function computeLambda(AQ, Gi) {
 
 ```js
 const lambdaData = [];
-for (let paramGi = 0; paramGi <= 1; paramGi += 0.1) {
-  for (let paramAi = 0; paramAi <= 1; paramAi += 0.1) {
+for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
+  for (let paramAi = 0; paramAi < 1.01; paramAi += 0.1) {
     lambdaData.push({
       key: "λ",
       ai: paramAi,
@@ -2657,10 +2657,71 @@ html`<span id="equation-38">${tex.block`\upsilon =
   \left( \frac{2 G L}{G^2 + L^2} \right)^2 \tag{38}`}</span>`
 ```
 
+```js
+function computeUpsilon(G, L) {
+  if (L === 0 && G === 0) {
+    return 0;
+  } else {
+    return (2 * G * L / (G**2 + L**2))**2;
+  }
+}
+```
+
 <p id="figure-25" class="u-center">Figure&nbsp;25:
   Upsilon&nbsp;${tex`\upsilon`} range of value
 
-![Upsilon υ range of value](whitepaper/figure-25.webp)
+```js
+const upsilonData = [];
+for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
+  for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
+    if (paramL + paramG < 1.01) {
+      upsilonData.push({
+        key: "υ",
+        l: paramL,
+        g: paramG,
+        value: computeUpsilon(paramG, paramL),
+      })
+    }
+  }
+}
+```
+
+```js
+Plot.plot({
+  caption: html`Range of ${tex`\upsilon`}`,
+  aspectRatio: 1,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "υ",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.2), label: "L" },
+  y: { ticks: d3.range(0, 1.01, 0.2), domain: [1.025, -0.025], label: "G" },
+  marks: [
+    Plot.frame(),
+    Plot.rect(upsilonData, {
+      x1: d => d.l - 0.025,
+      x2: d => d.l + 0.025,
+      y1: d => d.g - 0.025,
+      y2: d => d.g + 0.025,
+      fill: "value",
+    }),
+    Plot.text(upsilonData, {
+      x: "l",
+      y: "g",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => contrastingTextColor(
+        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
+      ),
+    })
+  ],
+})
+```
 
 The **absolute utilisation** parameter&nbsp;${tex`\eta`} is defined
 as&nbsp;${tex`\eta = 0`} if ${tex`S + L = 0`}, otherwise:
