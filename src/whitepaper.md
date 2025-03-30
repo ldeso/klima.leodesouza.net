@@ -2802,9 +2802,12 @@ Plot.plot({
 })
 ```
 
-Incentives&nbsp;${tex`I`} are allocated as follows:
+Incentives&nbsp;${tex`I`} are allocated as follows.
 
-**Treasury**
+<p id="9-3-1-treasury" tabindex="-1">
+  <a class="observablehq-header-anchor" href="#9-3-1-treasury">
+    <strong>Treasury</strong>
+  </a>
 
 The allocation to the Treasury&nbsp;${tex`I_T`} is the imbalance generated
 from&nbsp;${tex`\upsilon`}:
@@ -2820,9 +2823,17 @@ function computeTreasury(G, L) {
 }
 ```
 
+<p id="9-3-2-post-treasury" tabindex="-1">
+  <a class="observablehq-header-anchor" href="#9-3-2-post-treasury">
+    <strong>Post Treasury</strong>
+  </a>
+
 The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
 
-1. **A Bonds & G Staking**
+1. <p id="9-3-2-1-a-bonds-and-g-staking" tabindex="-1">
+    <a class="observablehq-header-anchor" href="#9-3-2-1-a-bonds-and-g-staking">
+      <strong>A Bonds & G Staking</strong>
+    </a>
 
     Where&nbsp;${tex`S`} is the proportion of **A**&nbsp;tokens that are staked
     for Bonds&nbsp;(as defined previously in [Section&nbsp;4](#4-bond-market)):
@@ -2859,7 +2870,10 @@ function computeIStaking(G, L, S) {
 }
 ```
 
-2. **Liquidity**
+2. <p id="9-3-2-2-liquidity" tabindex="-1">
+    <a class="observablehq-header-anchor" href="#9-3-2-2-liquidity">
+      <strong>Liquidity</strong>
+    </a>
 
     With&nbsp;${tex`\lambda_G`}, ${tex`\lambda_Q`}, ${tex`\lambda_{GG}`} as
     defined in [Section&nbsp;8.3](#8-3-share-of-risky-premium):
@@ -2891,7 +2905,8 @@ function computeIPool(G, L, weight) {
 ```
 
 <p id="figure-26" class="u-center">Figure&nbsp;26: Share of Non-Treasury
-  Incentives&nbsp;(1)(2)
+  Incentives&nbsp;${tex`I_S`}, ${tex`I_G`}, ${tex`I_{AG}`}
+  and&nbsp;${tex`I_{AQ}`}
 
 ```js
 const allocationSQData = [];
