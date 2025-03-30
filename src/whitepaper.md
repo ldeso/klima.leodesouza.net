@@ -2436,10 +2436,18 @@ const plotLambdaGG = Plot.plot({
   ],
 });
 
+function translateNode(dx, dy) {
+  return function () {
+    const {e, f} = this.transform.baseVal.consolidate().matrix;
+    return `translate(${e + dx},${f + dy})`;
+  }
+}
+
 d3.select(plotLambdaGG)
   .select("g[aria-label='x-axis label']")
-    .append("text")
-    .attr("transform", "translate(608.5,371.5)")
+  .select("text")
+    .clone(false)
+    .attr("transform", translateNode(-12, 1.5))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("Q");
@@ -2549,17 +2557,19 @@ const plotLambdaGQ = Plot.plot({
 
 d3.select(plotLambdaGQ)
   .select("g[aria-label='x-axis label']")
-    .append("text")
-    .attr("transform", "translate(608.5,306.2368421052632)")
+  .select("text")
+  .clone(false)
+    .attr("transform", translateNode(-12, 1.5))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("Q");
 
 d3.select(plotLambdaGQ)
   .select("g[aria-label='y-axis label']")
-    .append("text")
-    .attr("y", "0.71em")
-    .attr("transform", "translate(54,34.1)")
+  .select("text")
+    .attr("transform", translateNode(0, 10))
+  .clone(false)
+    .attr("transform", translateNode(14, 4.1))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("G");
@@ -3039,7 +3049,7 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
 ```
 
 ```js
-Plot.plot({
+const plotAllocationSQ = Plot.plot({
   caption: html`1. <strong>A</strong>&nbsp;Bonds and
     <strong>G</strong>&nbsp;Staking Allocations&nbsp;${tex`I_S`}
     and&nbsp;${tex`I_G`}`,
@@ -3081,7 +3091,14 @@ Plot.plot({
       ),
     }),
   ],
-})
+});
+
+d3.select(plotAllocationSQ)
+  .select("g[aria-label='y-axis label']")
+  .select("text")
+    .attr("transform", translateNode(0, 10));
+
+display(plotAllocationSQ);
 ```
 
 ```js
@@ -3115,7 +3132,7 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
 ```
 
 ```js
-Plot.plot({
+const plotAllocationPool = Plot.plot({
   caption: html`2. <span class="u-overline"><strong>AG</strong></span>&nbsp;Pool
     and <span class="u-overline"><strong>AQ</strong></span>&nbsp;Pool
     Allocations&nbsp;${tex`I_{AG}`} and&nbsp;${tex`I_{AQ}`}`,
@@ -3157,7 +3174,14 @@ Plot.plot({
       ),
     }),
   ],
-})
+});
+
+d3.select(plotAllocationPool)
+  .select("g[aria-label='y-axis label']")
+  .select("text")
+    .attr("transform", translateNode(0, 10));
+
+display(plotAllocationPool)
 ```
 
 ```js
