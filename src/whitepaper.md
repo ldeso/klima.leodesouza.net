@@ -2379,8 +2379,8 @@ html`<span id="equation-27">${tex.block`\lambda_{GG} = \frac{1 - A_Q}
 ```
 
 ```js
-function computeLambda(AQ, Gi) {
-  return (1 - AQ) / (1 + (Gi / (1 - Gi))**2);
+function computeLambdaGG(AQ, Gi, GG) {
+  return (1 - AQ) / (1 + (Gi / GG)**2);
 }
 ```
 
@@ -2388,21 +2388,21 @@ function computeLambda(AQ, Gi) {
   Allocation&nbsp;(assuming&nbsp;${tex`G_G = 1 − G_i`})
 
 ```js
-const lambdaData = [];
+const lambdaGGData = [];
 for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
-  for (let paramAi = 0; paramAi < 1.01; paramAi += 0.1) {
-    lambdaData.push({
+  for (let paramAQ = 0; paramAQ < 1.01; paramAQ += 0.1) {
+    lambdaGGData.push({
       key: "λ",
-      ai: paramAi,
+      aq: paramAQ,
       gi: paramGi,
-      value: computeLambda(paramAi, paramGi),
+      value: computeLambdaGG(paramAQ, paramGi, 1 - paramGi),
     });
   }
 }
 ```
 
 ```js
-Plot.plot({
+const plotLambdaGG = Plot.plot({
   caption: html`Heatmap of ${tex`\lambda_{GG}`} with ${tex`G_G = 1 - G_i`}`,
   color: {
     legend: true,
@@ -2411,19 +2411,19 @@ Plot.plot({
     type: "sequential",
     label: "λ",
   },
-  x: { ticks: d3.range(0, 1.01, 0.1), label: "AQ" },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "A  " },
   y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Gᵢ" },
   marks: [
     Plot.frame(),
-    Plot.rect(lambdaData, {
-      x1: d => d.ai - 0.05,
-      x2: d => d.ai + 0.05,
+    Plot.rect(lambdaGGData, {
+      x1: d => d.aq - 0.05,
+      x2: d => d.aq + 0.05,
       y1: d => d.gi - 0.05,
       y2: d => d.gi + 0.05,
       fill: "value",
     }),
-    Plot.text(lambdaData, {
-      x: "ai",
+    Plot.text(lambdaGGData, {
+      x: "aq",
       y: "gi",
       text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
         "en-GB",
@@ -2434,17 +2434,33 @@ Plot.plot({
       ),
     }),
   ],
-})
+});
+
+d3.select(plotLambdaGG)
+  .select("g[aria-label='x-axis label']")
+    .append("text")
+    .attr("transform", "translate(608.5,371.5)")
+    .attr("font-size", "0.6em")
+    .attr("font-weight", "600")
+    .text("Q");
+
+display(plotLambdaGG);
 ```
 
-Noting the relationship between&nbsp;${tex`G_i`} and&nbsp;${tex`\beta`}, and
-particularly if&nbsp;${tex`G_i = 0`}, ${tex`\beta = 0`}.
+Noting the relationship between&nbsp;${tex`G`} and&nbsp;${tex`\beta`}, and
+particularly if&nbsp;${tex`G = 0`}, ${tex`\beta = 0`}.
 
 The residual share, ${tex`1 − λ_{GG}`}, is split between the liquidity pools:
 
 ```js
 html`<span id="equation-28">${tex.block`\lambda_G =
-  \frac{2 \, A_G}{2 \, A_G + A_Q \sqrt 2} \tag{28}`}</span>`
+  \frac{2 \, A_G}{2 \, A_G + A_Q \, \sqrt 2} \tag{28}`}</span>`
+```
+
+```js
+function computeLambdaG(AQ, AG) {
+  return 2 * AG / (2 * AG + AQ * Math.sqrt(2));
+}
 ```
 
 For completeness:
@@ -2454,10 +2470,102 @@ html`<span id="equation-29">${tex.block`\lambda_Q = 1 - \lambda_G
   \tag{29}`}</span>`
 ```
 
+```js
+function computeLambdaQ(AQ, AG) {
+  return 1 - computeLambdaG(AQ, AG);
+}
+```
+
 <p id="figure-19" class="u-center">Figure&nbsp;19: Liquidity Pool
   Split&nbsp;${tex`\lambda_G, \lambda_Q`}
 
-![Liquidity Pool Split λ_G, λ_A](whitepaper/figure-19.webp)
+```js
+const lambdaGQData = [];
+for (let paramAG = 0; paramAG < 1.01; paramAG += 0.1) {
+  for (let paramAQ = 0; paramAQ < 1.01; paramAQ += 0.1) {
+    if (paramAG + paramAQ < 1.01) {
+      lambdaGQData.push({
+        key: "𝗔𝗚 Liquidity Pool Share",
+        aq: paramAQ,
+        ag: paramAG,
+        value: computeLambdaG(paramAQ, paramAG),
+      });
+      lambdaGQData.push({
+        key: "𝗔𝗤 Liquidity Pool Share",
+        aq: paramAQ,
+        ag: paramAG,
+        value: computeLambdaQ(paramAQ, paramAG),
+      });
+    }
+  }
+}
+```
+
+```js
+const plotLambdaGQ = Plot.plot({
+  caption: html`<span class="u-overline"><strong>AG</strong></span>
+    and <span class="u-overline"><strong>AQ</strong></span>&nbsp;Liquidity Pools
+    Shares&nbsp;${tex`\lambda_G`} and&nbsp;${tex`\lambda_G`}`,
+  aspectRatio: 1,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "λ",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "A  " },
+  y: {
+    ticks: d3.range(0, 1.01, 0.1),
+    domain: [1.05, -0.05],
+    label: "A",
+  },
+  fx: { label: null },
+  className: "LambdaGQ",
+  marks: [
+    Plot.frame(),
+    Plot.rect(lambdaGQData, {
+      x1: d => d.aq - 0.05,
+      x2: d => d.aq + 0.05,
+      y1: d => d.ag - 0.05,
+      y2: d => d.ag + 0.05,
+      fx: "key",
+      fill: "value",
+    }),
+    Plot.text(lambdaGQData, {
+      x: "aq",
+      y: "ag",
+      fx: "key",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => contrastingTextColor(
+        d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
+      ),
+    }),
+  ],
+});
+
+d3.select(plotLambdaGQ)
+  .select("g[aria-label='x-axis label']")
+    .append("text")
+    .attr("transform", "translate(608.5,306.2368421052632)")
+    .attr("font-size", "0.6em")
+    .attr("font-weight", "600")
+    .text("Q");
+
+d3.select(plotLambdaGQ)
+  .select("g[aria-label='y-axis label']")
+    .append("text")
+    .attr("y", "0.71em")
+    .attr("transform", "translate(54,34.1)")
+    .attr("font-size", "0.6em")
+    .attr("font-weight", "600")
+    .text("G");
+
+display(plotLambdaGQ);
+```
 
 ### 8.4 Risky Premium Distribution
 
@@ -3093,7 +3201,7 @@ Plot.plot({
     scheme: "Spectral",
     domain: [0, 1],
     type: "sequential",
-    label: "Treasury Allocation I",
+    label: "Allocation I",
   },
   x: { ticks: d3.range(0, 1.01, 0.1), label: "Liquidity L" },
   y: {
