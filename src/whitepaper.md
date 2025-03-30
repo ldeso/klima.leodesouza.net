@@ -3133,9 +3133,9 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
 
 ```js
 const plotAllocationPool = Plot.plot({
-  caption: html`2. <span class="u-overline"><strong>AG</strong></span>&nbsp;Pool
-    and <span class="u-overline"><strong>AQ</strong></span>&nbsp;Pool
-    Allocations&nbsp;${tex`I_{AG}`} and&nbsp;${tex`I_{AQ}`}`,
+  caption: html`2. <span class="u-overline"><strong>AG</strong></span>
+    and&nbsp;<span class="u-overline"><strong>AQ</strong></span>&nbsp;Liquidity
+    Pools Allocations&nbsp;${tex`I_{AG}`} and&nbsp;${tex`I_{AQ}`}`,
   aspectRatio: 1,
   color: {
     legend: true,
@@ -3181,7 +3181,7 @@ d3.select(plotAllocationPool)
   .select("text")
     .attr("transform", translateNode(0, 10));
 
-display(plotAllocationPool)
+display(plotAllocationPool);
 ```
 
 ```js
