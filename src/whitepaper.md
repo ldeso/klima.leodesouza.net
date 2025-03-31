@@ -1556,17 +1556,17 @@ const inputG3 = view(Inputs.range([0.0, 1/3], {
 ```
 
 ```js
-const inputC1_0 = view(Inputs.range([0, 1/3], {
+const inputC1_0 = view(Inputs.range([0.001, 1/3], {
   label: tex`C_{1 \, 0} \text{ (class } 1 \text{ liquid balance)}`,
   step: 0.001,
   value: 0.3,
 }));
-const inputC2_0 = view(Inputs.range([0, 1/3], {
+const inputC2_0 = view(Inputs.range([0.001, 1/3], {
   label: tex`C_{2 \, 0} \text{ (class } 2 \text{ liquid balance)}`,
   step: 0.001,
   value: 0.1,
 }));
-const inputC3_0 = view(Inputs.range([0, 1/3], {
+const inputC3_0 = view(Inputs.range([0.001, 1/3], {
   label: tex`C_{3 \, 0} \text{ (class } 3 \text{ liquid balance)}`,
   step: 0.001,
   value: 0.2,
@@ -2436,9 +2436,13 @@ const plotLambdaGG = Plot.plot({
   ],
 });
 
-function translateNode(dx, dy) {
+function changeTranslation(dx, dy) {
   return function () {
-    const {e, f} = this.transform.baseVal.consolidate().matrix;
+    const svgTransformList = this.transform.baseVal;
+    if (svgTransformList.length > 1) {
+      throw new Error("SVGTransformList must only contain one translation");
+    }
+    const {e, f} = svgTransformList.consolidate().matrix;
     return `translate(${e + dx},${f + dy})`;
   }
 }
@@ -2447,7 +2451,7 @@ d3.select(plotLambdaGG)
   .select("g[aria-label='x-axis label']")
   .select("text")
     .clone(false)
-    .attr("transform", translateNode(-12, 1.5))
+    .attr("transform", changeTranslation(-12, 1.5))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("Q");
@@ -2559,7 +2563,7 @@ d3.select(plotLambdaGQ)
   .select("g[aria-label='x-axis label']")
   .select("text")
   .clone(false)
-    .attr("transform", translateNode(-12, 1.5))
+    .attr("transform", changeTranslation(-12, 1.5))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("Q");
@@ -2567,9 +2571,9 @@ d3.select(plotLambdaGQ)
 d3.select(plotLambdaGQ)
   .select("g[aria-label='y-axis label']")
   .select("text")
-    .attr("transform", translateNode(0, 10))
+    .attr("transform", changeTranslation(0, 10))
   .clone(false)
-    .attr("transform", translateNode(14, 4.1))
+    .attr("transform", changeTranslation(14, 4.1))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("G");
@@ -3096,7 +3100,7 @@ const plotAllocationSQ = Plot.plot({
 d3.select(plotAllocationSQ)
   .select("g[aria-label='y-axis label']")
   .select("text")
-    .attr("transform", translateNode(0, 10));
+    .attr("transform", changeTranslation(0, 10));
 
 display(plotAllocationSQ);
 ```
@@ -3179,7 +3183,7 @@ const plotAllocationPool = Plot.plot({
 d3.select(plotAllocationPool)
   .select("g[aria-label='y-axis label']")
   .select("text")
-    .attr("transform", translateNode(0, 10));
+    .attr("transform", changeTranslation(0, 10));
 
 display(plotAllocationPool);
 ```
