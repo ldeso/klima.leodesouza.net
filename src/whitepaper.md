@@ -2313,7 +2313,7 @@ Plot.plot({
 
 The table and figure below shows an example of the effects on&nbsp;${tex`\beta`}
 on allocating large **G**&nbsp;values to small **A**&nbsp;values where the shift
-in **G**&nbsp;results in a lower&nbsp;${tex`\beta`}&nbsp;(0.11 from 0.37) with
+in **G**&nbsp;results in a lower&nbsp;${tex`\beta`}&nbsp;(0.27 from 0.55) with
 no change to total **G** and **A**&nbsp;staking.
 
 <p class="u-center">Table&nbsp;2: Effect on&nbsp;${tex`\beta`} from outsized
@@ -2321,7 +2321,7 @@ no change to total **G** and **A**&nbsp;staking.
 
 | Class                     | 1                                | 2                                | 3                                | 4                                | ${tex`\beta`}                      |
 |:------------------------- |:--------------------------------:|:--------------------------------:|:--------------------------------:|:--------------------------------:|:----------------------------------:|
-| ${tex`A_i`}               | 0.5O                             | 0.2O                             | 0.1O                             | 0.O5                             |                                    |
+| ${tex`A_i`}               | 0.50                             | 0.20                             | 0.10                             | 0.05                             |                                    |
 | Initial ${tex`G_i`}       | <span class="u-blue">0.30</span> | <span class="u-blue">0.10</span> | <span class="u-blue">0.05</span> | <span class="u-blue">0.01</span> |                                    |
 | Initial ${tex`\beta_i^2`} | 0.2550                           | 0.0380                           | 0.0098                           | 0.0010                           | <span class="u-blue">0.5511</span> |
 | New ${tex`G_i`}           | <span class="u-red">0.01</span>  | <span class="u-red">0.05</span>  | <span class="u-red">0.10</span>  | <span class="u-red">0.30</span>  |                                    |
