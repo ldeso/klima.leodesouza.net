@@ -1271,7 +1271,6 @@ Plot.plot({
     }),
     Plot.text(balanceData, {
       x: "class",
-      y: 100,
       y: d => 2 * d3.filter(
         d3.filter(balanceData, getCarbonBalance),
         c => c.class === d.class,
@@ -1757,12 +1756,12 @@ function numberOfDigits(x) {
   return x === 0 ? 1 : (1 + Math.floor(Math.log10(x)));
 }
 
-function piecewiseLogTransform(x, cutoff = 1) {
-  return x > cutoff ? Math.log(x) : x - cutoff + Math.log(cutoff);
+function piecewiseLogTransform(xTran = 1) {
+  return x => x > xTran ? Math.log(x) : x - xTran + Math.log(xTran);
 }
 
-function piecewiseLogInvert(y, cutoff = 1) {
-  return y > Math.log(cutoff) ? Math.exp(y) : y - Math.log10(cutoff) + cutoff;
+function piecewiseLogInvert(xTran = 1) {
+  return y => y > Math.log(xTran) ? Math.exp(y) : y - Math.log10(xTran) + xTran;
 }
 
 function setInput(input, value) {
@@ -1797,8 +1796,8 @@ const viewPresentTonnes = Inputs.range([0, 1e9], {
     \text{ in AAM)}`,
   step: 1,
   value: defaultPresentTonnes,
-  transform: piecewiseLogTransform,
-  invert: piecewiseLogInvert,
+  transform: piecewiseLogTransform(),
+  invert: piecewiseLogInvert(),
 });
 const viewDeltaTonnes = Inputs.range([1e-1, 1e7], {
   label: tex`\text{Present-value tonnes bought by the AAM}`,
@@ -1810,8 +1809,8 @@ const viewAi = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
   step: 1e-3,
   value: defaultAi,
-  transform: x => piecewiseLogTransform(x, 1e-3),
-  invert: x => piecewiseLogInvert(x, 1e-3),
+  transform: piecewiseLogTransform(1e-3),
+  invert: piecewiseLogInvert(1e-3),
 });
 const viewGi = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
@@ -1987,8 +1986,8 @@ const viewAi_ = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
   step: 1e-3,
   value: defaultAi,
-  transform: x => piecewiseLogTransform(x, 1e-3),
-  invert: x => piecewiseLogInvert(x, 1e-3),
+  transform: piecewiseLogTransform(1e-3),
+  invert: piecewiseLogInvert(1e-3),
 });
 const viewGi_ = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
@@ -2008,8 +2007,8 @@ const viewA = Inputs.range([0, 1], {
   label: tex`A \text{ (share of \textbf{A}~tokens staked for pricing)}`,
   step: 1e-3,
   value: defaultA,
-  transform: x => 1 - piecewiseLogTransform(1 - Math.sqrt(x), 1e-3),
-  invert: x => (1 - piecewiseLogInvert(1 - x, 1e-3))**2,
+  transform: x => 1 - piecewiseLogTransform(1e-3)(1 - Math.sqrt(x)),
+  invert: x => (1 - piecewiseLogInvert(1e-3)(1 - x))**2,
 });
 const viewFullyStaked = Inputs.button(
   [["Implied Zero Stake", () => setInput(viewA, 1)]],
@@ -2018,8 +2017,8 @@ const viewS = Inputs.range([0, 1], {
   label: tex`S \text{ (share of \textbf{A}~tokens staked for bonds)}`,
   step: 1e-3,
   value: defaultS,
-  transform: x => piecewiseLogTransform(x, 1e-3),
-  invert: x => piecewiseLogInvert(x, 1e-3),
+  transform: piecewiseLogTransform(1e-3),
+  invert: piecewiseLogInvert(1e-3),
 });
 const viewReset_ = Inputs.button(
   [["Reset", () => {
