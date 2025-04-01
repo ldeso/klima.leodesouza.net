@@ -232,7 +232,7 @@ Both tokens facilitate the Klima Carbon market to function efficiently with the
 **A**&nbsp;token responsible for portfolio selection and pricing, and the
 **G**&nbsp;token modulating capacity and risk.
 
-<p class="u-center">Table&nbsp;1: Token Summary
+<p id="table-1" class="u-center">Table&nbsp;1: Token Summary
 
 <table>
   <thead>
@@ -2315,8 +2315,8 @@ on allocating large **G**&nbsp;values to small **A**&nbsp;values where the shift
 in **G**&nbsp;results in a lower&nbsp;${tex`\beta`}&nbsp;(0.27 from 0.55) with
 no change to total **G** and **A**&nbsp;staking.
 
-<p class="u-center">Table&nbsp;2: Effect on&nbsp;${tex`\beta`} from outsized
-  <strong>G</strong>&nbsp;Staking
+<p id="table-2" class="u-center">Table&nbsp;2: Effect on&nbsp;${tex`\beta`} from
+  outsized <strong>G</strong>&nbsp;Staking
 
 | Class                     | 1                                | 2                                | 3                                | 4                                | ${tex`\beta`}                      |
 |:------------------------- |:--------------------------------:|:--------------------------------:|:--------------------------------:|:--------------------------------:|:----------------------------------:|
@@ -2635,7 +2635,7 @@ Thereafter each time bucket allocation is proportionate to LP&nbsp;holdings.
 
 ### 9.1 Planned Allocations
 
-<p class="u-center">Table&nbsp;3: KLIMA Token
+<p id="table-3" class="u-center">Table&nbsp;3: KLIMA Token
 
 | Cohort         | Proportion | Quantity&nbsp;(m) |
 |:-------------- |:----------:|:-----------------:|
@@ -2644,7 +2644,7 @@ Thereafter each time bucket allocation is proportionate to LP&nbsp;holdings.
 | 01X            | 2.5%       | 0.5               |
 | Total          |            | 20                |
 
-<p class="u-center">Table&nbsp;4: KlimaX Token
+<p id="table-4" class="u-center">Table&nbsp;4: KlimaX Token
 
 <table>
   <thead>
