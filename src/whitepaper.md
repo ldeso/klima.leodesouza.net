@@ -1311,17 +1311,17 @@ const inputC3 = view(Inputs.range([1, 1e9], {
 
 ```js
 const inputA1 = view(Inputs.range([0.0, 1/3], {
-  label: tex`A_1 \text{ (} A \text{ stake pricing class } 1 \text)`,
+  label: tex`A_1 \text{ (\textbf{A}~stake pricing class } 1 \text)`,
   step: 0.01,
   value: 0.1,
 }));
 const inputA2 = view(Inputs.range([0.0, 1/3], {
-  label: tex`A_2 \text{ (} A \text{ stake pricing class } 2 \text)`,
+  label: tex`A_2 \text{ (\textbf{A}~stake pricing class } 2 \text)`,
   step: 0.01,
   value: 0.1,
 }));
 const inputA3 = view(Inputs.range([0.0, 1/3], {
-  label: tex`A_3 \text{ (} A \text{ stake pricing class } 3 \text)`,
+  label: tex`A_3 \text{ (\textbf{A}~stake pricing class } 3 \text)`,
   step: 0.01,
   value: 0.1,
 }));
@@ -1538,17 +1538,17 @@ Plot.plot({
 
 ```js
 const inputG1 = view(Inputs.range([0.0, 1/3], {
-  label: tex`G_1 \text{ (} G \text{ stake pricing class } 1 \text)`,
+  label: tex`G_1 \text{ (\textbf{G}~stake pricing class } 1 \text)`,
   step: 0.001,
   value: 0.1,
 }));
 const inputG2 = view(Inputs.range([0.0, 1/3], {
-  label: tex`G_2 \text{ (} G \text{ stake pricing class } 2 \text)`,
+  label: tex`G_2 \text{ (\textbf{G}~stake pricing class } 2 \text)`,
   step: 0.001,
   value: 0.2,
 }));
 const inputG3 = view(Inputs.range([0.0, 1/3], {
-  label: tex`G_3 \text{ (} G \text{ stake pricing class } 3 \text)`,
+  label: tex`G_3 \text{ (\textbf{G}~stake pricing class } 3 \text)`,
   step: 0.001,
   value: 0.3,
 }));
@@ -1597,8 +1597,8 @@ If&nbsp;${tex`A = 1`}:
 In the event that there is 100%&nbsp;**A**&nbsp;staking for price, and the
 portfolio consists of zero-staked Carbon classes with liquid balances, the
 portfolio begins to issue these balances
-<span class="u-underline">to all A Bond holders</span> as a daily liquid yield
-using the governance-based weightings&nbsp;${tex`V`} in
+<span class="u-underline">to all **A** Bond holders</span> as a daily liquid
+yield using the governance-based weightings&nbsp;${tex`V`} in
 [Section&nbsp;5](#5-governance), [Equation&nbsp;(13)](#equation-13).
 
 With&nbsp;${tex`S`} as previously defined as the total **A**&nbsp;tokens staked
@@ -2250,7 +2250,7 @@ function computeBeta(Ai, Gi) {
 ```
 
 The portfolio ${tex`\beta`} determines a yield factor for the liquidity pools of
-A to compensate for the implied risk levels.
+**A** to compensate for the implied risk levels.
 
 For intuition, the map in [Figure&nbsp;15](#figure-15) shows the various outputs
 of the function per Class.
