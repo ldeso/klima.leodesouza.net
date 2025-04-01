@@ -2248,7 +2248,17 @@ html`<span id="equation-26">${tex.block`\beta =
 ```
 
 ```js
-function computeBeta(Ai, Gi) {
+function computeBeta(vecAi, vecGi) {
+  const beta2 = vecAi.reduce(
+    (acc, Ai, i) => acc + Ai - Ai * (1 - vecGi[i])**2,
+    0,
+  );
+  return Math.sqrt(beta2);
+}
+```
+
+```js
+function computeBetai(Ai, Gi) {
   return Math.sqrt(Ai - Ai * (1 - Gi)**2);
 }
 ```
@@ -2275,7 +2285,7 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       key: "βᵢ",
       ai: paramAi,
       gi: paramGi,
-      value: computeBeta(paramAi, paramGi),
+      value: computeBetai(paramAi, paramGi),
     });
   }
 }
@@ -2335,7 +2345,111 @@ no change to total **G** and **A**&nbsp;staking.
 <p id="figure-16" class="u-center">Figure&nbsp;16: Example of
   <strong>G</strong>&nbsp;Stake on&nbsp;${tex`\beta`}
 
-![Example of G Stake on β](whitepaper/figure-16.webp)
+```js
+const arrayAi = [0.5, 0.2, 0.1, 0.05];
+const arrayInitialGi = [0.3, 0.1, 0.05, 0.01];
+const arrayNewGi = arrayInitialGi.toReversed();
+const betaContribData = [];
+for (let i = 0; i < arrayAi.length; i++) {
+  const Ai = arrayAi[i];
+  const initialGi = arrayInitialGi[i];
+  const initialBeta2 = computeBetai(Ai, initialGi)**2;
+  const newGi = arrayNewGi[i];
+  const newBeta2 = computeBetai(Ai, newGi)**2;
+  betaContribData.push({ key: "Initial Gᵢ", class: i, value: initialGi });
+  betaContribData.push({ key: "Initial βᵢ²", class: i, value: initialBeta2 });
+  betaContribData.push({ key: "New Gᵢ", class: i, value: newGi });
+  betaContribData.push({ key: "New βᵢ²", class: i, value: newBeta2 });
+}
+const getInitialG = d => d.key === "Initial Gᵢ" ? d.value : NaN;
+const getInitialBeta2 = d => d.key === "Initial βᵢ²" ? d.value : NaN;
+const getNewG = d => d.key === "New Gᵢ" ? d.value : NaN;
+const getNewBeta2 = d => d.key === "New βᵢ²" ? d.value : NaN;
+
+const domainG = [0, Math.max(d3.max(arrayInitialGi), d3.max(arrayNewGi))];
+const rangeBeta2 = [
+  0,
+  Math.max(
+    d3.max(betaContribData, getInitialBeta2),
+    d3.max(betaContribData, getNewBeta2),
+  ),
+];
+const scaleG = d3.scaleLinear(domainG, rangeBeta2);
+const mapScaleG = x => x.map(scaleG);
+
+const paramInitialBeta = computeBeta(arrayAi, arrayInitialGi);
+const paramNewBeta = computeBeta(arrayAi, arrayNewGi);
+
+const stringInitialBeta = "Initial β = " + paramInitialBeta.toLocaleString(
+  "en-GB",
+  { minimumFractionDigits: 4, maximumFractionDigits: 4 },
+);
+const stringNewBeta = "New β = " + paramNewBeta.toLocaleString(
+  "en-GB",
+  { minimumFractionDigits: 4, maximumFractionDigits: 4 },
+);
+```
+
+```js
+Plot.plot({
+  caption: html`${tex`\beta`} Contribution from <strong>G</strong> Staking`,
+  color: {
+    legend: true,
+    range: ["gray", "black", "blue", "red"],
+    domain: ["Initial βᵢ²", "New βᵢ²", "Initial Gᵢ", "New Gᵢ"],
+  },
+  x: {
+    ticks: d3.range(4),
+    label: "Aᵢ Over 4 Classes",
+    tickFormat: d => arrayAi[d],
+  },
+  y: { domain: rangeBeta2 },
+  insetTop: 16,
+  insetLeft: 8,
+  insetRight: 8,
+  marks: [
+    Plot.frame(),
+    Plot.axisY({ anchor: "left", label: "βᵢ²" }),
+    Plot.axisY(scaleG.ticks(), { anchor: "right", label: "Gᵢ", y: scaleG }),
+    Plot.rectY(betaContribData, {
+      x1: d => d.class - 0.45,
+      x2: d => d.class,
+      y: getInitialBeta2,
+      fill: "key",
+    }),
+    Plot.rectY(betaContribData, {
+      x1: d => d.class,
+      x2: d => d.class + 0.45,
+      y: getNewBeta2,
+      fill: "key",
+    }),
+    Plot.lineY(betaContribData, Plot.mapY(mapScaleG, {
+      x: "class",
+      y: getInitialG,
+      stroke: "key",
+      strokeDasharray: 4,
+    })),
+    Plot.dotY(betaContribData, Plot.mapY(mapScaleG, {
+      x: "class",
+      y: getInitialG,
+      fill: "key",
+    })),
+    Plot.lineY(betaContribData, Plot.mapY(mapScaleG, {
+      x: "class",
+      y: getNewG,
+      stroke: "key",
+      strokeDasharray: 4,
+    })),
+    Plot.dotY(betaContribData, Plot.mapY(mapScaleG, {
+      x: "class",
+      y: getNewG,
+      fill: "key",
+    })),
+    Plot.text([stringInitialBeta], { x: 0.5, y: 0.23, fill: d => "blue" }),
+    Plot.text([stringNewBeta], { x: 2.5, y: 0.23, fill: d => "red" }),
+  ],
+})
+```
 
 [Figure&nbsp;16](#figure-16) shows the&nbsp;${tex`\beta`} sensitivity to
 **G**&nbsp;staking as a function of **A**&nbsp;stake; that is to say that a
