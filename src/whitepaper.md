@@ -1195,11 +1195,15 @@ function weightedGeometricMean(v, weights) {
   if (v.length !== weights.length) {
     throw new Error("Vectors must have the same length");
   }
-  const weigthedProduct = v.reduce(
-    (acc, val, i) => acc * Math.pow(val, weights[i]),
-    1,
-  );
-  return Math.pow(weigthedProduct, 1 / d3.sum(weights));
+  if (weights.every(el => el === 0)) {
+    return 1;
+  } else {
+    const weigthedProduct = v.reduce(
+      (acc, val, i) => acc * Math.pow(val, weights[i]),
+      1,
+    );
+    return Math.pow(weigthedProduct, 1 / d3.sum(weights));
+  }
 }
 ```
 
