@@ -2776,7 +2776,7 @@ Thereafter each time bucket allocation is proportionate to LP&nbsp;holdings.
     <tr>
       <td>Klima Holders
       <td class="u-center">40%
-      <td class="u-center">4O
+      <td class="u-center">40
       <td>Logistic Vesting 48&nbsp;months
     <tr>
       <td>Ecosystem Grant
