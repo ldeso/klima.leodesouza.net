@@ -50,8 +50,6 @@ const viewAi = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
   step: 1e-3,
   value: defaultAi,
-  transform: Ops.piecewiseLogTransform(1e-3),
-  invert: Ops.piecewiseLogInvert(1e-3),
 });
 const viewGi = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
