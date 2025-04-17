@@ -93,8 +93,6 @@ let currentASupply = inputASupply;
 let currentPresentTonnes = inputPresentTonnes;
 
 for (let i = 0; i < inputNTimes; i++) {
-  console.log(`currentAi: ${currentAi}`);
-  console.log(`currentASupply: ${currentASupply}`);
   const currentAiAbsolute = currentAi * currentASupply;
   const deltaA = Form.computeTrueDeltaA(
     currentAi,
