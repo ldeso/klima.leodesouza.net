@@ -145,7 +145,8 @@ const totalAEmitted1 = inputASupply * computeMultiDeltaA(
 const stringNTimes = inputNTimes.toLocaleString("en-GB");
 
 const stringIsAStaked = inputIsAStaked ? html`and staking the emitted
-  <strong>A</strong>&nbsp;tokens after each transaction` : "";
+  <strong>A</strong>&nbsp;tokens after each transaction` : html`without staking
+  the emitted <strong>A</strong>&nbsp;tokens`;
 
 const stringAEmitted1 = totalAEmitted1.toLocaleString(
   "en-GB",
