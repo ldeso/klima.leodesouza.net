@@ -1,3 +1,7 @@
+---
+title: Interactive Model
+---
+
 ```js
 import * as Form from "./components/form.js"
 import * as Ops from "./components/ops.js"
