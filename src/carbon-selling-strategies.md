@@ -96,6 +96,10 @@ function computeMultiDeltaA(
   NTimes,
   isAStaked,
 ) {
+  if (NTimes === 1) {
+    return Form.computeTrueDeltaA(Ai, Gi, barCiTonnes, deltaBarCiTonnes);
+  }
+
   const deltaTonnes = deltaBarCiTonnes / NTimes;
 
   let currentAi = Ai;
