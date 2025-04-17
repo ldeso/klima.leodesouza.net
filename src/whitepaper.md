@@ -2,6 +2,12 @@
 title: White Paper
 ---
 
+```js
+import * as Form from "./components/form.js"
+import * as Ops from "./components/ops.js"
+import * as Util from "./components/util.js"
+```
+
 <h1 id="klima-2-0" class="u-center" tabindex="-1">
   <a class="observablehq-header-anchor" href="#klima-2-0">Klima&nbsp;2.0</a>
 </h1>
@@ -615,44 +621,11 @@ index of standard maturities ${tex`t \in \{1, 2, 3, \dots, 40\}`}.
 - ${tex`E_t`}: Time to expiry expressed in years.
 
 ```js
-function constAreaLinear(range, area, inputSlope, slopeFactor = 0.007) {
-  if (range.length === 1) {
-    return [area];
-  }
-
-  let y1 = 0;
-  let y2 = range.length - 1;
-  let slope = slopeFactor * Math.atanh(inputSlope);
-  let intercept = area / range.length;
-
-  if (Math.abs(slope) > 2 * intercept / (y2 - y1 - 1)) {
-    const yExactShift = Math.sqrt(Math.abs(2 * area / slope));
-    const yRoundShift = Math.max(1, Math.round(yExactShift));
-    if (slope > 0) {
-      y1 = y2 - yRoundShift;
-    } else {
-      y2 = y1 + yRoundShift;
-    }
-    slope = Math.sign(slope) * 2 * area / Math.pow((y2 - y1), 2);
-    intercept = Math.abs(slope) * (y2 - y1 - 1) / 2;
-  }
-
-  const yConstArea = [];
-  for (let i = 0; i < range.length; i++) {
-    const y = i - (y1 + y2) / 2;
-    yConstArea.push(Math.max(0, slope * y + intercept));
-  }
-
-  return yConstArea;
-}
-```
-
-```js
 const vecE = d3.range(0.25, 10.1, 0.25);
 
 const scaleE = d3.scaleLinear(d3.extent(vecE), [-1, 1]);
 
-const vecS = constAreaLinear(vecE, 0.55, scaleE(inputD)).map(
+const vecS = Util.constAreaLinear(vecE, 0.55, scaleE(inputD)).map(
   x => x * inputS / 0.55,
 );
 
@@ -670,20 +643,7 @@ D = \frac{1}{S} \sum_{t=1}^{40} S_t \, E_t \tag{1}
 </div>
 
 ```js
-function dotProduct(v, w) {
-  if (v.length !== w.length) {
-    throw new Error("Vectors must have the same length");
-  }
-  return v.reduce((acc, val, i) => acc + val * w[i], 0);
-}
-
-function weightedArithmeticMean(v, weights) {
-  return dotProduct(v, weights) / d3.sum(weights);
-}
-```
-
-```js
-const paramD = weightedArithmeticMean(vecE, vecS);
+const paramD = Ops.weightedArithmeticMean(vecE, vecS);
 ```
 
 <div id="equation-2">
@@ -695,7 +655,7 @@ C = \frac{1}{S} \sum_{t=1}^{40} S_t \, E_t^2 \tag{2}
 </div>
 
 ```js
-const paramC = weightedArithmeticMean(vecE.map(e => e * e), vecS);
+const paramC = Ops.weightedArithmeticMean(vecE.map(e => e * e), vecS);
 ```
 
 The shape of the yield curve is produced:
@@ -710,14 +670,7 @@ The shape of the yield curve is produced:
 </div>
 
 ```js
-function computeGamma(vecE, paramD, paramC) {
-  const twoC = 2 * paramC;
-  return vecE.map(e => Math.max(0, e/paramD - e*e/twoC));
-}
-```
-
-```js
-const vecGamma = computeGamma(vecE, paramD, paramC);
+const vecGamma = Form.computeGamma(vecE, paramD, paramC);
 ```
 
 Normalising&nbsp;${tex`\gamma_t`} to&nbsp;${tex`\hat \gamma_t`}:
@@ -731,14 +684,7 @@ Normalising&nbsp;${tex`\gamma_t`} to&nbsp;${tex`\hat \gamma_t`}:
 </div>
 
 ```js
-function normalize(v) {
-  const sum = d3.sum(v);
-  return v.map(val => val / sum);
-}
-```
-
-```js
-const vecNormGamma = normalize(vecGamma);
+const vecNormGamma = Ops.normalize(vecGamma);
 ```
 
 With the cumulative sum of the normalised values expressed
@@ -767,13 +713,7 @@ Z_t = (1 - S) \, \frac{\Gamma_t}{E_t} \tag{6}
 </div>
 
 ```js
-function computeZ(paramS, vecCumSumGamma, vecE) {
-  return vecCumSumGamma.map((g, t) => (1 - paramS) * g / vecE[t]);
-}
-```
-
-```js
-const vecZ = computeZ(inputS, vecCumSumGamma, vecE);
+const vecZ = Form.computeZ(inputS, vecCumSumGamma, vecE);
 ```
 
 Whereupon, the Bond discount rate&nbsp;${tex`B_t`} that forms the Forward
@@ -788,13 +728,7 @@ B_t = \exp(-Z_t \, E_t) \tag{7}
 </div>
 
 ```js
-function computeB(vecZ, vecE) {
-  return vecZ.map((z, t) => Math.exp(-z * vecE[t]));
-}
-```
-
-```js
-const vecB = computeB(vecZ, vecE);
+const vecB = Form.computeB(vecZ, vecE);
 ```
 
 The yield due on **A**&nbsp;Bonds is calculated daily and added to staked
@@ -810,13 +744,7 @@ Y_t = \exp \left( \frac{Z_t}{365} \right) - 1 \tag{8}
 </div>
 
 ```js
-function computeY(vecZ) {
-    return vecZ.map(z => Math.expm1(z / 365));
-}
-```
-
-```js
-const vecY = computeY(vecZ);
+const vecY = Form.computeY(vecZ);
 ```
 
 Hence, any bond stake&nbsp;${tex`A_t`} will increase by&nbsp;${tex`\Delta A_t`}:
@@ -1171,9 +1099,9 @@ schedule and sum the discounted holdings:
 </div>
 
 ```js
-const vecCi = constAreaLinear(vecE, 1 - inputCi0, inputLiqShape, 0.01);
+const vecCi = Util.constAreaLinear(vecE, 1 - inputCi0, inputLiqShape, 0.01);
 
-const paramBarCi = inputCi0 + dotProduct(vecB, vecCi);
+const paramBarCi = inputCi0 + Ops.dotProduct(vecB, vecCi);
 ```
 
 ```js
@@ -1263,25 +1191,11 @@ Carbon&nbsp;${tex`i`} to be sold with a specific maturity index&nbsp;${tex`t`}:
 ```js
 const paramMaturityIdx = 4 * inputEt;
 
-function computeDeltaCi0(deltaCi, t) {
-  return paramMaturityIdx === 0 ? deltaCi : 0;
-}
+const paramDeltaCi0 = Form.computeDeltaCi0(inputDeltaCi, paramMaturityIdx);
 
-function computeVecDeltaCi(deltaCi, t) {
-  const vecDeltaCi = Array(40).fill(0);
-  if (t !== 0) {
-    vecDeltaCi[t - 1] = deltaCi;
-  }
-  return vecDeltaCi;
-}
-```
+const vecDeltaCi = Form.computeVecDeltaCi(inputDeltaCi, paramMaturityIdx);
 
-```js
-const paramDeltaCi0 = computeDeltaCi0(inputDeltaCi, paramMaturityIdx);
-
-const vecDeltaCi = computeVecDeltaCi(inputDeltaCi, paramMaturityIdx);
-
-const paramDeltaBarCi = paramDeltaCi0 + dotProduct(vecB, vecDeltaCi);
+const paramDeltaBarCi = paramDeltaCi0 + Ops.dotProduct(vecB, vecDeltaCi);
 ```
 
 Once standardised by the discount curve, trades can be aggregated in the same
@@ -1394,12 +1308,6 @@ Denoting the expression on the right hand side of
 
 </div>
 
-```js
-function computeDeltaA(Ai, Gi, deltaCi) {
-  return Math.expm1((Ai - (Ai**2 * (1 - Gi)**2 / 2)) * Math.log1p(deltaCi));
-}
-```
-
 Finally, ${tex`\Delta A`} is applied to the outstanding supply of&nbsp;**A** to
 solve for token quantities.
 
@@ -1407,16 +1315,6 @@ solve for token quantities.
 maintain the initial Portfolio pricing of the **A**&nbsp;token. The data has
 been normalised in [Figure&nbsp;12](#figure-12)
 to&nbsp;${tex`\Delta \bar C_i \, A_i`}.
-
-```js
-function contrastingTextColor(backgroundColor) {
-  if (d3.hsl(backgroundColor).l < 0.5) {
-    return "white";
-  } else {
-    return "black";
-  }
-}
-```
 
 ```js
 const pricingData = [];
@@ -1438,13 +1336,13 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       key: "ΔA",
       ai: paramAi,
       gi: paramGi,
-      value: computeDeltaA(paramAi, paramGi, inputDeltaBarCi),
+      value: Form.computeDeltaA(paramAi, paramGi, inputDeltaBarCi),
     });
     pricingData.push({
       key: "Normalised ΔA",
       ai: paramAi,
       gi: paramGi,
-      value: computeDeltaA(paramAi, paramGi, inputDeltaBarCi) /
+      value: Form.computeDeltaA(paramAi, paramGi, inputDeltaBarCi) /
               (inputDeltaBarCi * paramAi),
     });
   }
@@ -1489,11 +1387,11 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential(
           [
-            computeDeltaA(0.1, 1, inputDeltaBarCi),
-            computeDeltaA(1, 1, inputDeltaBarCi),
+            Form.computeDeltaA(0.1, 1, inputDeltaBarCi),
+            Form.computeDeltaA(1, 1, inputDeltaBarCi),
           ],
           d3.interpolateSpectral,
         )(d.value),
@@ -1553,11 +1451,11 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential(
           [
-            computeDeltaA(1, 0, inputDeltaBarCi) / inputDeltaBarCi,
-            computeDeltaA(1, 1, inputDeltaBarCi) / inputDeltaBarCi,
+            Form.computeDeltaA(1, 0, inputDeltaBarCi) / inputDeltaBarCi,
+            Form.computeDeltaA(1, 1, inputDeltaBarCi) / inputDeltaBarCi,
           ],
           d3.interpolateSpectral,
         )(d.value),
@@ -1601,21 +1499,6 @@ discounting, to be sold for any Carbon class that has a strictly positive
 </div>
 
 ```js
-function computeZeroCarbonDeltaA(Ai, Gi, deltaCnull) {
-  return (deltaCnull / (1 + deltaCnull)) * (Ai - (Ai**2 * (1 - Gi)**2 / 2))**2;
-}
-
-function computeTrueDeltaA(Ai, Gi, barCiTonnes, deltaBarCiTonnes) {
-  if (barCiTonnes === 0) {
-    return computeZeroCarbonDeltaA(Ai, Gi, deltaBarCiTonnes);
-  } else {
-    const deltaBarCi = deltaBarCiTonnes / barCiTonnes;
-    return computeDeltaA(Ai, Gi, deltaBarCi);
-  }
-}
-```
-
-```js
 const zeroCarbonData = [];
 for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
   zeroCarbonData.push({
@@ -1635,13 +1518,13 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       key: "ΔA",
       ai: paramAi,
       gi: paramGi,
-      value: computeZeroCarbonDeltaA(paramAi, paramGi, inputDeltaBarCnull),
+      value: Form.computeZeroCDeltaA(paramAi, paramGi, inputDeltaBarCnull),
     });
     zeroCarbonData.push({
       key: "Normalised ΔA",
       ai: paramAi,
       gi: paramGi,
-      value: computeZeroCarbonDeltaA(paramAi, paramGi, inputDeltaBarCnull) /
+      value: Form.computeZeroCDeltaA(paramAi, paramGi, inputDeltaBarCnull) /
               ((inputDeltaBarCnull / (1 + inputDeltaBarCnull)) * paramAi**2),
     });
   }
@@ -1650,8 +1533,8 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
 const stringDeltaBarCnull = inputDeltaBarCnull.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(1, numberOfDigits(inputDeltaBarCnull)),
-    maximumSignificantDigits: Math.max(1, numberOfDigits(inputDeltaBarCnull)),
+    minimumSignificantDigits: Math.max(1, Util.numDigits(inputDeltaBarCnull)),
+    maximumSignificantDigits: Math.max(1, Util.numDigits(inputDeltaBarCnull)),
   },
 );
 ```
@@ -1685,11 +1568,11 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 4, maximumFractionDigits: 4 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential(
           [
-            computeZeroCarbonDeltaA(0.1, 1, inputDeltaBarCnull),
-            computeZeroCarbonDeltaA(1, 1, inputDeltaBarCnull),
+            Form.computeZeroCDeltaA(0.1, 1, inputDeltaBarCnull),
+            Form.computeZeroCDeltaA(1, 1, inputDeltaBarCnull),
           ],
           d3.interpolateSpectral,
         )(d.value),
@@ -1745,12 +1628,12 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential(
           [
-            computeZeroCarbonDeltaA(1, 0, inputDeltaBarCnull) /
+            Form.computeZeroCDeltaA(1, 0, inputDeltaBarCnull) /
                     (inputDeltaBarCnull / (1 + inputDeltaBarCnull)),
-            computeZeroCarbonDeltaA(1, 1, inputDeltaBarCnull) /
+            Form.computeZeroCDeltaA(1, 1, inputDeltaBarCnull) /
                     (inputDeltaBarCnull / (1 + inputDeltaBarCnull)),
           ],
           d3.interpolateSpectral,
@@ -1799,12 +1682,6 @@ As before denoting the expression on the right hand side of
 </div>
 
 ```js
-function computeDeltaCi(Ai, Gi, deltaA) {
-  return Math.expm1(-Math.log1p(deltaA) / (Ai + (Ai**2 * (1 - Gi)**2 / 2)));
-}
-```
-
-```js
 const retirementData = [];
 for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
   retirementData.push({
@@ -1818,7 +1695,7 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       key: "-ΔCᵢ",
       ai: paramAi,
       gi: paramGi,
-      value: -computeDeltaCi(paramAi, paramGi, inputDeltaA),
+      value: -Form.computeDeltaCi(paramAi, paramGi, inputDeltaA),
     });
   }
 }
@@ -1862,11 +1739,11 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential(
           [
-            -computeDeltaCi(1, 0, inputDeltaA),
-            -computeDeltaCi(0.1, 1, inputDeltaA),
+            -Form.computeDeltaCi(1, 0, inputDeltaA),
+            -Form.computeDeltaCi(0.1, 1, inputDeltaA),
           ],
           d3.interpolateSpectral,
         )(d.value),
@@ -1909,14 +1786,6 @@ In the event that 100% of **A**&nbsp;tokens are placed into the burn mechanism
 for Carbon Offsets, the balances of all Carbon held in the Portfolio post-trade
 are distributed to all **G**&nbsp;holders.
 
-```js
-function computeSpread(Ai, Gi, deltaCinitial) {
-  const deltaA = computeDeltaA(Ai, Gi, deltaCinitial);
-  const deltaCfinal = -computeDeltaCi(Ai, Gi, deltaA);
-  return (deltaCinitial - deltaCfinal) / deltaCinitial;
-}
-```
-
 [Figure&nbsp;16](#figure-16) below shows the spread captured on a 'Round trip'
 by the system where&nbsp;${tex`\varepsilon`} is the proportion retained:
 
@@ -1934,7 +1803,7 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       key: "spread",
       ai: paramAi,
       gi: paramGi,
-      value: computeSpread(paramAi, paramGi, inputDeltaCinitial),
+      value: Form.computeSpread(paramAi, paramGi, inputDeltaCinitial),
     });
   }
 }
@@ -1954,7 +1823,7 @@ Plot.plot({
   color: {
     legend: true,
     scheme: "Spectral",
-    domain: [0, computeSpread(1, 0, 1)],
+    domain: [0, Form.computeSpread(1, 0, 1)],
     type: "sequential",
     label: "Carbon Spread ε",
   },
@@ -1976,9 +1845,9 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential(
-          [0, computeSpread(1, 0, inputDeltaA)],
+          [0, Form.computeSpread(1, 0, inputDeltaA)],
           d3.interpolateSpectral,
         )(d.value),
       ),
@@ -2063,22 +1932,6 @@ class&nbsp;${tex`i`}.
 
 </div>
 
-```js
-function computeBeta(vecAi, vecGi) {
-  const beta2 = vecAi.reduce(
-    (acc, Ai, i) => acc + Ai - Ai * (1 - vecGi[i])**2,
-    0,
-  );
-  return Math.sqrt(beta2);
-}
-```
-
-```js
-function computeBetai(Ai, Gi) {
-  return Math.sqrt(Ai - Ai * (1 - Gi)**2);
-}
-```
-
 The Portfolio&nbsp;${tex`\beta`} determines a yield factor for the liquidity
 pools of&nbsp;**A** to compensate for the implied risk levels.
 
@@ -2099,7 +1952,7 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       key: "βᵢ",
       ai: paramAi,
       gi: paramGi,
-      value: computeBetai(paramAi, paramGi),
+      value: Form.computeBetai(paramAi, paramGi),
     });
   }
 }
@@ -2135,7 +1988,7 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(d3.interpolateSpectral(d.value)),
+      fill: d => Util.contrastingTextColor(d3.interpolateSpectral(d.value)),
     }),
   ],
 })
@@ -2222,9 +2075,9 @@ const betaContribData = [];
 for (let i = 0; i < arrayAi.length; i++) {
   const Ai = arrayAi[i];
   const initialGi = arrayInitialGi[i];
-  const initialBeta2 = computeBetai(Ai, initialGi)**2;
+  const initialBeta2 = Form.computeBetai(Ai, initialGi)**2;
   const newGi = arrayNewGi[i];
-  const newBeta2 = computeBetai(Ai, newGi)**2;
+  const newBeta2 = Form.computeBetai(Ai, newGi)**2;
   betaContribData.push({ key: "Initial Gᵢ", class: i, value: initialGi });
   betaContribData.push({ key: "Initial βᵢ²", class: i, value: initialBeta2 });
   betaContribData.push({ key: "New Gᵢ", class: i, value: newGi });
@@ -2246,8 +2099,8 @@ const rangeBeta2 = [
 const scaleG = d3.scaleLinear(domainG, rangeBeta2);
 const mapScaleG = x => x.map(scaleG);
 
-const paramInitialBeta = computeBeta(arrayAi, arrayInitialGi);
-const paramNewBeta = computeBeta(arrayAi, arrayNewGi);
+const paramInitialBeta = Form.computeBeta(arrayAi, arrayInitialGi);
+const paramNewBeta = Form.computeBeta(arrayAi, arrayNewGi);
 
 const stringInitialBeta = "Initial β = " + paramInitialBeta.toLocaleString(
   "en-GB",
@@ -2375,23 +2228,6 @@ The allocation to **G**&nbsp;token staking, ${tex`\lambda_{GG}`}:
 </div>
 
 ```js
-function computeLambdaGG(AQ, Gi, GG) {
-  return (1 - AQ) / (1 + (Gi / GG)**2);
-}
-
-function changeTranslation(dx, dy) {
-  return function () {
-    const svgTransformList = this.transform.baseVal;
-    if (svgTransformList.length > 1) {
-      throw new Error("SVGTransformList must only contain one translation");
-    }
-    const {e, f} = svgTransformList.consolidate().matrix;
-    return `translate(${e + dx},${f + dy})`;
-  }
-}
-```
-
-```js
 const lambdaGGData = [];
 for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
   for (let paramAQ = 0; paramAQ < 1.01; paramAQ += 0.1) {
@@ -2399,7 +2235,7 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       key: "λ",
       aq: paramAQ,
       gi: paramGi,
-      value: computeLambdaGG(paramAQ, paramGi, 1 - paramGi),
+      value: Form.computeLambdaGG(paramAQ, paramGi, 1 - paramGi),
     });
   }
 }
@@ -2437,7 +2273,7 @@ const plotLambdaGG = Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
     }),
@@ -2448,7 +2284,7 @@ d3.select(plotLambdaGG)
   .select("g[aria-label='x-axis label']")
   .select("text")
     .clone(false)
-    .attr("transform", changeTranslation(-12, 1.5))
+    .attr("transform", Util.changeTranslation(-12, 1.5))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("Q");
@@ -2471,12 +2307,6 @@ The residual share, ${tex`1 - λ_{GG}`}, is split between the liquidity pools:
 
 </div>
 
-```js
-function computeLambdaG(AQ, AG) {
-  return 2 * AG / (2 * AG + AQ * Math.sqrt(2));
-}
-```
-
 For completeness:
 
 <div id="equation-26">
@@ -2488,12 +2318,6 @@ For completeness:
 </div>
 
 ```js
-function computeLambdaQ(AQ, AG) {
-  return 1 - computeLambdaG(AQ, AG);
-}
-```
-
-```js
 const lambdaGQData = [];
 for (let paramAG = 0; paramAG < 1.01; paramAG += 0.1) {
   for (let paramAQ = 0; paramAQ < 1.01; paramAQ += 0.1) {
@@ -2502,13 +2326,13 @@ for (let paramAG = 0; paramAG < 1.01; paramAG += 0.1) {
         key: "𝗔𝗚 Liquidity Pool Share",
         aq: paramAQ,
         ag: paramAG,
-        value: computeLambdaG(paramAQ, paramAG),
+        value: Form.computeLambdaG(paramAQ, paramAG),
       });
       lambdaGQData.push({
         key: "𝗔𝗤 Liquidity Pool Share",
         aq: paramAQ,
         ag: paramAG,
-        value: computeLambdaQ(paramAQ, paramAG),
+        value: Form.computeLambdaQ(paramAQ, paramAG),
       });
     }
   }
@@ -2558,7 +2382,7 @@ const plotLambdaGQ = Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
     }),
@@ -2569,7 +2393,7 @@ d3.select(plotLambdaGQ)
   .select("g[aria-label='x-axis label']")
   .select("text")
   .clone(false)
-    .attr("transform", changeTranslation(-12, 1.5))
+    .attr("transform", Util.changeTranslation(-12, 1.5))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("Q");
@@ -2577,9 +2401,9 @@ d3.select(plotLambdaGQ)
 d3.select(plotLambdaGQ)
   .select("g[aria-label='y-axis label']")
   .select("text")
-    .attr("transform", changeTranslation(0, 10))
+    .attr("transform", Util.changeTranslation(0, 10))
   .clone(false)
-    .attr("transform", changeTranslation(14, 4.1))
+    .attr("transform", Util.changeTranslation(14, 4.1))
     .attr("font-size", "0.6em")
     .attr("font-weight", "600")
     .text("G");
@@ -2686,25 +2510,6 @@ class&nbsp;${tex`i`} purchased by the AAM.
 | **Unit price**    | ${stringAPrice}               | ${stringBarCiPrice}                                 |
 
 ```js
-function numberOfDigits(x) {
-  return x === 0 ? 1 : (1 + Math.floor(Math.log10(x)));
-}
-
-function piecewiseLogTransform(xTran = 1) {
-  return x => x > xTran ? Math.log(x) : x - xTran + Math.log(xTran);
-}
-
-function piecewiseLogInvert(xTran = 1) {
-  return y => y > Math.log(xTran) ? Math.exp(y) : y - Math.log10(xTran) + xTran;
-}
-
-function setInput(input, value) {
-  input.value = value;
-  input.dispatchEvent(new Event("input", { bubbles: true }));
-}
-```
-
-```js
 const defaultAValue = 2e6;
 const defaultASupply = 2e7;
 const defaultPresentTonnes = 1e7;
@@ -2729,8 +2534,8 @@ const viewPresentTonnes = Inputs.range([0, 1e9], {
     \text{ in AAM)}`,
   step: 1,
   value: defaultPresentTonnes,
-  transform: piecewiseLogTransform(),
-  invert: piecewiseLogInvert(),
+  transform: Ops.piecewiseLogTransform(),
+  invert: Ops.piecewiseLogInvert(),
 });
 const viewDeltaTonnes = Inputs.range([1e-1, 1e7], {
   label: tex`\text{Present-value tonnes bought by AAM}`,
@@ -2742,8 +2547,8 @@ const viewAi = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
   step: 1e-3,
   value: defaultAi,
-  transform: piecewiseLogTransform(1e-3),
-  invert: piecewiseLogInvert(1e-3),
+  transform: Ops.piecewiseLogTransform(1e-3),
+  invert: Ops.piecewiseLogInvert(1e-3),
 });
 const viewGi = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
@@ -2751,16 +2556,16 @@ const viewGi = Inputs.range([0, 1], {
   value: defaultGi,
 });
 const viewZeroCarbon = Inputs.button(
-  [["Zero Carbon Scenario", () => setInput(viewPresentTonnes, 0)]],
+  [["Zero Carbon Scenario", () => Util.setInput(viewPresentTonnes, 0)]],
 );
 const viewReset = Inputs.button(
   [["Reset", () => {
-    setInput(viewAValue, defaultAValue);
-    setInput(viewASupply, defaultASupply);
-    setInput(viewPresentTonnes, defaultPresentTonnes);
-    setInput(viewDeltaTonnes, defaultDeltaTonnes);
-    setInput(viewAi, defaultAi);
-    setInput(viewGi, defaultGi);
+    Util.setInput(viewAValue, defaultAValue);
+    Util.setInput(viewASupply, defaultASupply);
+    Util.setInput(viewPresentTonnes, defaultPresentTonnes);
+    Util.setInput(viewDeltaTonnes, defaultDeltaTonnes);
+    Util.setInput(viewAi, defaultAi);
+    Util.setInput(viewGi, defaultGi);
   }]],
 );
 ```
@@ -2793,7 +2598,7 @@ if (inputPresentTonnes === 0) {
 ```
 
 ```js
-const paramDeltaA = computeTrueDeltaA(
+const paramDeltaA = Form.computeTrueDeltaA(
   inputAi,
   inputGi,
   inputPresentTonnes,
@@ -2807,43 +2612,43 @@ const paramBarCiPrice = inputAValue * paramDeltaA / inputDeltaTonnes;
 const stringASupply = inputASupply.toLocaleString(
   "en-GB",
   {
-    minimumFractionDigits: Math.max(0, 2 - numberOfDigits(paramAEmitted)),
-    maximumFractionDigits: Math.max(0, 2 - numberOfDigits(paramAEmitted)),
+    minimumFractionDigits: Math.max(0, 2 - Util.numDigits(paramAEmitted)),
+    maximumFractionDigits: Math.max(0, 2 - Util.numDigits(paramAEmitted)),
   },
 ) + " KLIMA";
 const stringPresentTonnes = inputPresentTonnes.toLocaleString(
   "en-GB",
   {
-    minimumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
-    maximumFractionDigits: Math.max(0, 1 - numberOfDigits(paramDeltaTonnes)),
+    minimumFractionDigits: Math.max(0, 1 - Util.numDigits(paramDeltaTonnes)),
+    maximumFractionDigits: Math.max(0, 1 - Util.numDigits(paramDeltaTonnes)),
   },
 ) + " tCO2eq";
 const stringAEmitted = "+" + paramAEmitted.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, numberOfDigits(paramAEmitted)),
-    maximumSignificantDigits: Math.max(2, numberOfDigits(paramAEmitted)),
+    minimumSignificantDigits: Math.max(2, Util.numDigits(paramAEmitted)),
+    maximumSignificantDigits: Math.max(2, Util.numDigits(paramAEmitted)),
   },
 ) + " KLIMA";
 const stringDeltaTonnes = "+" + paramDeltaTonnes.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(1, numberOfDigits(paramDeltaTonnes)),
-    maximumSignificantDigits: Math.max(1, numberOfDigits(paramDeltaTonnes)),
+    minimumSignificantDigits: Math.max(1, Util.numDigits(paramDeltaTonnes)),
+    maximumSignificantDigits: Math.max(1, Util.numDigits(paramDeltaTonnes)),
   },
 ) + " tCO2eq";
 const stringAPrice = "$" + paramAPrice.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice)),
-    maximumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice)),
+    minimumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramAPrice)),
+    maximumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramAPrice)),
   },
 );
 const stringBarCiPrice = "$" + paramBarCiPrice.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramBarCiPrice)),
-    maximumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramBarCiPrice)),
+    minimumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramBarCiPrice)),
+    maximumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramBarCiPrice)),
   },
 );
 ```
@@ -2897,8 +2702,8 @@ const viewAi_ = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
   step: 1e-3,
   value: defaultAi,
-  transform: piecewiseLogTransform(1e-3),
-  invert: piecewiseLogInvert(1e-3),
+  transform: Ops.piecewiseLogTransform(1e-3),
+  invert: Ops.piecewiseLogInvert(1e-3),
 });
 const viewGi_ = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
@@ -2906,16 +2711,16 @@ const viewGi_ = Inputs.range([0, 1], {
   value: defaultGi,
 });
 const viewUnweighed = Inputs.button(
-  [["Unweighed Carbon Class", () => setInput(viewAi, 0)]],
+  [["Unweighed Carbon Class", () => Util.setInput(viewAi, 0)]],
 );
 const viewReset_ = Inputs.button(
   [["Reset", () => {
-    setInput(viewAValue_, defaultAValue);
-    setInput(viewASupply_, defaultASupply);
-    setInput(viewLiquidTonnes, defaultLiquidTonnes);
-    setInput(viewABurnt, defaultABurnt);
-    setInput(viewAi, defaultAi);
-    setInput(viewGi, defaultGi);
+    Util.setInput(viewAValue_, defaultAValue);
+    Util.setInput(viewASupply_, defaultASupply);
+    Util.setInput(viewLiquidTonnes, defaultLiquidTonnes);
+    Util.setInput(viewABurnt, defaultABurnt);
+    Util.setInput(viewAi, defaultAi);
+    Util.setInput(viewGi, defaultGi);
   }]],
 );
 ```
@@ -2944,7 +2749,7 @@ if (inputAValue_ === defaultAValue && inputASupply_ === defaultASupply &&
 ```js
 const paramABurnt = inputAi === 0 ? 0 : inputABurnt
 const paramDeltaA_ = paramABurnt / inputASupply_;
-const paramDeltaCi = inputAi === 0 ? -0 : computeDeltaCi(
+const paramDeltaCi = inputAi === 0 ? -0 : Form.computeDeltaCi(
   inputAi,
   inputGi,
   paramDeltaA_,
@@ -2956,43 +2761,43 @@ const paramCiPrice = inputAi === 0 ? 0 : inputAValue_ * paramDeltaA_ / paramDelt
 const stringASupply_ = inputASupply_.toLocaleString(
   "en-GB",
   {
-    minimumFractionDigits: Math.max(0, 2 - numberOfDigits(paramABurnt)),
-    maximumFractionDigits: Math.max(0, 2 - numberOfDigits(paramABurnt)),
+    minimumFractionDigits: Math.max(0, 2 - Util.numDigits(paramABurnt)),
+    maximumFractionDigits: Math.max(0, 2 - Util.numDigits(paramABurnt)),
   },
 ) + " KLIMA";
 const stringLiquidTonnes = inputLiquidTonnes.toLocaleString(
   "en-GB",
   {
-    minimumFractionDigits: Math.max(0, 2 - numberOfDigits(paramDeltaCiTonnes)),
-    maximumFractionDigits: Math.max(0, 2 - numberOfDigits(paramDeltaCiTonnes)),
+    minimumFractionDigits: Math.max(0, 2 - Util.numDigits(paramDeltaCiTonnes)),
+    maximumFractionDigits: Math.max(0, 2 - Util.numDigits(paramDeltaCiTonnes)),
   },
 ) + " tCO2eq";
 const stringABurnt = "−" + paramABurnt.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, numberOfDigits(paramABurnt)),
-    maximumSignificantDigits: Math.max(2, numberOfDigits(paramABurnt)),
+    minimumSignificantDigits: Math.max(2, Util.numDigits(paramABurnt)),
+    maximumSignificantDigits: Math.max(2, Util.numDigits(paramABurnt)),
   },
 ) + " KLIMA";
 const stringDeltaCiTonnes = "−" + paramDeltaCiTonnes.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, numberOfDigits(paramDeltaCiTonnes)),
-    maximumSignificantDigits: Math.max(2, numberOfDigits(paramDeltaCiTonnes)),
+    minimumSignificantDigits: Math.max(2, Util.numDigits(paramDeltaCiTonnes)),
+    maximumSignificantDigits: Math.max(2, Util.numDigits(paramDeltaCiTonnes)),
   },
 ) + " tCO2eq";
 const stringAPrice_ = "$" + paramAPrice_.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice_)),
-    maximumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramAPrice_)),
+    minimumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramAPrice_)),
+    maximumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramAPrice_)),
   },
 );
 const stringCiPrice = "$" + paramCiPrice.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramCiPrice)),
-    maximumSignificantDigits: Math.max(2, 2 + numberOfDigits(paramCiPrice)),
+    minimumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramCiPrice)),
+    maximumSignificantDigits: Math.max(2, 2 + Util.numDigits(paramCiPrice)),
   },
 );
 ```
@@ -3187,16 +2992,6 @@ Where ${tex`\upsilon = 0`} if ${tex`G + L = 0`}, otherwise:
 </div>
 
 ```js
-function computeUpsilon(G, L) {
-  if (G === 0 && L === 0) {
-    return 0;
-  } else {
-    return (2 * G * L / (G**2 + L**2))**2;
-  }
-}
-```
-
-```js
 const upsilonData = [];
 for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
   for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
@@ -3205,7 +3000,7 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
         key: "υ",
         l: paramL,
         g: paramG,
-        value: computeUpsilon(paramG, paramL),
+        value: Form.computeUpsilon(paramG, paramL),
       });
     }
   }
@@ -3249,7 +3044,7 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
     }),
@@ -3271,16 +3066,6 @@ as&nbsp;${tex`\eta = 0`} if ${tex`G + L = 0`}, otherwise:
 </div>
 
 ```js
-function computeEta(G, L) {
-  if (G === 0 && L === 0) {
-    return 0;
-  } else {
-    return 2 * G * L / (G * (1 - G) + L * (1 - L));
-  }
-}
-```
-
-```js
 const etaData = [];
 for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
   for (let paramL = 0; paramL < 1.01; paramL += 0.05) {
@@ -3289,7 +3074,7 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
         key: "η",
         l: paramL,
         g: paramG,
-        value: computeEta(paramG, paramL),
+        value: Form.computeEta(paramG, paramL),
       });
     }
   }
@@ -3329,7 +3114,7 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
     }),
@@ -3354,12 +3139,6 @@ I_T = 1 - \upsilon \, \eta \tag{37}
 ```
 
 </div>
-
-```js
-function computeTreasury(G, L) {
-  return Math.max(0, 1 - computeUpsilon(G, L) * computeEta(G, L));
-}
-```
 
 <p id="4-3-2-post-treasury" tabindex="-1">
   <a class="observablehq-header-anchor" href="#4-3-2-post-treasury">
@@ -3398,24 +3177,6 @@ The residual post Treasury allocation is shared four ways within 2&nbsp;buckets:
 
         </div>
 
-```js
-function computeIBonds(G, L, S) {
-  if (G === 0 && L === 0) {
-    return 0;
-  } else {
-    return S * L**2 / (G**2 + L**2);
-  }
-}
-
-function computeIStaking(G, L, S) {
-  if (G === 0 && L === 0) {
-    return 0;
-  } else {
-    return (1 - S) * L**2 / (G**2 + L**2);
-  }
-}
-```
-
 2. <p id="4-3-2-2-liquidity" tabindex="-1">
     <a class="observablehq-header-anchor" href="#4-3-2-2-liquidity">
       <strong>Liquidity</strong>
@@ -3447,16 +3208,6 @@ function computeIStaking(G, L, S) {
         </div>
 
 ```js
-function computeIPool(G, L, weight) {
-  if (G === 0 && L === 0) {
-    return 0;
-  } else {
-    return weight * G**2 / (G**2 + L**2);
-  }
-}
-```
-
-```js
 const allocationSQData = [];
 for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
   for (let paramL = 0; paramL < 1.01; paramL += 0.1) {
@@ -3465,13 +3216,13 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
         key: "𝗔 Bonds Allocation",
         l: paramL,
         g: paramG,
-        value: computeIBonds(paramG, paramL, inputS_),
+        value: Form.computeIBonds(paramG, paramL, inputS_),
       });
       allocationSQData.push({
         key: "𝗚 Staking Allocation",
         l: paramL,
         g: paramG,
-        value: computeIStaking(paramG, paramL, inputS_),
+        value: Form.computeIStaking(paramG, paramL, inputS_),
       });
     }
   }
@@ -3520,7 +3271,7 @@ const plotAllocationSQ = Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
     }),
@@ -3530,7 +3281,7 @@ const plotAllocationSQ = Plot.plot({
 d3.select(plotAllocationSQ)
   .select("g[aria-label='y-axis label']")
   .select("text")
-    .attr("transform", changeTranslation(0, 10));
+    .attr("transform", Util.changeTranslation(0, 10));
 
 display(plotAllocationSQ);
 ```
@@ -3552,13 +3303,13 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
         key: "𝗔𝗚 Pool Allocation",
         l: paramL,
         g: paramG,
-        value: computeIPool(paramG, paramL, inputWeightAG),
+        value: Form.computeIPool(paramG, paramL, inputWeightAG),
       });
       allocationPoolData.push({
         key: "𝗔𝗤 Pool Allocation",
         l: paramL,
         g: paramG,
-        value: computeIPool(paramG, paramL, paramWeightAQ),
+        value: Form.computeIPool(paramG, paramL, paramWeightAQ),
       });
     }
   }
@@ -3603,7 +3354,7 @@ const plotAllocationPool = Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
     }),
@@ -3613,7 +3364,7 @@ const plotAllocationPool = Plot.plot({
 d3.select(plotAllocationPool)
   .select("g[aria-label='y-axis label']")
   .select("text")
-    .attr("transform", changeTranslation(0, 10));
+    .attr("transform", Util.changeTranslation(0, 10));
 
 display(plotAllocationPool);
 ```
@@ -3642,7 +3393,7 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
         key: "I_T",
         l: paramL,
         g: paramG,
-        value: computeTreasury(paramG, paramL),
+        value: Form.computeTreasury(paramG, paramL),
       });
     }
   }
@@ -3685,7 +3436,7 @@ Plot.plot({
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
-      fill: d => contrastingTextColor(
+      fill: d => Util.contrastingTextColor(
         d3.scaleSequential([0, 1], d3.interpolateSpectral)(d.value),
       ),
     }),
