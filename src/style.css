@@ -14,7 +14,7 @@ ol > li > ol {
   list-style-type: lower-roman;
 }
 
-ul > li > ul {
+li > ul {
   list-style-type: "\2013\2002";
 }
 
@@ -23,8 +23,14 @@ th, td {
   font-variant-numeric: tabular-nums;
 }
 
-figcaption {
+caption, figcaption {
   text-align: center;
+}
+
+main > table > caption, main > figure > figcaption {
+  margin: 17px 0;
+  color: unset;
+  font: 17px/1.5 var(--serif);
 }
 
 form {
@@ -103,8 +109,4 @@ input[type="number"] {
 
 .u-hidden {
   visibility: hidden;
-}
-
-.u-removed {
-  display: none !important;
 }
