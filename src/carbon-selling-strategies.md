@@ -241,8 +241,8 @@ for (let paramDeltaBarCi = 0; paramDeltaBarCi < 2.01; paramDeltaBarCi += 0.2) {
       value: computeMultiDeltaA(
         paramAi,
         inputGi_,
-        inputPresentTonnes,
-        paramDeltaBarCi * inputPresentTonnes,
+        1,
+        paramDeltaBarCi,
         inputASupply,
         inputNTimes_,
         inputIsAStaked_,
@@ -255,8 +255,8 @@ for (let paramDeltaBarCi = 0; paramDeltaBarCi < 2.01; paramDeltaBarCi += 0.2) {
       value: Form.computeTrueDeltaA(
         paramAi,
         inputGi_,
-        inputPresentTonnes,
-        paramDeltaBarCi * inputPresentTonnes,
+        1,
+        paramDeltaBarCi,
       ),
     });
   }
@@ -266,18 +266,13 @@ const deltaAMax = Math.max(
   computeMultiDeltaA(
     1,
     inputGi_,
-    inputPresentTonnes,
-    2 * inputPresentTonnes,
+    1,
+    2,
     inputASupply,
     inputNTimes_,
     inputIsAStaked_,
   ),
-  Form.computeTrueDeltaA(
-    1,
-    inputGi_,
-    inputPresentTonnes,
-    2 * inputPresentTonnes,
-  ),
+  Form.computeTrueDeltaA(1, inputGi_, 1, 2),
 );
 ```
 
@@ -373,13 +368,13 @@ for (let paramDeltaBarCi = 0; paramDeltaBarCi < 2.01; paramDeltaBarCi += 0.2) {
       value: Math.log(Form.computeTrueDeltaA(
         paramAi,
         inputGi_,
-        inputPresentTonnes,
-        paramDeltaBarCi * inputPresentTonnes,
+        1,
+        paramDeltaBarCi,
       )) - Math.log(computeMultiDeltaA(
         paramAi,
         inputGi_,
-        inputPresentTonnes,
-        paramDeltaBarCi * inputPresentTonnes,
+        1,
+        paramDeltaBarCi,
         inputASupply,
         inputNTimes_,
         inputIsAStaked_,
@@ -391,13 +386,13 @@ for (let paramDeltaBarCi = 0; paramDeltaBarCi < 2.01; paramDeltaBarCi += 0.2) {
 const differenceMax = Math.log(Form.computeTrueDeltaA(
   1,
   inputGi_,
-  inputPresentTonnes,
-  2 * inputPresentTonnes,
+  1,
+  2,
 )) - Math.log(computeMultiDeltaA(
   1,
   inputGi_,
-  inputPresentTonnes,
-  2 * inputPresentTonnes,
+  1,
+  2,
   inputASupply,
   inputNTimes_,
   inputIsAStaked_,
