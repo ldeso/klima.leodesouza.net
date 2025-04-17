@@ -10,9 +10,9 @@ import * as Util from "./components/util.js"
 </h1>
 <div></div>
 
-## Case Study
+## Interactive Case Study
 
-### Initial parameters
+### Initial Parameters
 
 ```js
 const defaultASupply = 2e7;
@@ -202,6 +202,14 @@ Selling carbon in a single transaction results in a total emission of:
 
 ## Analysis
 
+[Figure&nbsp;1](#figure-1) shows the proportion of minted Klima while selling
+carbon to the AAM in multiple transactions and in a single transaction. At
+first sight, selling carbon in a single transaction seems to almost always
+create more Klima than selling carbon in multiple transactions. The difference 
+is especially large when a large share of circulating Klima tokens are already
+staked for the carbon class and a large quantity of carbon is sold relative to
+the quantity initially present in the AAM portfolio.
+
 ```js
 const data = [];
 for (let paramDeltaBarCi = 0; paramDeltaBarCi < 2.01; paramDeltaBarCi += 0.2) {
@@ -387,6 +395,12 @@ const differenceMax = Math.log(Form.computeTrueDeltaA(
   inputIsAStaked_,
 ));
 ```
+
+The finer picture can be seen in [Figure&nbsp;2](#figure-2), which shows the
+difference between the logarithms of each side of [Figure&nbsp;1](#figure-1).
+This representation shows that **when roughly less than 40% of circulating Klima
+are staked** for a carbon class, selling carbon from this class in multiple
+transactions creates more Klima than in a single transaction.
 
 <figure id="figure-2" class="u-center">
 <figcaption>Figure&nbsp;2: Difference between the two strategies: a single
