@@ -8,7 +8,8 @@ import * as Util from "./components/util.js"
   <a class="observablehq-header-anchor" href="#carbon-selling-strategies">Carbon
     Selling Strategies</a>
 </h1>
-<div></div>
+
+_Is is better to sell carbon to the AAM in a single or multiple transactions?_
 
 ## Interactive Case Study
 
