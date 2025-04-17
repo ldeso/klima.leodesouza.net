@@ -211,11 +211,11 @@ is especially large when a large share of circulating Klima tokens are already
 staked for the carbon class and a large quantity of carbon is sold relative to
 the quantity initially present in the AAM portfolio.
 
-The finer picture can be seen in [Figure&nbsp;2](#figure-2), which shows the
-difference between the logarithms of each side of [Figure&nbsp;1](#figure-1).
-This representation shows that **when roughly less than 40% of circulating Klima
-are staked** for a carbon class, selling carbon from this class in multiple
-transactions creates more Klima than in a single transaction.
+[Figure&nbsp;2](#figure-2) gives a finer look by showing the difference between
+the logarithms of each side of [Figure&nbsp;1](#figure-1). This representation
+shows that **when roughly less than 40% of circulating Klima are staked** for a
+carbon class, selling carbon from this class in multiple transactions creates
+more Klima than in a single transaction.
 
 ```js
 const data = [];
