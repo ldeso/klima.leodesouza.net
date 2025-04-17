@@ -10,6 +10,10 @@ export default {
   root: "src",
   style: "style.css",
   globalStylesheets: ["https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"],
+  pages: [
+    { name: "Interactive Model", path: "/interactive-model" },
+    { name: "Carbon Selling Strategies", path: "/carbon-selling-strategies" },
+  ],
   toc: true,
   pager: false,
   typographer: true,

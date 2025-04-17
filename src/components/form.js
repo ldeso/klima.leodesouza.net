@@ -37,7 +37,7 @@ export function computeZeroCDeltaA(Ai, Gi, deltaCnull) {
 
 export function computeTrueDeltaA(Ai, Gi, barCiTonnes, deltaBarCiTonnes) {
   if (barCiTonnes === 0) {
-    return computeZeroCarbonDeltaA(Ai, Gi, deltaBarCiTonnes);
+    return computeZeroCDeltaA(Ai, Gi, deltaBarCiTonnes);
   } else {
     const deltaBarCi = deltaBarCiTonnes / barCiTonnes;
     return computeDeltaA(Ai, Gi, deltaBarCi);
