@@ -1,7 +1,7 @@
 import MarkdownItFootnote from "markdown-it-footnote";
 
 export default {
-  title: "Klima 2.0",
+  title: "Klima Protocol",
   head: `
     <link rel="icon" type="image/png" sizes="96x96" href="res/favicon-96x96.png">
     <link rel="icon" type="image/svg+xml" href="res/favicon.svg">

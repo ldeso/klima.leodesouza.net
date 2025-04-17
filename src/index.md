@@ -9,6 +9,6 @@ head: |
   <meta http-equiv="refresh" content="0; url=./whitepaper">
 ---
 
-# Klima 2.0
+# Klima Protocol
 
 This page should automatically redirect you to the [White Paper](./whitepaper).
