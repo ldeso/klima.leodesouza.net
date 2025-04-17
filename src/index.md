@@ -9,7 +9,6 @@ head: |
   <meta http-equiv="refresh" content="0; url=./whitepaper">
 ---
 
-# Klima Visualisations
+# Klima 2.0
 
-This page should automatically redirect you to the
-[Klima 2.0 Interactive Whitepaper](./whitepaper).
+This page should automatically redirect you to the [White Paper](./whitepaper).
