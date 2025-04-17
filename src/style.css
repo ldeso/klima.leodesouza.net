@@ -107,6 +107,10 @@ input[type="number"] {
   text-decoration: overline;
 }
 
+.u-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 .u-hidden {
   visibility: hidden;
 }
