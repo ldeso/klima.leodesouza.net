@@ -2889,10 +2889,68 @@ const stringCiPrice = "$" + paramCiPrice.toLocaleString(
   </tbody>
 </table>
 
+```js
+const allocInitGData = [];
+for (let i = 0; i < 100.01; i += 0.25) {
+  if (i < 2.51) {
+    allocInitGData.push({ key: "01X", value: i });
+  }
+  if (2.49 < i && i < 5.51) {
+    allocInitGData.push({ key: "pKlima Holders", value: i });
+  }
+  if (5.49 < i && i < 10.01) {
+    allocInitGData.push({ key: "DAO / Treasury", value: i });
+  }
+  if (9.99 < i && i < 15.01) {
+    allocInitGData.push({ key: "Ecosystem Grant", value: i });
+  }
+  if (14.99 < i && i < 20.01) {
+    allocInitGData.push({ key: "Product design", value: i });
+  }
+  if (19.99 < i && i < 60.01) {
+    allocInitGData.push({ key: "Incentives", value: i });
+  }
+  if (59.99 < i) {
+    allocInitGData.push({ key: "Klima Holders", value: i });
+  }
+}
+const longitudeScale = d3.scaleLinear([180, -180]);
+const getCenter = d =>
+        [1.25, 4, 7.75, 12.5, 17.5, 40, 80].includes(d.value) ? d.value : NaN;
+```
+
 <figure id="figure-24" class="u-center">
 <figcaption>Figure&nbsp;24: Allocations:
   <strong>KlimaX</strong>&nbsp;Token</figcaption>
-<img alt="Allocations: KlimaX Token" src="res/whitepaper/figure-24.webp">
+
+```js
+Plot.plot({
+  projection: { type: "azimuthal-equidistant", rotate: [0, -90], scale: 2 },
+  color: {
+    legend: true,
+    range: d3.schemeCategory10,
+    domain: [
+      "Klima Holders",
+      "Incentives",
+      "Product design",
+      "Ecosystem Grant",
+      "DAO / Treasury",
+      "pKlima Holders",
+      "01X",
+    ],
+  },
+  marks: [
+    Plot.area(allocInitGData, {
+      x1: ({ value }) => longitudeScale(value / 100),
+      y1: -20,
+      x2: ({ value }) => longitudeScale(value / 100),
+      y2: -70,
+      fill: "key",
+    }),
+  ]
+})
+```
+
 </figure>
 
 ### 4.2 Programmatic Incentive Curve
