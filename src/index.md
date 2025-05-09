@@ -2993,9 +2993,81 @@ Giving supply function ${tex`\operatorname{P}(t)`} as:
 
 ${tex`P_0`} set at&nbsp;7.0% and&nbsp;${tex`T`} at 24&nbsp;months:
 
+```js
+const paramP0 = 0.07;
+const paramT = 24;
+
+const incentiveData = [];
+for (let t = 0; t < 48.01; t += 0.1) {
+  incentiveData.push({
+    key: "Logistic Curve",
+    x: t,
+    y: 100 * Form.computeP(t, paramP0, paramT),
+  });
+  incentiveData.push({
+    key: "Rate of Change",
+    x: t,
+    y: 100 * Form.computeDerivP(t, paramP0, paramT),
+  });
+}
+const getLogisticCurve = d => d.key === "Logistic Curve" ? d.y : NaN;
+const getRateOfChange = d => d.key === "Rate of Change" ? d.y : NaN;
+
+const domainRateOfChange = [0, d3.max(incentiveData, getRateOfChange)];
+const scaleRateOfChange = d3.scaleLinear(domainRateOfChange, [0, 100]);
+const mapScaleRateOfChange = x => x.map(scaleRateOfChange);
+```
+
 <figure id="figure-25" class="u-center">
 <figcaption>Figure&nbsp;25: Incentive Issuance</figcaption>
-<img alt="Incentive Issuance" src="res/whitepaper/figure-25.webp">
+
+```js
+Plot.plot({
+  caption: "Logistic Curve",
+  color: {
+    legend: true,
+    range: [5, 7].map(i => d3.schemeCategory10[i]),
+  },
+  x: { ticks: d3.range(0, 48.1, 6), label: "‘Life’ Span (Months)", grid: true },
+  insetTop: 16,
+  marks: [
+    Plot.frame(),
+    Plot.axisY({ anchor: "left", label: "Proportion of Supply (%)" }),
+    Plot.axisY(scaleRateOfChange.ticks(), {
+      anchor: "right",
+      tickFormat: scaleRateOfChange.tickFormat(),
+      label: "Rate of Change (%/Month)",
+      y: scaleRateOfChange
+    }),
+    Plot.lineY(incentiveData, Plot.mapY(mapScaleRateOfChange, {
+      x: "x",
+      y: getRateOfChange,
+      stroke: "key",
+      strokeWidth : 2,
+      strokeDasharray: 4,
+    })),
+    Plot.lineY(incentiveData, {
+      x: "x",
+      y: getLogisticCurve,
+      stroke: "key",
+      strokeWidth : 2,
+    }),
+    Plot.areaY(incentiveData, Plot.mapY(mapScaleRateOfChange, {
+      x: "x",
+      y: getRateOfChange,
+      fill: "key",
+      fillOpacity: 0.3,
+    })),
+    Plot.areaY(incentiveData, {
+      x: "x",
+      y: getLogisticCurve,
+      fill: "key",
+      fillOpacity: 0.3,
+    }),
+  ]
+})
+```
+
 </figure>
 
 <figure id="figure-26" class="u-center">

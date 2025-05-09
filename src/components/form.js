@@ -78,6 +78,21 @@ export function computeLambdaQ(AQ, AG) {
   return 1 - computeLambdaG(AQ, AG);
 }
 
+export function computeP(t, P0, T) {
+  const x0 = Math.log(P0 / (1 - P0));
+  const xt = x0 * (1 - t / T);
+  const exp = Math.exp(xt);
+  return exp / (exp + 1);
+}
+
+export function computeDerivP(t, P0, T) {
+  const x0 = Math.log(P0 / (1 - P0));
+  const xt = x0 * (1 - t / T);
+  const exp = Math.exp(xt);
+  const P = exp / (1 + exp);
+  return -(x0 / T) * P * (1 - P);
+}
+
 export function computeUpsilon(G, L) {
   if (G === 0 && L === 0) {
     return 0;
