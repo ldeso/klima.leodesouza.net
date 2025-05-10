@@ -942,10 +942,59 @@ respect to staking and duration, [Figure&nbsp;8](#figure-8) assumes a single
 maturity over the staking range to provide an approximation of
 inflation&nbsp;${tex`{\Delta A \approx Z \, S}`}.
 
+```js
+const inflationData = [];
+for (let paramS = 0; paramS < 1.01; paramS += 0.1) {
+  inflationData.push({ key: "ΔA", e: 0, s: paramS, value: NaN });
+  for (let paramE = 1; paramE <= 10; paramE++) {
+    inflationData.push({
+      key: "ΔA",
+      e: paramE,
+      s: paramS,
+      value: Form.computeApproxDeltaA(paramS, paramE),
+    });
+  }
+}
+```
+
 <figure id="figure-8" class="u-center">
 <figcaption>Figure&nbsp;8: Range of
   <strong>A</strong>&nbsp;Inflation</figcaption>
-<img alt="Range of A Inflation" src="res/whitepaper/figure-8.webp">
+
+```js
+Plot.plot({
+  caption: html`A Inflation Rate from Bond Yields ${tex`\Delta A`}`,
+  // aspectRatio: 1,
+  color: { legend: true, scheme: "Spectral", type: "sequential", label: "ΔA" },
+  x: { ticks: d3.range(0, 10.1, 1), label: "Expiry Time E" },
+  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Staking S" },
+  marks: [
+    Plot.frame(),
+    Plot.rect(inflationData, {
+      x1: d => d.e - 0.5,
+      x2: d => d.e + 0.5,
+      y1: d => d.s - 0.05,
+      y2: d => d.s + 0.05,
+      fill: "value",
+    }),
+    Plot.text(inflationData, {
+      x: "e",
+      y: "s",
+      text: d => Number.isNaN(d.value) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => Util.contrastingTextColor(
+        d3.scaleSequential(
+          [0, Form.computeApproxDeltaA(0.5, 1)],
+          d3.interpolateSpectral,
+        )(d.value),
+      ),
+    }),
+  ],
+})
+```
+
 </figure>
 
 #### 3.1.2 Governance Weightings

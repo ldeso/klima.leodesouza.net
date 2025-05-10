@@ -15,6 +15,10 @@ export function computeY(vecZ) {
   return vecZ.map(z => Math.expm1(z / 365));
 }
 
+export function computeApproxDeltaA(paramS, paramE) {
+  return paramS * (1 - paramS) / paramE;
+}
+
 export function computeDeltaCi0(deltaCi, t) {
   return t === 0 ? deltaCi : 0;
 }
