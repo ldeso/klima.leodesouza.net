@@ -3536,7 +3536,7 @@ Plot.plot({
   caption: "Logistic Curve",
   color: {
     legend: true,
-    range: d3.schemeCategory10,
+    range: [9, 8].map(i => d3.schemeCategory10[i]),
     domain: ["APY", "APR"],
   },
   x: { ticks: d3.range(0, 60.1, 12), label: "Time (Months)", grid: true },
@@ -3554,13 +3554,14 @@ Plot.plot({
       y: getAPY,
       stroke: "key",
       strokeWidth : 2,
+      curve: "step-after",
     }),
     Plot.lineY(supplyData, {
       x: "x",
       y: getAPR,
       stroke: "key",
       strokeWidth : 2,
-      strokeDasharray: 4,
+      curve: "step-after",
     }),
   ]
 })
