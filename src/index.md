@@ -945,7 +945,6 @@ inflation&nbsp;${tex`{\Delta A \approx Z \, S}`}.
 ```js
 const inflationData = [];
 for (let paramS = 0; paramS < 1.01; paramS += 0.1) {
-  inflationData.push({ key: "ΔA", e: 0, s: paramS, value: NaN });
   for (let paramE = 1; paramE <= 10; paramE++) {
     inflationData.push({
       key: "ΔA",
@@ -966,7 +965,7 @@ Plot.plot({
   caption: html`A Inflation Rate from Bond Yields ${tex`\Delta A`}`,
   // aspectRatio: 1,
   color: { legend: true, scheme: "Spectral", type: "sequential", label: "ΔA" },
-  x: { ticks: d3.range(0, 10.1, 1), label: "Expiry Time E" },
+  x: { ticks: d3.range(1, 10.1, 1), domain: [10.5, 0.5], label: "Expiry Time E" },
   y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Staking S" },
   marks: [
     Plot.frame(),
