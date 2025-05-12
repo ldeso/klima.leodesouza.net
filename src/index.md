@@ -1838,16 +1838,27 @@ are distributed to all **G**&nbsp;holders.
 by the system where&nbsp;${tex`\varepsilon`} is the proportion retained:
 
 ```js
-const spreadData = [];
+const liquidationData = [];
 for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
-  spreadData.push({
-    key: "spread",
-    ai: 0,
-    gi: paramGi,
-    value: NaN,
-  });
+  liquidationData.push({ key: "deltaa", ai: 0, gi: paramGi, value: NaN });
+  liquidationData.push({ key: "deltac", ai: 0, gi: paramGi, value: NaN });
+  liquidationData.push({ key: "spread", ai: 0, gi: paramGi, value: NaN });
   for (let paramAi = 0.1; paramAi < 1.01; paramAi += 0.1) {
-    spreadData.push({
+    const deltaA = Form.computeDeltaA(paramAi, paramGi, inputDeltaCinitial)
+    liquidationData.push({
+      key: "deltaa",
+      ai: paramAi,
+      gi: paramGi,
+      value: Form.computeDeltaA(paramAi, paramGi, inputDeltaCinitial) /
+              inputDeltaCinitial,
+    });
+    liquidationData.push({
+      key: "deltac",
+      ai: paramAi,
+      gi: paramGi,
+      value: Form.computeDeltaCi(paramAi, paramGi, deltaA) / inputDeltaCinitial,
+    });
+    liquidationData.push({
       key: "spread",
       ai: paramAi,
       gi: paramGi,
@@ -1855,7 +1866,9 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
     });
   }
 }
-const getSpread = d => d.key === "spread" ? d.value : NaN;
+const getLiqDeltaA = d => d.key === "deltaa" ? d.value : NaN;
+const getLiqDeltaCi = d => d.key === "deltac" ? d.value : NaN;
+const getLiqSpread = d => d.key === "spread" ? d.value : NaN;
 ```
 
 <figure id="figure-16" class="u-center">
@@ -1879,23 +1892,23 @@ Plot.plot({
   y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Gᵢ" },
   marks: [
     Plot.frame(),
-    Plot.rect(spreadData, {
+    Plot.rect(liquidationData, {
       x1: d => d.ai - 0.05,
       x2: d => d.ai + 0.05,
       y1: d => d.gi - 0.05,
       y2: d => d.gi + 0.05,
-      fill: getSpread,
+      fill: getLiqSpread,
     }),
-    Plot.text(spreadData, {
+    Plot.text(liquidationData, {
       x: "ai",
       y: "gi",
-      text: d => Number.isNaN(getSpread(d)) ? "" : d.value.toLocaleString(
+      text: d => Number.isNaN(getLiqSpread(d)) ? "" : d.value.toLocaleString(
         "en-GB",
         { minimumFractionDigits: 2, maximumFractionDigits: 2 },
       ),
       fill: d => Util.contrastingTextColor(
         d3.scaleSequential(
-          [0, Form.computeSpread(1, 0, inputDeltaA)],
+          [0, Form.computeSpread(1, 0, inputDeltaCinitial)],
           d3.interpolateSpectral,
         )(d.value),
       ),
@@ -1914,12 +1927,106 @@ const inputDeltaCinitial = view(Inputs.range([0.001, 1], {
 
 </figure>
 
-[Figure&nbsp;17](#figure-17) shows the component `Spread' contributions on a
+[Figure&nbsp;17](#figure-17) shows the component 'Spread' contributions on a
 Carbon sale and purchase of offset round trip.
 
 <figure id="figure-17" class="u-center">
 <figcaption>Figure&nbsp;17: Carbon ‘Spread’ Components</figcaption>
-<img alt="Carbon ‘Spread’ Components" src="res/whitepaper/figure-17.webp">
+
+```js
+Plot.plot({
+  caption: html`Heatmap of Carbon Spread Component ${tex`\Delta A`} over an
+          Initial ${tex`\Delta C = ${(100 * inputDeltaCinitial).toLocaleString(
+            "en-GB",
+            { minimumFractionDigits: 1, maximumFractionDigits: 1 },
+          )} \%`}`,
+  color: {
+    legend: true,
+    scheme: "Spectral",
+    domain: [0, 1],
+    type: "sequential",
+    label: "Carbon Spread Component ΔA",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "Aᵢ" },
+  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Gᵢ" },
+  marks: [
+    Plot.frame(),
+    Plot.rect(liquidationData, {
+      x1: d => d.ai - 0.05,
+      x2: d => d.ai + 0.05,
+      y1: d => d.gi - 0.05,
+      y2: d => d.gi + 0.05,
+      fill: getLiqDeltaA,
+    }),
+    Plot.text(liquidationData, {
+      x: "ai",
+      y: "gi",
+      text: d => Number.isNaN(getLiqDeltaA(d)) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => Util.contrastingTextColor(d3.interpolateSpectral(d.value)),
+    }),
+  ],
+})
+```
+
+```js
+Plot.plot({
+  caption: html`Heatmap of Carbon Spread Component ${tex`\Delta C`} over an
+          Initial ${tex`\Delta C = ${(100 * inputDeltaCinitial).toLocaleString(
+            "en-GB",
+            { minimumFractionDigits: 1, maximumFractionDigits: 1 },
+          )} \%`}`,
+  color: {
+    legend: true,
+    scheme: "Greys",
+    domain: [
+      -1,
+      Form.computeDeltaCi(
+        1,
+        0,
+        Form.computeDeltaA(1, 0, inputDeltaCinitial) / inputDeltaCinitial,
+      ),
+    ],
+    label: "Carbon Spread Component ΔC",
+  },
+  x: { ticks: d3.range(0, 1.01, 0.1), label: "Aᵢ" },
+  y: { ticks: d3.range(0, 1.01, 0.1), domain: [1.05, -0.05], label: "Gᵢ" },
+  marks: [
+    Plot.frame(),
+    Plot.rect(liquidationData, {
+      x1: d => d.ai - 0.05,
+      x2: d => d.ai + 0.05,
+      y1: d => d.gi - 0.05,
+      y2: d => d.gi + 0.05,
+      fill: getLiqDeltaCi,
+    }),
+    Plot.text(liquidationData, {
+      x: "ai",
+      y: "gi",
+      text: d => Number.isNaN(getLiqDeltaCi(d)) ? "" : d.value.toLocaleString(
+        "en-GB",
+        { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+      ),
+      fill: d => Util.contrastingTextColor(
+        d3.scaleSequential(
+          [
+            -1,
+            Form.computeDeltaCi(
+              1,
+              0,
+              Form.computeDeltaA(1, 0, inputDeltaCinitial) / inputDeltaCinitial,
+            ),
+          ],
+          d3.interpolateGreys,
+        )(d.value),
+      ),
+    }),
+  ],
+})
+```
+
 </figure>
 
 ### 3.3 Liquidity Markets
@@ -3033,6 +3140,14 @@ Giving supply function ${tex`\operatorname{P}(t)`} as:
 
 ```tex
 \operatorname{P}(t) = \frac{\exp(x_t)}{\exp(x_t) + 1} \tag{34}
+```
+
+```tex
+\operatorname{APR}(t) = 100 \times 12 \times \frac{\operatorname{supply}(t+1) - \operatorname{supply}(t)}{\operatorname{supply}(t)}
+```
+
+```tex
+\operatorname{APY}(t) = \frac{\operatorname{APR}(t)}{12 \times 100}
 ```
 
 </div>
