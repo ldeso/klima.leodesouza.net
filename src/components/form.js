@@ -97,6 +97,16 @@ export function computeDerivP(t, P0, T) {
   return -(x0 / T) * P * (1 - P);
 }
 
+export function getVesting(vecVesting, t, tStart, tEnd) {
+  if (t < tStart)
+    return 0;
+  else if (t < tEnd) {
+    return vecVesting[t - tStart];
+  } else {
+    return vecVesting[tEnd - tStart - 1];
+  }
+}
+
 export function computeUpsilon(G, L) {
   if (G === 0 && L === 0) {
     return 0;

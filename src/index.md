@@ -3063,10 +3063,10 @@ for (let i = 0; i < 100.01; i += 0.25) {
     allocInitGData.push({ key: "Product design", value: i });
   }
   if (19.99 < i && i < 60.01) {
-    allocInitGData.push({ key: "Incentives", value: i });
+    allocInitGData.push({ key: "Klima Holders", value: i });
   }
   if (59.99 < i) {
-    allocInitGData.push({ key: "Klima Holders", value: i });
+    allocInitGData.push({ key: "Incentives", value: i });
   }
 }
 const longitudeScale = d3.scaleLinear([180, -180]);
@@ -3085,8 +3085,8 @@ const cohortsDomain = [
 ```
 
 <figure id="figure-24" class="u-center">
-<figcaption>Figure&nbsp;24: Allocations:
-  <strong>KlimaX</strong>&nbsp;Token</figcaption>
+<figcaption>Figure&nbsp;24: <strong>KlimaX</strong>&nbsp;Token
+  Allocations</figcaption>
 
 ```js
 Plot.plot({
@@ -3142,36 +3142,27 @@ Giving supply function ${tex`\operatorname{P}(t)`} as:
 \operatorname{P}(t) = \frac{\exp(x_t)}{\exp(x_t) + 1} \tag{34}
 ```
 
-```tex
-\operatorname{APR}(t) = 100 \times 12 \times \frac{\operatorname{supply}(t+1) - \operatorname{supply}(t)}{\operatorname{supply}(t)}
-```
-
-```tex
-\operatorname{APY}(t) = \frac{\operatorname{APR}(t)}{12 \times 100}
-```
-
 </div>
 
 ${tex`P_0`} set at&nbsp;7.0% and&nbsp;${tex`T`} at 24&nbsp;months:
 
 ```js
-const paramP0 = 0.07;
-const paramT = 24;
-
-const supplyData = [];
-const tVesting = d3.range(3, 48);
+const tVestStart = 3;
+const tVestEnd = 2 * inputT;
+const tVesting = d3.range(tVestStart, tVestEnd);
 const vecVestingDeriv = Ops.normalize(tVesting.map(t =>
-  Form.computeDerivP(t, paramP0, paramT)
+  Form.computeDerivP(t, inputP0, inputT)
 ));
 const vecVesting = d3.cumsum(vecVestingDeriv);
 
 let paramVestingPrevious = 0;
-let vecSupplyIncentives = [];
-let vecSupplyCirculating = [];
+const vecSupplyIncentives = [];
+const vecSupplyCirculating = [];
+const supplyData = [];
 for (let t = 0; t <= 72; t++) {
-  const paramP = Form.computeP(t, paramP0, paramT);
-  const paramDerivP = Form.computeDerivP(t, paramP0, paramT);
-  const paramVesting = t < 3 ? 0 : (t < 48 ? vecVesting[t-3] : vecVesting[44]);
+  const paramP = Form.computeP(t, inputP0, inputT);
+  const paramDerivP = Form.computeDerivP(t, inputP0, inputT);
+  const paramVesting = Form.getVesting(vecVesting, t, tVestStart, tVestEnd);
   const paramVestingDiff = paramVesting - paramVestingPrevious;
   paramVestingPrevious = paramVesting;
 
@@ -3212,7 +3203,7 @@ for (let t = 0; t <= 72; t++) {
     const diff01XStacked = diff01X + diffTreasuryStacked;
 
     supplyData.push({
-      key: "Logistic Curve",
+      key: "Proportion of Supply",
       x: t,
       y: 100 * paramP,
     });
@@ -3451,7 +3442,7 @@ for (let t = 0; t <= 60; t++) {
   supplyData.push({ key: "APR", x: t, y: vecAPR[t] });
 }
 
-const getLogisticCurve = d => d.key === "Logistic Curve" ? d.y : NaN;
+const getLogisticCurve = d => d.key === "Proportion of Supply" ? d.y : NaN;
 const getRateOfChange = d => d.key === "Rate of Change" ? d.y : NaN;
 const getCirculatingStacked = d =>
         d.key === "Circulating Supply (Stacked)" ? d.y : NaN;
@@ -3477,6 +3468,20 @@ const getAPR = d => d.key === "APR" ? d.y : NaN;
 const domainRateOfChange = [0, d3.max(supplyData, getRateOfChange)];
 const scaleRateOfChange = d3.scaleLinear(domainRateOfChange, [0, 100]);
 const mapScaleRateOfChange = x => x.map(scaleRateOfChange);
+
+const stringP0 = "Initial Issuance P₀ = " + inputP0.toLocaleString(
+  "en-GB",
+  { style: "percent", maximumFractionDigits: 0 },
+);
+const stringT = "Inflection Point Time T = " + inputT.toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+) + " months";
+
+const supplyParams = [
+  { key: stringP0, x: 0, y: 100 * inputP0 },
+  { key: stringT, x: inputT, y: 50 },
+];
 ```
 
 <figure id="figure-25" class="u-center">
@@ -3487,11 +3492,13 @@ Plot.plot({
   caption: "Logistic Curve",
   color: {
     legend: true,
-    range: [5, 7].map(i => d3.schemeCategory10[i]),
-    domain: ["Logistic Curve", "Rate of Change"],
+    range: [5, 7, 0, 2].map(i => d3.schemeCategory10[i]),
+    domain: ["Proportion of Supply", "Rate of Change", stringP0, stringT],
   },
   x: { ticks: d3.range(0, 60.1, 12), label: "‘Life’ Span (Months)", grid: true },
+  y: { domain: [0, 100] },
   insetTop: 16,
+  clip: true,
   marks: [
     Plot.frame(),
     Plot.axisY({ anchor: "left", label: "Proportion of Supply (%)" }),
@@ -3526,11 +3533,37 @@ Plot.plot({
       fill: "key",
       fillOpacity: 0.3,
     }),
+    Plot.ruleX(supplyParams, {
+      x: d => d.key === stringT ? d.x : NaN,
+      y: "y",
+      stroke: "key",
+      strokeWidth : 2,
+      strokeDasharray: 4,
+    }),
+    Plot.dotY(supplyParams, {
+      x: "x",
+      y: "y",
+      r: 6,
+      fill: "key",
+    }),
   ]
 })
 ```
 
 </figure>
+
+```js
+const inputP0 = view(Inputs.range([0.01, 0.5], {
+  label: tex`P_0 \text{ (initial issuance at TGE)}`,
+  step: 0.01,
+  value: 0.07,
+}));
+const inputT = view(Inputs.range([2, 60], {
+  label: tex`T \text{ (inflection point time in months)}`,
+  step: 1,
+  value: 24,
+}));
+```
 
 <figure id="figure-26" class="u-center">
 <figcaption>Figure&nbsp;26: <strong>KlimaX</strong>&nbsp;Token Supply Over
@@ -3639,7 +3672,6 @@ Plot.plot({
       x: "x",
       y: getDiffUnstacked,
       fill: getCohortDiffUnstacked,
-      fillOpacity: 0.5,
       curve: "step-after",
     }),
   ]
@@ -3648,7 +3680,7 @@ Plot.plot({
 
 ```js
 Plot.plot({
-  caption: "Logistic Curve",
+  caption: "Utility Incentive Yield",
   color: {
     legend: true,
     range: [9, 8].map(i => d3.schemeCategory10[i]),
@@ -3657,7 +3689,7 @@ Plot.plot({
   x: { ticks: d3.range(0, 60.1, 12), label: "Time (Months)", grid: true },
   y: {
     domain: [0, Math.max(d3.max(vecAPR), d3.max(vecAPY))],
-    label: "Annual Percentage Change (%)",
+    label: "Annual Percentage (%)",
     grid: true,
   },
   insetTop: 16,
