@@ -1935,7 +1935,7 @@ Carbon sale and purchase of offset round trip.
 
 ```js
 Plot.plot({
-  caption: html`Heatmap of Carbon Spread Component ${tex`\Delta A`} over an
+  caption: html`Heatmap of Carbon Spread Component ${tex`\Delta A`} with an
           Initial ${tex`\Delta C = ${(100 * inputDeltaCinitial).toLocaleString(
             "en-GB",
             { minimumFractionDigits: 1, maximumFractionDigits: 1 },
@@ -1973,7 +1973,7 @@ Plot.plot({
 
 ```js
 Plot.plot({
-  caption: html`Heatmap of Carbon Spread Component ${tex`\Delta C`} over an
+  caption: html`Heatmap of Carbon Spread Component ${tex`\Delta C`} with an
           Initial ${tex`\Delta C = ${(100 * inputDeltaCinitial).toLocaleString(
             "en-GB",
             { minimumFractionDigits: 1, maximumFractionDigits: 1 },
@@ -3479,7 +3479,7 @@ const stringT = "Inflection Point Time T = " + inputT.toLocaleString(
 ) + " months";
 
 const supplyParams = [
-  { key: stringP0, x: 0, y: 100 * inputP0 },
+  { key: stringP0, x: 0.5, y: 100 * inputP0 },
   { key: stringT, x: inputT, y: 50 },
 ];
 ```
@@ -3543,7 +3543,7 @@ Plot.plot({
     Plot.dotY(supplyParams, {
       x: "x",
       y: "y",
-      r: 6,
+      r: 5,
       fill: "key",
     }),
   ]
@@ -3703,11 +3703,20 @@ Plot.plot({
       strokeWidth : 2,
       curve: "step-after",
     }),
+    Plot.areaY(supplyData, {
+      x: "x",
+      y1: 0,
+      y2: getAPY,
+      fill: "key",
+      fillOpacity: 0.2,
+      curve: "step-after",
+    }),
     Plot.lineY(supplyData, {
       x: "x",
       y: getAPR,
       stroke: "key",
       strokeWidth : 2,
+      strokeDasharray: [1, 3],
       curve: "step-after",
     }),
   ]
