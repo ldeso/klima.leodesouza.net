@@ -319,3 +319,15 @@ or burnt by the protocol:
 | White Paper    | +${stringAEmittedWhitePaper}    | ${stringABurntWhitePaper}    |
 | Smart Contract | +${stringAEmittedSmartContract} | ${stringABurntSmartContract} |
 | **Difference** | ${stringAEmittedDiff}           | ${stringABurntDiff}          |
+
+## Conclusion
+
+The current smart contract implementation results:
+
+1. Are _identical_ to the white paper implementation results for **carbon sales
+with carbon in the portfolio** (with an expected error caused by the use of
+floating point arithmetics).
+2. Are _significantly different_ to the white paper implementation results for
+**carbon retirements**.
+3. Are _completely different_ from the white paper implementation results for
+**carbon sales with no carbon in the portfolio**.
