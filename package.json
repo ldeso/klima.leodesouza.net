@@ -9,11 +9,11 @@
     "observable": "observable"
   },
   "dependencies": {
-    "@observablehq/framework": "^1.13.2",
+    "@observablehq/framework": "^1.13.3",
     "markdown-it-footnote": "^4.0.0"
   },
   "devDependencies": {
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.10"
   },
   "engines": {
     "node": ">=18"
