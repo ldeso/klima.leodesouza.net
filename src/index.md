@@ -3032,7 +3032,7 @@ const stringCiPrice = "$" + paramCiPrice.toLocaleString(
       <td>24&nbsp;month locked&nbsp;LP
         of&nbsp;<span class="u-overline"><strong>AG</strong></span>
     <tr>
-      <td>Product design and development
+      <td>Product Design and Development
       <td class="u-center">5%
       <td class="u-center">5
       <td>Logistic Vesting 48&nbsp;months
@@ -3060,7 +3060,7 @@ for (let i = 0; i < 100.01; i += 0.25) {
     allocInitGData.push({ key: "Ecosystem Grant", value: i });
   }
   if (14.99 < i && i < 20.01) {
-    allocInitGData.push({ key: "Product design", value: i });
+    allocInitGData.push({ key: "Product Design", value: i });
   }
   if (19.99 < i && i < 60.01) {
     allocInitGData.push({ key: "Klima Holders", value: i });
@@ -3076,7 +3076,7 @@ const getCenter = d =>
 const cohortsDomain = [
       "Incentives",
       "Klima Holders",
-      "Product design",
+      "Product Design",
       "Ecosystem Grant",
       "DAO / Treasury",
       "pKlima Holders",
@@ -3144,7 +3144,14 @@ Giving supply function ${tex`\operatorname{P}(t)`} as:
 
 </div>
 
-${tex`P_0`} set at&nbsp;7.0% and&nbsp;${tex`T`} at 24&nbsp;months:
+${tex`P_0`} set at&nbsp;${
+  inputP0.toLocaleString(
+    "en-GB",
+    { style: "percent", maximumFractionDigits: 0 },
+  )
+} and&nbsp;${tex`T`} at ${
+  inputT.toLocaleString("en-GB", { maximumFractionDigits: 0 })
+}&nbsp;months:
 
 ```js
 const tVestStart = 3;
@@ -3239,7 +3246,7 @@ for (let t = 0; t <= 72; t++) {
     });
     supplyData.push({
       key: "Circulating Supply (Stacked)",
-      cohort: "Product design",
+      cohort: "Product Design",
       x: t,
       y: supplyProductStacked / supplyCirculating,
     });
@@ -3282,7 +3289,7 @@ for (let t = 0; t <= 72; t++) {
     });
     supplyData.push({
       key: "Circulating Supply (Unstacked)",
-      cohort: "Product design",
+      cohort: "Product Design",
       x: t,
       y: supplyProduct / supplyCirculating,
     });
@@ -3325,7 +3332,7 @@ for (let t = 0; t <= 72; t++) {
     });
     supplyData.push({
       key: "Total Supply (Stacked)",
-      cohort: "Product design",
+      cohort: "Product Design",
       x: t,
       y: supplyProductStacked,
     });
@@ -3368,7 +3375,7 @@ for (let t = 0; t <= 72; t++) {
     });
     supplyData.push({
       key: "Total Supply (Unstacked)",
-      cohort: "Product design",
+      cohort: "Product Design",
       x: t,
       y: supplyProduct,
     });
@@ -3399,7 +3406,7 @@ for (let t = 0; t <= 72; t++) {
     });
     supplyData.push({
       key: "Total Supply Differential (Unstacked)",
-      cohort: "Product design",
+      cohort: "Product Design",
       x: t,
       y: diffProduct,
     });
@@ -3986,7 +3993,7 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
 
 <figure id="figure-30" class="u-center">
 <figcaption>Figure&nbsp;30: Share of Non-Treasury Incentives&nbsp;${tex`I_S`},
-  ${tex`I_G`}, ${tex`I_{AG}`} and&nbsp;${tex`I_{AQ}`</figcaption>
+  ${tex`I_G`}, ${tex`I_{AG}`} and&nbsp;${tex`I_{AQ}`}</figcaption>
 
 ```js
 const plotAllocationSQ = Plot.plot({
@@ -4156,7 +4163,7 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
 ```
 
 <figure id="figure-31" class="u-center">
-<figcaption>Figure&nbsp;31: Treasury Incentives&nbsp;${tex`I_T`}`</figcaption>
+<figcaption>Figure&nbsp;31: Treasury Incentives&nbsp;${tex`I_T`}</figcaption>
 
 ```js
 Plot.plot({
