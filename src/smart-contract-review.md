@@ -283,7 +283,7 @@ const diffAEmitted = Math.abs(totalAEmittedWhitePaper -
         totalAEmittedSmartContract);
 const diffABurnt = Math.abs(totalABurntWhitePaper - totalABurntSmartContract);
 
-const stringAEmittedWhitePaper = totalAEmittedWhitePaper.toLocaleString(
+const stringAEmittedWhitePaper = "+"+ totalAEmittedWhitePaper.toLocaleString(
   "en-GB",
   { minimumSignificantDigits: 18, maximumSignificantDigits: 18 },
 ) + " KLIMA";
@@ -291,7 +291,7 @@ const stringABurntWhitePaper = "−" + totalABurntWhitePaper.toLocaleString(
   "en-GB",
   { minimumSignificantDigits: 18, maximumSignificantDigits: 18 },
 ) + " KLIMA";
-const stringAEmittedSmartContract = totalAEmittedSmartContract.toLocaleString(
+const stringAEmittedSmartContract = "+"+ totalAEmittedSmartContract.toLocaleString(
   "en-GB",
   { minimumSignificantDigits: 18, maximumSignificantDigits: 18 },
 ) + " KLIMA";
@@ -314,11 +314,11 @@ const stringABurntDiff = diffABurnt.toLocaleString(
 The above carbon transaction results in the following amounts of KLIMA emitted
 or burnt by the protocol:
 
-| Implementation | Carbon Sale                     | Carbon Retirement            |
-| -------------- | ------------------------------- | ---------------------------- |
-| White Paper    | +${stringAEmittedWhitePaper}    | ${stringABurntWhitePaper}    |
-| Smart Contract | +${stringAEmittedSmartContract} | ${stringABurntSmartContract} |
-| **Difference** | ${stringAEmittedDiff}           | ${stringABurntDiff}          |
+| Implementation | Carbon Sale                    | Carbon Retirement            |
+| -------------- | ------------------------------ | ---------------------------- |
+| White Paper    | ${stringAEmittedWhitePaper}    | ${stringABurntWhitePaper}    |
+| Smart Contract | ${stringAEmittedSmartContract} | ${stringABurntSmartContract} |
+| **Difference** | ~${stringAEmittedDiff}         | ~${stringABurntDiff}         |
 
 ## Conclusion
 
