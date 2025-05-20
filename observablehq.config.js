@@ -13,6 +13,7 @@ export default {
   pages: [
     { name: "Interactive Model", path: "/interactive-model" },
     { name: "Carbon Selling Strategies", path: "/carbon-selling-strategies" },
+    { name: "Smart Contract Review", path: "/smart-contract-review" },
   ],
   toc: true,
   pager: false,
