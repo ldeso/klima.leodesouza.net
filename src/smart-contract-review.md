@@ -95,8 +95,7 @@ if (inputPresentTonnes === 0) {
 ```
 
 ```ts
-// klima-v2 @ 2050ffd
-import { formatUnits } from "npm:ethers";
+// klima-v2 @ 0ff531a
 import Decimal from "npm:decimal.js";
 
 Decimal.set({ precision: 60, rounding: Decimal.ROUND_DOWN });
@@ -165,14 +164,16 @@ function calculateKlimaSwapPrice(
       maturityAmount.mul(discountFactor)
     );
   }
+  const klimaSupplyDecimal = toBigDecimal(klimaCirculatingSupply);
 
   if (totalDiscountedBalance.equals(0)) {
     // Handle zero carbon scenario with Decimal
-    totalDiscountedBalance = calculateZeroCarbonScenario(
+    const deltaA = calculateZeroCarbonScenario(
       toBigDecimal(amountBigInt).mul(discountFactor),
       toBigDecimal(klimaStakeBigInt),
       toBigDecimal(klimaXStakeBigInt)
     );
+    return deltaA.mul(klimaSupplyDecimal).toFixed(18);
   }
 
   // Calculate class delta
@@ -199,7 +200,7 @@ function calculateKlimaSwapPrice(
   const deltaA = expTerm.minus(ONE);
 
   // Calculate final price
-  const klimaSupplyDecimal = toBigDecimal(klimaCirculatingSupply);
+
   const klimaPriceDecimal = deltaA.mul(klimaSupplyDecimal);
   // Return as string with appropriate precision
   return klimaPriceDecimal.toFixed(18);
@@ -212,25 +213,36 @@ function calculateKlimaRetirementPrice(
   liquidClassBalance: bigint,
   klimaCirculatingSupply: bigint
 ): RetirementTestCase["klimaRetirementPrice"] {
-  // Convert everything to decimal values for verification
-  const amountDecimal = Number(formatUnits(amountBigInt, 18));
-  const Ai = Number(formatUnits(klimaStakeBigInt, 18));
-  const Gi = Number(formatUnits(klimaXStakeBigInt, 18));
+  const ONE = new Decimal(1);
+  // solve whitepaper equation for ΔA
+  // ΔA = 1 − exp( −ln(1 + ΔC) · (A + ½·A²·(1 − G)²) )
 
-  // @note maturityId open question, liquid id?
+  const liquidClassBalanceDec = new Decimal(liquidClassBalance.toString()).div(
+    "1e18"
+  );
+  const amountDec = new Decimal(amountBigInt.toString()).div("1e18");
+  const Ai = new Decimal(klimaStakeBigInt.toString()).div("1e18");
+  const Gi = new Decimal(klimaXStakeBigInt.toString()).div("1e18");
+  const supply = new Decimal(klimaCirculatingSupply.toString()).div("1e18");
 
-  let deltaC = Number(formatUnits(liquidClassBalance, 18)) - amountDecimal;
+  // ------------------------------------------------------------------------
 
-  let deltaA =
-    1 -
-    Math.exp(
-      -(
-        Math.log(1 + deltaC) *
-        (Ai + (1 / 2) * Math.pow(Ai, 2) * Math.pow(1 - Gi, 2))
-      )
-    );
+  // @note what to do in this situation?
+  if (amountDec.greaterThanOrEqualTo(liquidClassBalanceDec)) {
+    // trying to retire the entire balance ⇒ quote full supply
+    return supply.toFixed(18);
+  }
 
-  return (deltaA * Number(formatUnits(klimaCirculatingSupply, 18))).toFixed(18);
+  const deltaC = amountDec.div(liquidClassBalanceDec); // ΔC / Ci
+  const exponent = Ai.plus(
+    // A + ½A²(1−G)² (always > 0)
+    Ai.pow(2).mul(ONE.minus(Gi).pow(2)).div(2)
+  );
+
+  // match sol impl with no negative logs
+  const deltaA = ONE.minus(ONE.minus(deltaC).pow(exponent));
+
+  return deltaA.mul(supply).toFixed(18); // price with 18 decimals
 }
 ```
 
@@ -248,10 +260,10 @@ const deltaAEmittedWhitePaper = Form.computeTrueDeltaA(
   inputDeltaTonnes,
 );
 const deltaABurntWhitePaper = inputPresentTonnes === 0 ? 0 :
-        computeDeltaARetirement(
+        -computeDeltaARetirement(
           inputAi,
           inputGi,
-          -inputDeltaTonnes / inputPresentTonnes,
+          inputDeltaTonnes / inputPresentTonnes,
         );
 
 const totalAEmittedWhitePaper = deltaAEmittedWhitePaper * inputASupply;
@@ -272,7 +284,7 @@ const totalAEmittedSmartContract = parseFloat(calculateKlimaSwapPrice(
 
 const totalABurntSmartContract = inputPresentTonnes === 0 ? 0 :
         parseFloat(calculateKlimaRetirementPrice(
-          BigInt(1e18 * (inputPresentTonnes - inputDeltaTonnes/inputPresentTonnes)),
+          BigInt(1e18 * inputDeltaTonnes),
           BigInt(1e18 * inputAi),
           BigInt(1e18 * inputGi),
           BigInt(1e18 * inputPresentTonnes),
@@ -299,11 +311,11 @@ const stringABurntSmartContract = "−" + totalABurntSmartContract.toLocaleStrin
   "en-GB",
   { minimumSignificantDigits: 18, maximumSignificantDigits: 18 },
 ) + " KLIMA";
-const stringAEmittedDiff = diffAEmitted.toLocaleString(
+const stringAEmittedDiff = "~" + diffAEmitted.toLocaleString(
   "en-GB",
   { minimumSignificantDigits: 3, maximumSignificantDigits: 3 },
 ) + " KLIMA";
-const stringABurntDiff = diffABurnt.toLocaleString(
+const stringABurntDiff = "~" + diffABurnt.toLocaleString(
   "en-GB",
   { minimumSignificantDigits: 3, maximumSignificantDigits: 3 },
 ) + " KLIMA";
@@ -318,16 +330,14 @@ or burnt by the protocol:
 | -------------- | ------------------------------ | ---------------------------- |
 | White Paper    | ${stringAEmittedWhitePaper}    | ${stringABurntWhitePaper}    |
 | Smart Contract | ${stringAEmittedSmartContract} | ${stringABurntSmartContract} |
-| **Difference** | ~${stringAEmittedDiff}         | ~${stringABurntDiff}         |
+| **Difference** | ${stringAEmittedDiff}          | ${stringABurntDiff}          |
 
 ## Conclusion
 
 The current smart contract implementation results:
 
-1. Are _identical_ to the white paper implementation results for **carbon sales
-with carbon in the portfolio** (with an expected error caused by the use of
-floating point arithmetics).
+1. Are _identical_ to the white paper implementation results for **carbon
+sales** (with an expected error caused by the use of floating point
+arithmetics).
 2. Are _significantly different_ to the white paper implementation results for
 **carbon retirements**.
-3. Are _completely different_ from the white paper implementation results for
-**carbon sales with no carbon in the portfolio**.
