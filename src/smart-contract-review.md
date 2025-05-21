@@ -95,7 +95,7 @@ if (inputPresentTonnes === 0) {
 ```
 
 ```ts
-// klima-v2 @ https://github.com/KlimaDAO/klima-v2/pull/23#discussion_r2100303823
+// klima-v2 @ 8f73f16
 import Decimal from "npm:decimal.js";
 
 Decimal.set({ precision: 60, rounding: Decimal.ROUND_DOWN });
@@ -191,13 +191,11 @@ function calculateKlimaSwapPrice(
   const aiSquared = aiDecimal.pow(2);
 
   const halfTerm = aiSquared.mul(oneMinusGSquared).div(2);
-  const coefficient = aiDecimal.minus(halfTerm);
+  const rhs = aiDecimal.minus(halfTerm);
   // Calculate using ln and exp from Decimal
   const onePlusDeltaC = ONE.plus(classDelta);
-  const logTerm = onePlusDeltaC.ln();
-  const rhsTerm = coefficient.mul(logTerm);
-  const expTerm = rhsTerm.exp();
-  const deltaA = expTerm.minus(ONE);
+  const powTerm = onePlusDeltaC.pow(rhs);
+  const deltaA = powTerm.minus(ONE);
 
   // Calculate final price
 
@@ -227,14 +225,26 @@ function calculateKlimaRetirementPrice(
 
   // ------------------------------------------------------------------------
 
+  /**
+   * @note solve for A from white-paper formula
+   * ΔA = 1 − exp( −ln(1 + ΔC) · (A + ½·A²·(1 − G)²))
+   * identity 1: exp(-x) = 1/exp(x)
+   * ΔA = 1 − 1/exp(ln(1 + ΔC) · (A + ½·A²·(1 − G)²))
+   * identity 2: exp(k ln x)= x ** k
+   * k = rhs & x = 1 + ΔC
+   * solve:
+   * 1 - 1 / (1 + ΔC) ** (A + ½A²(1−G)²)
+   * * 1 - 1 / x ** rhs
+   */
+
   const deltaC = amountDec.div(liquidClassBalanceDec); // ΔC / Ci
-  const lnTerm = ONE.plus(deltaC).ln();
+  const x = ONE.plus(deltaC);
   const rhs = Ai.plus(
     // A + ½A²(1−G)² (always > 0)
     Ai.pow(2).mul(ONE.minus(Gi).pow(2)).div(2)
   );
 
-  const expTerm = lnTerm.mul(rhs).exp();
+  const expTerm = x.pow(rhs);
 
   // match sol impl with no negative logs
   const deltaA = ONE.minus(ONE.div(expTerm));
