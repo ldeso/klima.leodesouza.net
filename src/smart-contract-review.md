@@ -331,10 +331,6 @@ or burnt by the protocol:
 
 ## Conclusion
 
-The current smart contract implementation results:
-
-1. Are _identical_ to the white paper implementation results for **carbon
-sales** (with an expected error caused by the use of floating point
-arithmetics).
-2. Are _significantly different_ to the white paper implementation results for
-**carbon retirements**.
+The current smart contract implementation results are _identical_ to the white
+paper implementation results, with a small expected error caused by the use of
+floating point arithmetics.
