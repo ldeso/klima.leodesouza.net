@@ -95,7 +95,7 @@ if (inputPresentTonnes === 0) {
 ```
 
 ```ts
-// klima-v2 @ 0ff531a
+// klima-v2 @ https://github.com/KlimaDAO/klima-v2/pull/23#discussion_r2100303823
 import Decimal from "npm:decimal.js";
 
 Decimal.set({ precision: 60, rounding: Decimal.ROUND_DOWN });
@@ -227,22 +227,19 @@ function calculateKlimaRetirementPrice(
 
   // ------------------------------------------------------------------------
 
-  // @note what to do in this situation?
-  if (amountDec.greaterThanOrEqualTo(liquidClassBalanceDec)) {
-    // trying to retire the entire balance ⇒ quote full supply
-    return supply.toFixed(18);
-  }
-
   const deltaC = amountDec.div(liquidClassBalanceDec); // ΔC / Ci
-  const exponent = Ai.plus(
+  const lnTerm = ONE.plus(deltaC).ln();
+  const rhs = Ai.plus(
     // A + ½A²(1−G)² (always > 0)
     Ai.pow(2).mul(ONE.minus(Gi).pow(2)).div(2)
   );
 
-  // match sol impl with no negative logs
-  const deltaA = ONE.minus(ONE.minus(deltaC).pow(exponent));
+  const expTerm = lnTerm.mul(rhs).exp();
 
-  return deltaA.mul(supply).toFixed(18); // price with 18 decimals
+  // match sol impl with no negative logs
+  const deltaA = ONE.minus(ONE.div(expTerm));
+
+  return deltaA.mul(supply).toFixed(18);
 }
 ```
 
