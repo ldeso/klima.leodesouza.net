@@ -91,9 +91,7 @@ const viewSetAvoidance = Inputs.button(
 );
 ```
 
-### Inputs
-
-#### Input Parameters
+### Inputs Parameters
 
 ```js
 display(viewDollarPrice);
@@ -111,7 +109,7 @@ const inputG = view(viewG);
 const inputASupply = view(viewASupply);
 ```
 
-#### Results
+### Results
 
 1. Current USD price
 
