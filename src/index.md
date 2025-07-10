@@ -2377,7 +2377,8 @@ The allocation to **G**&nbsp;token staking, ${tex`\lambda_{GG}`}:
 <div id="equation-24">
 
 ```tex
-\lambda_{GG} = \frac{1 - A_Q}{1 + \left( \frac{G_i}{G_G} \right)^2} \tag{24}
+\lambda_{GG} =
+  \frac{1 - A_Q}{1 + \left( \frac{\sum_{i=1}^{n}{G_i}}{G_G} \right)^2} \tag{24}
 ```
 
 </div>
