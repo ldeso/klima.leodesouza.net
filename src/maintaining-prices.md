@@ -55,7 +55,7 @@ const viewCarbonPrice = Inputs.range([1e-3, 1e5], {
   transform: Math.log,
 });
 const viewBarC = Inputs.range([10, 1e9], {
-  label: "Initial carbon supply",
+  label: "Current carbon supply",
   step: 1,
   value: defaultBarCRemoval,
   transform: Math.log,
@@ -128,12 +128,15 @@ display(viewSetAvoidance);
 ```
 
 ```js
-const inputASupply = view(viewASupply);
-const inputAPrice = view(viewAPrice);
 const inputCarbonPrice = view(viewCarbonPrice);
 const inputBarC = view(viewBarC);
 const inputAi = view(viewAi);
 const inputGi = view(viewGi);
+```
+
+```js
+const inputAPrice = view(viewAPrice);
+const inputASupply = view(viewASupply);
 ```
 
 ```js
