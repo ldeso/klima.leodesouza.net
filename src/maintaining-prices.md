@@ -72,7 +72,7 @@ const viewGi = Inputs.range([0, 1], {
 });
 
 const viewSetRemoval = Inputs.button(
-  [["Removal", () => {
+  [["Removal – BCHAR", () => {
     Util.setInput(viewCarbonPrice, defaultCarbonPriceRemoval);
     Util.setInput(viewBarC, defaultBarCRemoval);
     Util.setInput(viewAi, defaultARemoval);
@@ -81,7 +81,7 @@ const viewSetRemoval = Inputs.button(
 );
 
 const viewSetNatureBased = Inputs.button(
-  [["Nature Based", () => {
+  [["Nature Based Solutions – REDD+", () => {
     Util.setInput(viewCarbonPrice, defaultCarbonPriceNatureBased);
     Util.setInput(viewBarC, defaultBarCNatureBased);
     Util.setInput(viewAi, defaultANatureBased);
@@ -90,7 +90,7 @@ const viewSetNatureBased = Inputs.button(
 );
 
 const viewSetAvoidance = Inputs.button(
-  [["Avoidance", () => {
+  [["Renewables – Large Scale", () => {
     Util.setInput(viewCarbonPrice, defaultCarbonPriceAvoidance);
     Util.setInput(viewBarC, defaultBarCAvoidance);
     Util.setInput(viewAi, defaultAAvoidance);
