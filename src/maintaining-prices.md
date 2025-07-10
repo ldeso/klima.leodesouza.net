@@ -119,8 +119,6 @@ const viewTogglePriceRetirementTx = Inputs.toggle({
 });
 ```
 
-### Inputs Parameters
-
 ```js
 display(viewAPrice);
 display(viewCarbonPrice);
@@ -141,15 +139,6 @@ const inputGi = view(viewGi);
 ```js
 display(viewReset);
 ```
-
-### Results
-
-1. ${stringPriceSaleCurrent} / tCO2eq
-
-2. Share kVCM that must be allocated to maintain price
-
-3. "The protocol can maintain the desired price for transactions up to
-___ tCO2eq by allocating __% more kVCM."
 
 ```js
 const vecBarCi = d3.range(0, 9*16 + 1).map(i => Math.pow(10, i/16));
@@ -217,6 +206,8 @@ const paramPriceRetirementCurrent = inputAPrice * inputASupply * Form.computeDel
   -1e-10 / inputBarC,
 ) / 1e-10;
 
+// const stringPriceSaleCurrent = "Current Sale Price";
+// const stringPriceRetirementCurrent = "Current Retirement Price";
 const stringPriceSaleCurrent = `Current Sale Price: ${
   paramPriceSaleCurrent.toLocaleString(
     "en-GB",
@@ -237,12 +228,12 @@ const stringPriceDesired = `Desired Price: ${
 } USD`;
 
 const carbonPriceData2 = [
-  { key: stringPriceSaleCurrent, price: paramPriceSaleCurrent, supply: inputBarC },
+  { key: "Sale Price", price: paramPriceSaleCurrent, supply: inputBarC },
   // { key: stringPriceRetirementCurrent, price: paramPriceRetirementCurrent, supply: inputBarC },
 ];
 if (inputTogglePriceRetirement || inputTogglePriceRetirementTx) {
   carbonPriceData2.push({
-    key: stringPriceRetirementCurrent,
+    key: "Retirement Price",
     price: paramPriceRetirementCurrent,
     supply: inputBarC,
   })
@@ -278,6 +269,22 @@ for (let i = 0; i < vecBarCi.length; i++) {
     });
   // }
 }
+const legendStrings = ["Sale Price"];
+const legendColors = [0];
+if (inputTogglePriceRetirement || inputTogglePriceRetirementTx) {
+  legendStrings.push("Retirement Price");
+  legendColors.push(1);
+}
+if (inputTogglePriceSaleTx) {
+  legendStrings.push(stringPriceSaleCurrent);
+  legendColors.push(2);
+}
+if (inputTogglePriceRetirementTx) {
+  legendStrings.push(stringPriceRetirementCurrent);
+  legendColors.push(3);
+}
+legendStrings.push(stringPriceDesired);
+legendColors.push(4);
 ```
 
 ```js
@@ -285,24 +292,18 @@ Plot.plot({
   caption: "Carbon Price vs. Carbon Supply",
   color: {
     legend: true,
-    range: [0, 1, 2, 3, 4].map(i => d3.schemeCategory10[i]),
-    domain: [
-      "Sale Price",
-      "Retirement Price",
-      stringPriceSaleCurrent,
-      stringPriceRetirementCurrent,
-      stringPriceDesired,
-    ],
+    range: legendColors.map(i => d3.schemeCategory10[i]),
+    domain: legendStrings,
   },
   x: {
     type: "log",
     label: "Carbon Supply (tCO2eq)",
-    domain: [1, 1e9],
+    domain: [10, 1e9],
   },
   y: {
     type: "log",
     label: "Carbon Price (USD/tCO2eq)",
-    domain: [1e-3, 1e5 * inputCarbonPrice],
+    domain: [1e-3, 1e5],
   },
   insetTop: 16,
   clip: true,
@@ -341,3 +342,12 @@ const inputTogglePriceRetirement = view(viewTogglePriceRetirement);
 const inputTogglePriceSaleTx = view(viewTogglePriceSaleTx);
 const inputTogglePriceRetirementTx = view(viewTogglePriceRetirementTx);
 ```
+
+## Results
+
+1. ${stringPriceSaleCurrent} / tCO2eq
+
+2. Share of kVCM that must be allocated to reach desired price: __
+
+3. "The protocol can maintain the desired price for transactions up to
+___ tCO2eq by allocating __% more kVCM."
