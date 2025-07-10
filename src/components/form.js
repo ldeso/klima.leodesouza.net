@@ -52,6 +52,10 @@ export function computeDeltaCi(Ai, Gi, deltaA) {
   return Math.expm1(-Math.log1p(deltaA) / (Ai + (Ai**2 * (1 - Gi)**2 / 2)));
 }
 
+export function computeDeltaARetirement(Ai, Gi, deltaCi) {
+  return Math.expm1((-Ai - (Ai**2 * (1 - Gi)**2 / 2)) * Math.log1p(deltaCi));
+}
+
 export function computeSpread(Ai, Gi, deltaCinitial) {
   const deltaA = computeDeltaA(Ai, Gi, deltaCinitial);
   const deltaCfinal = -computeDeltaCi(Ai, Gi, deltaA);
