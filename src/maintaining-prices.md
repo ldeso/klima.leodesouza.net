@@ -484,8 +484,8 @@ all carbon classes will increase and decrease regularly.
 
 ## Questions
 
-1. How does the changing supply of kVCM tokens affect carbon price after a
-carbon sale or retirement?
+1. How are carbon prices affected by the fact that the supply of kVCM tokens
+changes after a carbon sale and retirements?
 
-2. How many kVCM tokens have to be created from carbon sales to significantly
-dilute the share of kVCM owned by the Klima Foundation?
+2. How many carbon sales have to take place to significantly dilute the share of
+kVCM tokens owned by the Klima Foundation?
