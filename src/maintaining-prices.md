@@ -15,7 +15,7 @@ import * as Util from "./components/util.js"
 
 _How easily can the Klima Foundation maintaining carbon prices after launch?_
 
-## Interactive SDimulation
+## Interactive Simulation
 
 ```js
 const defaultAPrice = 1.0;
@@ -32,6 +32,9 @@ const defaultGRemoval = 0.0;
 const defaultGNatureBased = 0.0;
 const defaultGAvoidance = 0.0;
 const defaultASupply = 2e7;
+const defaultTogglePriceRetirement = true;
+const defaultTogglePriceSaleTx = false;
+const defaultTogglePriceRetirementTx = false;
 
 const viewASupply = Inputs.range([1e6, 1e10], {
   label: tex`\text{kVCM supply}`,
@@ -51,9 +54,9 @@ const viewCarbonPrice = Inputs.range([1e-3, 1e9], {
   value: defaultCarbonPriceRemoval,
   transform: Math.log,
 });
-const viewBarC = Inputs.range([1e-3, 1e9], {
+const viewBarC = Inputs.range([1, 1e9], {
   label: tex`\text{Initial carbon supply } \bar C_i`,
-  step: 1e-3,
+  step: 1,
   value: defaultBarCRemoval,
   transform: Math.log,
 });
@@ -101,6 +104,18 @@ const viewReset = Inputs.button(
     Util.setInput(viewASupply, defaultASupply);
   }]],
 );
+
+const viewTogglePriceRetirement = Inputs.toggle(
+  { label: "Show retirement price", value: defaultTogglePriceRetirement }
+);
+const viewTogglePriceSaleTx = Inputs.toggle({
+  label: "Show sale price for various amounts",
+  value: defaultTogglePriceSaleTx,
+});
+const viewTogglePriceRetirementTx = Inputs.toggle({
+  label: "Show retirement price for various amounts",
+  value: defaultTogglePriceRetirementTx,
+});
 ```
 
 ### Inputs Parameters
@@ -149,37 +164,39 @@ const vecCarbonPriceSale = vecBarCi.map(paramBarCi => {
 });
 
 const vecCarbonPriceRetirement = vecBarCi.map(paramBarCi => {
-  const paramDeltaTonnes = 1e-10;
-  return inputAPrice * inputASupply * Form.computeDeltaARetirement(
-    inputAi,
-    inputGi,
-    paramBarCi,
-    -paramDeltaTonnes,
-  ) / paramDeltaTonnes;
+  if (inputTogglePriceRetirement) {
+    const paramDeltaTonnes = 1e-10;
+    return inputAPrice * inputASupply * Form.computeDeltaARetirement(
+      inputAi,
+      inputGi,
+      -paramDeltaTonnes / paramBarCi,
+    ) / paramDeltaTonnes;
+  } else {
+    return NaN;
+  }
 });
 
 const vecCarbonPriceSaleTx = vecBarCi.map(paramBarCi => {
   const paramDeltaTonnes = paramBarCi - inputBarC;
-  if (paramDeltaTonnes < 0) {
-    return NaN;
-  } else {
+  if (paramDeltaTonnes > 0 && inputTogglePriceSaleTx) {
     return inputAPrice * inputASupply * Form.computeTrueDeltaA(
       inputAi,
       inputGi,
       inputBarC,
       paramDeltaTonnes,
     ) / paramDeltaTonnes;
+  } else {
+    return NaN;
   }
 });
 
 const vecCarbonPriceRetirementTx = vecBarCi.map(paramBarCi => {
   const paramDeltaTonnes = paramBarCi - inputBarC;
-  if (paramDeltaTonnes < 0) {
+  if (paramDeltaTonnes < 0 && inputTogglePriceRetirementTx) {
     return inputAPrice * inputASupply * Form.computeDeltaARetirement(
       inputAi,
       inputGi,
-      inputBarC,
-      -paramDeltaTonnes,
+      -paramDeltaTonnes / inputBarC,
     ) / paramDeltaTonnes;
   } else {
     return NaN;
@@ -196,24 +213,40 @@ const paramPriceSaleCurrent = inputAPrice * inputASupply * Form.computeTrueDelta
 const paramPriceRetirementCurrent = inputAPrice * inputASupply * Form.computeDeltaARetirement(
   inputAi,
   inputGi,
-  inputBarC,
-  -1e-10,
+  -1e-10 / inputBarC,
 ) / 1e-10;
 
 const stringPriceSaleCurrent = `Current Sale Price: ${
-  paramPriceSaleCurrent.toLocaleString("en-GB", { maximumFractionDigits: 3 })
+  paramPriceSaleCurrent.toLocaleString(
+    "en-GB",
+    { maximumSignificantDigits: 3 },
+  )
 } USD`;
 const stringPriceRetirementCurrent = `Current Retirement Price: ${
-  paramPriceRetirementCurrent.toLocaleString("en-GB", { maximumFractionDigits: 3 })
+  paramPriceRetirementCurrent.toLocaleString(
+    "en-GB",
+    { maximumSignificantDigits: 3 },
+  )
 } USD`;
 const stringPriceDesired = `Desired Price: ${
-  inputCarbonPrice.toLocaleString("en-GB", { maximumFractionDigits: 3 })
+  inputCarbonPrice.toLocaleString(
+    "en-GB",
+    { maximumSignificantDigits: 3 },
+  )
 } USD`;
 
 const carbonPriceData2 = [
   { key: stringPriceSaleCurrent, price: paramPriceSaleCurrent, supply: inputBarC },
-  { key: stringPriceRetirementCurrent, price: paramPriceRetirementCurrent, supply: inputBarC },
+  // { key: stringPriceRetirementCurrent, price: paramPriceRetirementCurrent, supply: inputBarC },
 ];
+if (inputTogglePriceRetirement || inputTogglePriceRetirementTx) {
+  carbonPriceData2.push({
+    key: stringPriceRetirementCurrent,
+    price: paramPriceRetirementCurrent,
+    supply: inputBarC,
+  })
+}
+
 const priceDesiredData = [{ key: stringPriceDesired, price: inputCarbonPrice }];
 
 const carbonPriceData = [];
@@ -232,15 +265,17 @@ for (let i = 0; i < vecBarCi.length; i++) {
 
 for (let i = 0; i < vecBarCi.length; i++) {
   carbonPriceData.push({
-    key: "Min. Sale Price",
+    key: "Sale Price",
     price: vecCarbonPriceSale[i],
     supply: vecBarCi[i],
   });
-  carbonPriceData.push({
-    key: "Max. Retirement Price",
-    price: vecCarbonPriceRetirement[i],
-    supply: vecBarCi[i],
-  });
+  // if (inputTogglePriceRetirementTx) {
+    carbonPriceData.push({
+      key: "Retirement Price",
+      price: vecCarbonPriceRetirement[i],
+      supply: vecBarCi[i],
+    });
+  // }
 }
 ```
 
@@ -251,8 +286,8 @@ Plot.plot({
     legend: true,
     range: [0, 1, 2, 3].map(i => d3.schemeCategory10[i]),
     domain: [
-      "Min. Sale Price",
-      "Max. Retirement Price",
+      "Sale Price",
+      "Retirement Price",
       stringPriceSaleCurrent,
       stringPriceRetirementCurrent,
       stringPriceDesired,
@@ -303,4 +338,10 @@ Plot.plot({
     }),
   ],
 })
+```
+
+```js
+const inputTogglePriceRetirement = view(viewTogglePriceRetirement);
+const inputTogglePriceSaleTx = view(viewTogglePriceSaleTx);
+const inputTogglePriceRetirementTx = view(viewTogglePriceRetirementTx);
 ```
