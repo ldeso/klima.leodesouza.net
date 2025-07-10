@@ -18,21 +18,21 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
 ## Interactive Simulation
 
 ```js
-const defaultAPrice = 1.0;
-const defaultCarbonPriceRemoval = 1.0;
-const defaultCarbonPriceNatureBased = 10.0;
-const defaultCarbonPriceAvoidance = 100.0;
-const defaultBarCRemoval = 1049.765;
-const defaultBarCNatureBased = 1107984.42;
-const defaultBarCAvoidance = 13556768.1;
-const defaultARemoval = 7e-5;
-const defaultANatureBased = 0.076;
-const defaultAAvoidance = 0.924;
+const defaultAPrice = 10.0;
+const defaultCarbonPriceRemoval = 140;
+const defaultCarbonPriceNatureBased = 15.0;
+const defaultCarbonPriceAvoidance = 0.16;
+const defaultBarCRemoval = 1050.0;
+const defaultBarCNatureBased = 1107984.0;
+const defaultBarCAvoidance = 13556768.0;
+const defaultARemoval = 0.00147;
+const defaultANatureBased = 0.183;
+const defaultAAvoidance = 0.022;
 const defaultGRemoval = 0.0;
 const defaultGNatureBased = 0.0;
 const defaultGAvoidance = 0.0;
-const defaultASupply = 2e7;
-const defaultTogglePriceRetirement = true;
+const defaultASupply = 1e7;
+const defaultTogglePriceRetirement = false;
 const defaultTogglePriceSaleTx = false;
 const defaultTogglePriceRetirementTx = false;
 
@@ -45,7 +45,7 @@ const viewASupply = Inputs.range([1e6, 1e10], {
 const viewAPrice = Inputs.range([1e-5, 1e3], {
   label: tex`\text{kVCM price (USD/kVCM)}`,
   step: 1e-5,
-  value: defaultCarbonPriceRemoval,
+  value: defaultAPrice,
   transform: Math.log,
 });
 const viewCarbonPrice = Inputs.range([1e-3, 1e9], {
@@ -64,6 +64,7 @@ const viewAi = Inputs.range([1e-5, 1], {
   label: tex`\text{Maximum kVCM allocation } A_i^\text{max}`,
   step: 1e-5,
   value: defaultARemoval,
+  transform: Math.log,
 });
 const viewGi = Inputs.range([0, 1], {
   label: tex`\text{K2 allocation } G_i`,
@@ -90,7 +91,7 @@ const viewSetNatureBased = Inputs.button(
 );
 
 const viewSetAvoidance = Inputs.button(
-  [["Renewables – Large Scale", () => {
+  [["Avoidance – Large Scale Renewables", () => {
     Util.setInput(viewCarbonPrice, defaultCarbonPriceAvoidance);
     Util.setInput(viewBarC, defaultBarCAvoidance);
     Util.setInput(viewAi, defaultAAvoidance);
@@ -143,7 +144,7 @@ display(viewReset);
 
 ### Results
 
-1. Current USD price
+1. ${stringPriceSaleCurrent} / tCO2eq
 
 2. Share kVCM that must be allocated to maintain price
 
@@ -284,7 +285,7 @@ Plot.plot({
   caption: "Carbon Price vs. Carbon Supply",
   color: {
     legend: true,
-    range: [0, 1, 2, 3].map(i => d3.schemeCategory10[i]),
+    range: [0, 1, 2, 3, 4].map(i => d3.schemeCategory10[i]),
     domain: [
       "Sale Price",
       "Retirement Price",
@@ -307,9 +308,13 @@ Plot.plot({
   clip: true,
   marks: [
     Plot.frame(),
-    // Plot.ruleX(paramPresentTonnes, { x: "supply", stroke: "string", strokeDasharray: 4 }),
-    // Plot.rectY(paramPresentTonnes, { x1: 1, x2: "supply", y1: 1e-2, y2: "price", fill: "string" }),
-    // Plot.ruleY(paramPresentTonnes, { x1: 1, x2: "supply", y: "price", stroke: "string" }),
+    Plot.ruleY(priceDesiredData, {
+      x1: 1e9,
+      x2: 1,
+      y: "price",
+      stroke: "key",
+      strokeDasharray: 4,
+    }),
     Plot.lineY(carbonPriceData, { x: "supply", y: "price", stroke: "key" }),
     Plot.dot(carbonPriceData2, { x: "supply", y: "price", fill: "key" }),
     // Plot.ruleX(carbonPriceData2, {
@@ -325,15 +330,6 @@ Plot.plot({
       x2: 1,
       y: "price",
       stroke: "key",
-      // strokeWidth : 2,
-      strokeDasharray: 4,
-    }),
-    Plot.ruleY(priceDesiredData, {
-      x1: 1e9,
-      x2: 1,
-      y: "price",
-      stroke: "key",
-      // strokeWidth : 2,
       strokeDasharray: 4,
     }),
   ],
