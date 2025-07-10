@@ -48,7 +48,7 @@ const viewAPrice = Inputs.range([1e-5, 1e3], {
   value: defaultAPrice,
   transform: Math.log,
 });
-const viewCarbonPrice = Inputs.range([1e-3, 1e9], {
+const viewCarbonPrice = Inputs.range([1e-3, 1e5], {
   label: tex`\text{Desired carbon price (USD/tCO2eq)}`,
   step: 1e-3,
   value: defaultCarbonPriceRemoval,
@@ -110,11 +110,11 @@ const viewTogglePriceRetirement = Inputs.toggle(
   { label: "Show retirement price", value: defaultTogglePriceRetirement }
 );
 const viewTogglePriceSaleTx = Inputs.toggle({
-  label: "Show sale price for various amounts",
+  label: "Show current price for various sales",
   value: defaultTogglePriceSaleTx,
 });
 const viewTogglePriceRetirementTx = Inputs.toggle({
-  label: "Show retirement price for various amounts",
+  label: "Show current price for various retirements",
   value: defaultTogglePriceRetirementTx,
 });
 ```
@@ -166,6 +166,16 @@ const vecCarbonPriceRetirement = vecBarCi.map(paramBarCi => {
   }
 });
 
+const vecCarbonPriceSaleMax = vecBarCi.map(paramBarCi => {
+  const paramDeltaTonnes = 1e-10;
+  return inputAPrice * inputASupply * Form.computeTrueDeltaA(
+    1,
+    inputGi,
+    paramBarCi,
+    paramDeltaTonnes,
+  ) / paramDeltaTonnes;
+});
+
 const vecCarbonPriceSaleTx = vecBarCi.map(paramBarCi => {
   const paramDeltaTonnes = paramBarCi - inputBarC;
   if (paramDeltaTonnes > 0 && inputTogglePriceSaleTx) {
@@ -206,6 +216,13 @@ const paramPriceRetirementCurrent = inputAPrice * inputASupply * Form.computeDel
   -1e-10 / inputBarC,
 ) / 1e-10;
 
+const paramPriceSaleCurrentMax = inputAPrice * inputASupply * Form.computeTrueDeltaA(
+  1,
+  inputGi,
+  inputBarC,
+  1e-10,
+) / 1e-10;
+
 // const stringPriceSaleCurrent = "Current Sale Price";
 // const stringPriceRetirementCurrent = "Current Retirement Price";
 const stringPriceSaleCurrent = `Current Sale Price: ${
@@ -226,29 +243,51 @@ const stringPriceDesired = `Desired Price: ${
     { maximumSignificantDigits: 3 },
   )
 } USD`;
+const stringPriceReachable = `Reachable Price: ${
+  paramPriceSaleCurrentMax.toLocaleString(
+    "en-GB",
+    { maximumSignificantDigits: 3 },
+  )
+} USD`;
 
-const carbonPriceData2 = [
-  { key: "Sale Price", price: paramPriceSaleCurrent, supply: inputBarC },
+const priceCurrentData = [
+  { key: "Sales", price: paramPriceSaleCurrent, supply: inputBarC },
   // { key: stringPriceRetirementCurrent, price: paramPriceRetirementCurrent, supply: inputBarC },
 ];
 if (inputTogglePriceRetirement || inputTogglePriceRetirementTx) {
-  carbonPriceData2.push({
-    key: "Retirement Price",
+  priceCurrentData.push({
+    key: "Retirements",
     price: paramPriceRetirementCurrent,
     supply: inputBarC,
   })
 }
 
+const priceSaleMaxData = [];
+for (let i = 0; i < vecBarCi.length; i++) {
+  priceSaleMaxData.push({
+    key: "Max. Allocation",
+    price: vecCarbonPriceSaleMax[i],
+    supply: vecBarCi[i],
+  });
+}
+
+const priceCurrentMinMaxData = [{
+  key: stringPriceReachable,
+  price: paramPriceSaleCurrentMax,
+  current: paramPriceSaleCurrent,
+  supply: inputBarC,
+}];
+
 const priceDesiredData = [{ key: stringPriceDesired, price: inputCarbonPrice }];
 
-const carbonPriceData = [];
+const priceData = [];
 for (let i = 0; i < vecBarCi.length; i++) {
-  carbonPriceData.push({
+  priceData.push({
     key: stringPriceSaleCurrent,
     price: vecCarbonPriceSaleTx[i],
     supply: vecBarCi[i],
   });
-  carbonPriceData.push({
+  priceData.push({
     key: stringPriceRetirementCurrent,
     price: vecCarbonPriceRetirementTx[i],
     supply: vecBarCi[i],
@@ -256,23 +295,23 @@ for (let i = 0; i < vecBarCi.length; i++) {
 }
 
 for (let i = 0; i < vecBarCi.length; i++) {
-  carbonPriceData.push({
-    key: "Sale Price",
+  priceData.push({
+    key: "Sales",
     price: vecCarbonPriceSale[i],
     supply: vecBarCi[i],
   });
   // if (inputTogglePriceRetirementTx) {
-    carbonPriceData.push({
-      key: "Retirement Price",
+    priceData.push({
+      key: "Retirements",
       price: vecCarbonPriceRetirement[i],
       supply: vecBarCi[i],
     });
   // }
 }
-const legendStrings = ["Sale Price"];
+const legendStrings = ["Sales"];
 const legendColors = [0];
 if (inputTogglePriceRetirement || inputTogglePriceRetirementTx) {
-  legendStrings.push("Retirement Price");
+  legendStrings.push("Retirements");
   legendColors.push(1);
 }
 if (inputTogglePriceSaleTx) {
@@ -285,6 +324,10 @@ if (inputTogglePriceRetirementTx) {
 }
 legendStrings.push(stringPriceDesired);
 legendColors.push(4);
+legendStrings.push(stringPriceReachable);
+legendColors.push(5);
+// legendStrings.push("Max. Allocation");
+// legendColors.push(6);
 ```
 
 ```js
@@ -316,9 +359,16 @@ Plot.plot({
       stroke: "key",
       strokeDasharray: 4,
     }),
-    Plot.lineY(carbonPriceData, { x: "supply", y: "price", stroke: "key" }),
-    Plot.dot(carbonPriceData2, { x: "supply", y: "price", fill: "key" }),
-    // Plot.ruleX(carbonPriceData2, {
+    Plot.lineY(priceData, { x: "supply", y: "price", stroke: "key" }),
+    Plot.arrow(priceCurrentMinMaxData, {
+      x: "supply",
+      y1: "current",
+      y2: "price",
+      stroke: "key",
+      // strokeDasharray: 4,
+    }),
+    Plot.dot(priceCurrentData, { x: "supply", y: "price", fill: "key" }),
+    // Plot.ruleX(priceCurrentData, {
     //   x: "supply",
     //   y1: 1e-3,
     //   y2: "price",
@@ -326,12 +376,12 @@ Plot.plot({
     //   strokeWidth : 2,
     //   strokeDasharray: 3,
     // }),
-    // Plot.ruleY(carbonPriceData2, {
-    //   x1: "supply",
-    //   x2: 1,
+    // Plot.lineY(priceSaleMaxData, {
+    //   x: "supply",
     //   y: "price",
     //   stroke: "key",
-    //   strokeDasharray: 4,
+    //   strokeWidth : 1,
+    //   // strokeDasharray: 3,
     // }),
   ],
 })
