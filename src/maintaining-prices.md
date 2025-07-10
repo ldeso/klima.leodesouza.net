@@ -325,13 +325,13 @@ Plot.plot({
     //   strokeWidth : 2,
     //   strokeDasharray: 3,
     // }),
-    Plot.ruleY(carbonPriceData2, {
-      x1: "supply",
-      x2: 1,
-      y: "price",
-      stroke: "key",
-      strokeDasharray: 4,
-    }),
+    // Plot.ruleY(carbonPriceData2, {
+    //   x1: "supply",
+    //   x2: 1,
+    //   y: "price",
+    //   stroke: "key",
+    //   strokeDasharray: 4,
+    // }),
   ],
 })
 ```
