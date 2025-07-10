@@ -243,7 +243,7 @@ const stringPriceDesired = `Desired Price: ${
     { maximumSignificantDigits: 3 },
   )
 } USD`;
-const stringPriceReachable = `Reachable Price: ${
+const stringPriceReachable = `Maximum Price: ${
   paramPriceSaleCurrentMax.toLocaleString(
     "en-GB",
     { maximumSignificantDigits: 3 },
