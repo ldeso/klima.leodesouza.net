@@ -428,7 +428,7 @@ const stringRequiredAi = (() => {
 })();
 ```
 
-## Results
+## Result
 
 1. ${stringPriceDesired}/tCO2eq (${stringPriceSaleCurrent}/tCO2eq)
 
@@ -481,3 +481,11 @@ all carbon classes will increase and decrease regularly.
     - If carbon is regularly overpriced, there will be a regularly creation of
     new kVCM tokens. **This may dilute the share of kVCM tokens owned by the Klima
     Foundation.**
+
+## Questions
+
+1. How does the changing supply of kVCM tokens affect carbon price after a
+carbon sale or retirement?
+
+2. How many kVCM tokens have to be created from carbon sales to significantly
+dilute the share of kVCM owned by the Klima Foundation?
