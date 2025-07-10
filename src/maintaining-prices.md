@@ -203,25 +203,25 @@ const vecCarbonPriceRetirementTx = vecBarCi.map(paramBarCi => {
   }
 });
 
-const paramPriceSaleCurrent = inputAPrice * inputASupply * Form.computeTrueDeltaA(
+const paramPriceSaleCurrent = Form.computeTrueDeltaA(
   inputAi,
   inputGi,
   inputBarC,
   1e-10,
-) / 1e-10;
+) * inputAPrice * inputASupply / 1e-10;
 
-const paramPriceRetirementCurrent = inputAPrice * inputASupply * Form.computeDeltaARetirement(
+const paramPriceRetirementCurrent = Form.computeDeltaARetirement(
   inputAi,
   inputGi,
   -1e-10 / inputBarC,
-) / 1e-10;
+) * inputAPrice * inputASupply / 1e-10;
 
-const paramPriceSaleCurrentMax = inputAPrice * inputASupply * Form.computeTrueDeltaA(
+const paramPriceSaleCurrentMax = Form.computeTrueDeltaA(
   1,
   inputGi,
   inputBarC,
   1e-10,
-) / 1e-10;
+) * inputAPrice * inputASupply / 1e-10;
 
 // const stringPriceSaleCurrent = "Current Sale Price";
 // const stringPriceRetirementCurrent = "Current Retirement Price";
@@ -252,7 +252,6 @@ const stringPriceReachable = `Reachable Price: ${
 
 const priceCurrentData = [
   { key: "Sales", price: paramPriceSaleCurrent, supply: inputBarC },
-  // { key: stringPriceRetirementCurrent, price: paramPriceRetirementCurrent, supply: inputBarC },
 ];
 if (inputTogglePriceRetirement || inputTogglePriceRetirementTx) {
   priceCurrentData.push({
@@ -341,12 +340,15 @@ Plot.plot({
   x: {
     type: "log",
     label: "Carbon Supply (tCO2eq)",
-    domain: [10, 1e9],
+    domain: [10, 1e8],
+    // domain: [1e4, 1e8],
   },
   y: {
     type: "log",
     label: "Carbon Price (USD/tCO2eq)",
     domain: [1e-3, 1e5],
+    // domain: [1e-3, 1e2],
+    grid: true,
   },
   insetTop: 16,
   clip: true,
@@ -393,11 +395,35 @@ const inputTogglePriceSaleTx = view(viewTogglePriceSaleTx);
 const inputTogglePriceRetirementTx = view(viewTogglePriceRetirementTx);
 ```
 
+```js
+function computeAi(deltaA, deltaC) {
+  const logRatio = Math.log1p(deltaA) / Math.log1p(deltaC);
+  if (logRatio > 0.5) {
+    return -1;
+  } else {
+    return 1 - Math.sqrt(4 - 8 * logRatio) / 2;
+  }
+}
+```
+
+```js
+const deltaC = 1e-10;
+const deltaA = inputCarbonPrice * deltaC * inputBarC / (inputAPrice * inputASupply);
+const requiredShare = computeAi(deltaA, deltaC);
+const stringRequiredAi = (() => {
+  if (requiredShare === -1) {
+    return "Impossible!";
+  } else {
+    return requiredShare.toLocaleString(
+      "en-GB",
+      { maximumSignificantDigits: 3 },
+    )
+  }
+})();
+```
+
 ## Results
 
 1. ${stringPriceSaleCurrent} / tCO2eq
 
-2. Share of kVCM that must be allocated to reach desired price: __
-
-3. "The protocol can maintain the desired price for transactions up to
-___ tCO2eq by allocating __% more kVCM."
+2. Share of kVCM that must be allocated to reach desired price: ${stringRequiredAi}
