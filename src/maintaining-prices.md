@@ -110,11 +110,11 @@ const viewTogglePriceRetirement = Inputs.toggle(
   { label: "Show retirement price", value: defaultTogglePriceRetirement }
 );
 const viewTogglePriceSaleTx = Inputs.toggle({
-  label: "Show current price for various sales",
+  label: "Show various sales price at current supply",
   value: defaultTogglePriceSaleTx,
 });
 const viewTogglePriceRetirementTx = Inputs.toggle({
-  label: "Show current price for various retirements",
+  label: "Show various retirement prices at current supply",
   value: defaultTogglePriceRetirementTx,
 });
 ```
@@ -225,25 +225,25 @@ const paramPriceSaleCurrentMax = Form.computeTrueDeltaA(
 
 // const stringPriceSaleCurrent = "Current Sale Price";
 // const stringPriceRetirementCurrent = "Current Retirement Price";
-const stringPriceSaleCurrent = `Current Sale Price: ${
+const stringPriceSaleCurrent = `Current price: ${
   paramPriceSaleCurrent.toLocaleString(
     "en-GB",
     { maximumSignificantDigits: 3 },
   )
 } USD`;
-const stringPriceRetirementCurrent = `Current Retirement Price: ${
+const stringPriceRetirementCurrent = `Current retirement price: ${
   paramPriceRetirementCurrent.toLocaleString(
     "en-GB",
     { maximumSignificantDigits: 3 },
   )
 } USD`;
-const stringPriceDesired = `Desired Price: ${
+const stringPriceDesired = `Desired price: ${
   inputCarbonPrice.toLocaleString(
     "en-GB",
     { maximumSignificantDigits: 3 },
   )
 } USD`;
-const stringPriceReachable = `Maximum Price: ${
+const stringPriceReachable = `Maximum price: ${
   paramPriceSaleCurrentMax.toLocaleString(
     "en-GB",
     { maximumSignificantDigits: 3 },
@@ -397,18 +397,21 @@ const inputTogglePriceRetirementTx = view(viewTogglePriceRetirementTx);
 
 ```js
 function computeAi(deltaA, deltaC) {
+  // const Gm1squared = (1 - Gi)^2;
   const logRatio = Math.log1p(deltaA) / Math.log1p(deltaC);
   if (logRatio > 0.5) {
     return -1;
   } else {
-    return 1 - Math.sqrt(4 - 8 * logRatio) / 2;
+    return 1 - Math.sqrt(1 - 2 * logRatio);
+    // return (1 - Math.sqrt(1 - 2 * Gm1squared * logRatio)) / Gm1squared;
   }
 }
 ```
 
 ```js
 const deltaC = 1e-10;
-const deltaA = inputCarbonPrice * deltaC * inputBarC / (inputAPrice * inputASupply);
+const deltaA = inputCarbonPrice * deltaC * inputBarC /
+        (inputAPrice * inputASupply);
 const requiredShare = computeAi(deltaA, deltaC);
 const stringRequiredAi = (() => {
   if (requiredShare === -1) {
@@ -416,7 +419,7 @@ const stringRequiredAi = (() => {
   } else {
     return requiredShare.toLocaleString(
       "en-GB",
-      { maximumSignificantDigits: 3 },
+      { style: "percent", maximumSignificantDigits: 3 },
     )
   }
 })();
@@ -424,6 +427,54 @@ const stringRequiredAi = (() => {
 
 ## Results
 
-1. ${stringPriceSaleCurrent} / tCO2eq
+1. ${stringPriceDesired}/tCO2eq (${stringPriceSaleCurrent}/tCO2eq)
 
-2. Share of kVCM that must be allocated to reach desired price: ${stringRequiredAi}
+3. Allocation needed to reach the desired price: ${stringRequiredAi} of kVCM tokens
+
+## Analysis
+
+The protocol prices a carbon class based on how many tonnes of this class are
+held in the portfolio. Looking at three carbon classes, we observe the
+following:
+
+1. To reach a desired price, each carbon class requires a different amount of
+kVCM allocated. The REDD+ class requires roughly 10 times more kVCM allocations
+than the large scale renewable class, which requires roughly 10 times more than
+the BCHAR class.
+
+2. **Overpriced carbon scenario:** If the kVCM token price increases, the price
+of all carbon classes will increase. This is expected to lead to higher volumes
+of carbon sold to the protocol, and therefore to an increase in the total kVCM
+supply.
+
+    - In an ideal scenario where the foundation would control all kVCM tokens,
+    it would always be able to reduce the price of carbon classes by lowering
+    its kVCM allocations.
+
+    - If too many kVCM tokens remain allocated to an overpriced carbon class,
+    arbitrages will cause carbon prices to slowly come back to an equilibrium
+    as the number of tonnes in the portfolio increases.
+
+3. **Underpriced carbon scenario:** If the kVCM token price decreases, the price
+of all carbon classes will decrease, which is expected to reduce the volume of
+cabon sold to the protocol, and therefore reduce the creation of new kVCM
+tokens.
+
+    - Increasing kVCM allocations to underpriced carbon classes is not always
+    possible; there is even a theoretical maximum price reached when
+    100% of kVCM tokens are allocated to a carbon class.
+
+    - If not enough kVCM tokens are allocated to an underpriced carbon class,
+    its price is only able to come back to an equilibrium if the number of
+    tonnes in the portfolio decreases. This can happen with carbon retirements
+    or very slowly with liquid carbon yield.
+
+4. **kVCM mint & burn cycle:** If the kVCM token price oscillates, the price of
+all carbon classes will increase and decrease regularly.
+
+    - If kVCM token holders are able to modify their allocations fast enough to
+    maintain accurate carbon prices, arbitrages will be avoided.
+
+    - If carbon is regularly overpriced, there will be a regularly creation of
+    new kVCM tokens. **This may dilute the share of kVCM tokens owned by the Klima
+    Foundation.**
