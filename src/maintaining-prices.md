@@ -18,6 +18,7 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
 ## Interactive Simulation
 
 ```js
+const defaultASupply = 1.5e7;
 const defaultAPrice = 10.0;
 const defaultCarbonPriceRemoval = 140;
 const defaultCarbonPriceNatureBased = 15.0;
@@ -25,49 +26,48 @@ const defaultCarbonPriceAvoidance = 0.16;
 const defaultBarCRemoval = 1050.0;
 const defaultBarCNatureBased = 1107984.0;
 const defaultBarCAvoidance = 13556768.0;
-const defaultARemoval = 0.00147;
-const defaultANatureBased = 0.183;
-const defaultAAvoidance = 0.022;
+const defaultARemoval = 0.00098;
+const defaultANatureBased = 0.118;
+const defaultAAvoidance = 0.0146;
 const defaultGRemoval = 0.0;
 const defaultGNatureBased = 0.0;
 const defaultGAvoidance = 0.0;
-const defaultASupply = 1e7;
 const defaultTogglePriceRetirement = false;
 const defaultTogglePriceSaleTx = false;
 const defaultTogglePriceRetirementTx = false;
 
 const viewASupply = Inputs.range([1e6, 1e10], {
-  label: tex`\text{kVCM supply}`,
+  label: "kVCM supply",
   step: 1,
   value: defaultASupply,
   transform: Math.log,
 });
 const viewAPrice = Inputs.range([1e-5, 1e3], {
-  label: tex`\text{kVCM price (USD/kVCM)}`,
+  label: "kVCM price (USD/kVCM)",
   step: 1e-5,
   value: defaultAPrice,
   transform: Math.log,
 });
 const viewCarbonPrice = Inputs.range([1e-3, 1e5], {
-  label: tex`\text{Desired carbon price (USD/tCO2eq)}`,
+  label: "Desired carbon price (USD/tCO2eq)",
   step: 1e-3,
   value: defaultCarbonPriceRemoval,
   transform: Math.log,
 });
 const viewBarC = Inputs.range([1, 1e9], {
-  label: tex`\text{Initial carbon supply } \bar C_i`,
+  label: "Initial carbon supply",
   step: 1,
   value: defaultBarCRemoval,
   transform: Math.log,
 });
 const viewAi = Inputs.range([1e-5, 1], {
-  label: tex`\text{Maximum kVCM allocation } A_i^\text{max}`,
+  label: "kVCM allocation",
   step: 1e-5,
   value: defaultARemoval,
   transform: Math.log,
 });
 const viewGi = Inputs.range([0, 1], {
-  label: tex`\text{K2 allocation } G_i`,
+  label: "K2 allocation",
   step: 1e-3,
   value: defaultGRemoval,
 });
