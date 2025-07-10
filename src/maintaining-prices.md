@@ -54,7 +54,7 @@ const viewCarbonPrice = Inputs.range([1e-3, 1e5], {
   value: defaultCarbonPriceRemoval,
   transform: Math.log,
 });
-const viewBarC = Inputs.range([1, 1e9], {
+const viewBarC = Inputs.range([10, 1e9], {
   label: "Initial carbon supply",
   step: 1,
   value: defaultBarCRemoval,
