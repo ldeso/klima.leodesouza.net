@@ -429,7 +429,7 @@ const stringRequiredAi = (() => {
 
 1. ${stringPriceDesired}/tCO2eq (${stringPriceSaleCurrent}/tCO2eq)
 
-3. Allocation needed to reach the desired price: ${stringRequiredAi} of kVCM tokens
+3. kVCM allocation needed to reach the desired price: ${stringRequiredAi}
 
 ## Analysis
 
