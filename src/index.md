@@ -2458,7 +2458,7 @@ The residual share, ${tex`1 - λ_{GG}`}, is split between the liquidity pools:
 <div id="equation-25">
 
 ```tex
-\lambda_G = \frac{2 A_G}{2 A_G + A_Q \sqrt 2} \tag{25}
+\lambda_G = (1 - \lambda_{GG}) \frac{2 A_G}{2 A_G + A_Q \sqrt 2} \tag{25}
 ```
 
 </div>
@@ -2468,7 +2468,7 @@ For completeness:
 <div id="equation-26">
 
 ```tex
-\lambda_Q = 1 - \lambda_G \tag{26}
+\lambda_Q = 1 - \lambda_{GG} - \lambda_G \tag{26}
 ```
 
 </div>
@@ -2479,13 +2479,13 @@ for (let paramAG = 0; paramAG < 1.01; paramAG += 0.1) {
   for (let paramAQ = 0; paramAQ < 1.01; paramAQ += 0.1) {
     if (paramAG + paramAQ < 1.01) {
       lambdaGQData.push({
-        key: "𝗔𝗚 Liquidity Pool Share",
+        key: "Relative 𝗔𝗚 Liquidity Pool Share",
         aq: paramAQ,
         ag: paramAG,
         value: Form.computeLambdaG(paramAQ, paramAG),
       });
       lambdaGQData.push({
-        key: "𝗔𝗤 Liquidity Pool Share",
+        key: "Relative 𝗔𝗤 Liquidity Pool Share",
         aq: paramAQ,
         ag: paramAG,
         value: Form.computeLambdaQ(paramAQ, paramAG),
@@ -2501,9 +2501,9 @@ for (let paramAG = 0; paramAG < 1.01; paramAG += 0.1) {
 
 ```js
 const plotLambdaGQ = Plot.plot({
-  caption: html`<span class="u-overline"><strong>AG</strong></span>
+  caption: html`Relative <span class="u-overline"><strong>AG</strong></span>
     and <span class="u-overline"><strong>AQ</strong></span>&nbsp;Liquidity Pools
-    Shares&nbsp;${tex`\lambda_G`} and&nbsp;${tex`\lambda_G`}`,
+    Shares`,
   aspectRatio: 1,
   color: {
     legend: true,
