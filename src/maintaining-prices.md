@@ -18,24 +18,78 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
 ## Interactive Simulation
 
 ```js
-const defaultASupply = 1.5e7;
-const defaultAPrice = 10.0;
-const defaultCarbonPriceRemoval = 140;
-const defaultCarbonPriceNatureBased = 15.0;
-const defaultCarbonPriceAvoidance = 0.16;
-const defaultBarCRemoval = 1050.0;
-const defaultBarCNatureBased = 1107984.0;
-const defaultBarCAvoidance = 13556768.0;
-const defaultARemoval = 0.00098;
-const defaultANatureBased = 0.118;
-const defaultAAvoidance = 0.0146;
-const defaultGRemoval = 0.0;
-const defaultGNatureBased = 0.0;
-const defaultGAvoidance = 0.0;
+function computeAi(deltaA, deltaC, Gi) {
+  // const Gm1squared = (1 - Gi)^2;
+  const logRatio = Math.log1p(deltaA) / Math.log1p(deltaC);
+  if (logRatio > 0.5) {
+    return -1;
+  } else {
+    return 1 - Math.sqrt(1 - 2 * logRatio);
+    // return (1 - Math.sqrt(1 - 2 * Gm1squared * logRatio)) / Gm1squared;
+  }
+}
+```
+
+```js
+const carbonClasses = [
+  {
+    name: "OAE (Removal – High Durability)",
+    price: 700,
+    liquidity: 14,
+    kvcm: 0.00013,
+    k2: 0,
+  },
+  {
+    name: "BCHAR (Removal – Biochar)",
+    price: 150,
+    liquidity: 1050,
+    kvcm: 0.00209,
+    k2: 0,
+  },
+  {
+    name: "Mangrove Restoration (NBS – Removal)",
+    price: 35,
+    liquidity: 1063,
+    kvcm: 0.000494,
+    k2: 0,
+  },
+  {
+    name: "REDD+ (NBS – Mitigation/Avoidance)",
+    price: 1.5,
+    liquidity: 1107984,
+    kvcm: 0.0223,
+    k2: 0,
+  },
+  {
+    name: "IFM (NBS – Mitigation/Avoidance)",
+    price: 1.2,
+    liquidity: 298455,
+    kvcm: 0.00477,
+    k2: 0,
+  },
+  {
+    name: "Landfill Gas (Avoidance – Other)",
+    price: 0.9,
+    liquidity: 96234,
+    kvcm: 0.00115,
+    k2: 0,
+  },
+  {
+    name: "Renewables – Large Scale (Avoidance – Other)",
+    price: 0.5,
+    liquidity: 13556768,
+    kvcm: 0.0945,
+    k2: 0,
+  },
+]
+const defaultASupply = d3.sum(carbonClasses, d => d.liquidity);
+const defaultAPrice = 0.6;
 const defaultTogglePriceRetirement = false;
 const defaultTogglePriceSaleTx = false;
 const defaultTogglePriceRetirementTx = false;
+```
 
+```js
 const viewASupply = Inputs.range([1e6, 1e10], {
   label: "kVCM supply",
   step: 1,
@@ -51,54 +105,49 @@ const viewAPrice = Inputs.range([1e-5, 1e3], {
 const viewCarbonPrice = Inputs.range([1e-3, 1e5], {
   label: "Desired carbon price (USD/tCO2eq)",
   step: 1e-3,
-  value: defaultCarbonPriceRemoval,
+  value: carbonClasses[6].price,
   transform: Math.log,
 });
 const viewBarC = Inputs.range([10, 1e9], {
   label: "Current carbon supply",
   step: 1,
-  value: defaultBarCRemoval,
+  value: carbonClasses[6].liquidity,
   transform: Math.log,
 });
 const viewAi = Inputs.range([1e-5, 1], {
   label: "kVCM allocation",
   step: 1e-5,
-  value: defaultARemoval,
+  value: carbonClasses[6].kvcm,
   transform: Math.log,
 });
 const viewGi = Inputs.range([0, 1], {
   label: "K2 allocation",
   step: 1e-3,
-  value: defaultGRemoval,
+  value: carbonClasses[6].k2,
 });
+```
 
-const viewSetRemoval = Inputs.button(
-  [["Removal – BCHAR", () => {
-    Util.setInput(viewCarbonPrice, defaultCarbonPriceRemoval);
-    Util.setInput(viewBarC, defaultBarCRemoval);
-    Util.setInput(viewAi, defaultARemoval);
-    Util.setInput(viewGi, defaultGRemoval);
-  }]],
-);
+```js
+const viewButtons = carbonClasses.map(({ name, price, liquidity, kvcm, k2}) =>
+  Inputs.button(
+    [[name, () => {
+      const deltaC = 1e-10;
+      const deltaA = price * deltaC * liquidity / (inputAPrice * inputASupply);
+      const paramAi = computeAi(deltaA, deltaC, inputGi);
+      Util.setInput(viewCarbonPrice, price);
+      Util.setInput(viewBarC, liquidity);
+      if (paramAi == -1) {
+        Util.setInput(viewAi, 1);
+      } else {
+        Util.setInput(viewAi, paramAi);
+      }
+      // Util.setInput(viewGi, k2);
+    }]]
+  )
+)
+```
 
-const viewSetNatureBased = Inputs.button(
-  [["Nature Based Solutions – REDD+", () => {
-    Util.setInput(viewCarbonPrice, defaultCarbonPriceNatureBased);
-    Util.setInput(viewBarC, defaultBarCNatureBased);
-    Util.setInput(viewAi, defaultANatureBased);
-    Util.setInput(viewGi, defaultGNatureBased);
-  }]],
-);
-
-const viewSetAvoidance = Inputs.button(
-  [["Avoidance – Large Scale Renewables", () => {
-    Util.setInput(viewCarbonPrice, defaultCarbonPriceAvoidance);
-    Util.setInput(viewBarC, defaultBarCAvoidance);
-    Util.setInput(viewAi, defaultAAvoidance);
-    Util.setInput(viewGi, defaultGAvoidance);
-  }]],
-);
-
+```js
 const viewReset = Inputs.button(
   [["Reset", () => {
     Util.setInput(viewAPrice, defaultAPrice);
@@ -120,11 +169,9 @@ const viewTogglePriceRetirementTx = Inputs.toggle({
 ```
 
 ```js
-display(viewAPrice);
-display(viewCarbonPrice);
-display(viewSetRemoval);
-display(viewSetNatureBased);
-display(viewSetAvoidance);
+for (const viewButton of viewButtons) {
+  display(viewButton);
+}
 ```
 
 ```js
@@ -349,7 +396,7 @@ Plot.plot({
   y: {
     type: "log",
     label: "Carbon Price (USD/tCO2eq)",
-    domain: [1e-3, 1e5],
+    domain: [1e-2, 1e7],
     // domain: [1e-3, 1e2],
     grid: true,
   },
@@ -399,23 +446,10 @@ const inputTogglePriceRetirementTx = view(viewTogglePriceRetirementTx);
 ```
 
 ```js
-function computeAi(deltaA, deltaC) {
-  // const Gm1squared = (1 - Gi)^2;
-  const logRatio = Math.log1p(deltaA) / Math.log1p(deltaC);
-  if (logRatio > 0.5) {
-    return -1;
-  } else {
-    return 1 - Math.sqrt(1 - 2 * logRatio);
-    // return (1 - Math.sqrt(1 - 2 * Gm1squared * logRatio)) / Gm1squared;
-  }
-}
-```
-
-```js
 const deltaC = 1e-10;
 const deltaA = inputCarbonPrice * deltaC * inputBarC /
         (inputAPrice * inputASupply);
-const requiredShare = computeAi(deltaA, deltaC);
+const requiredShare = computeAi(deltaA, deltaC, inputGi);
 const stringRequiredAi = (() => {
   if (requiredShare === -1) {
     return "Impossible!";
@@ -432,7 +466,28 @@ const stringRequiredAi = (() => {
 
 1. ${stringPriceDesired}/tCO2eq (${stringPriceSaleCurrent}/tCO2eq)
 
-3. kVCM allocation needed to reach the desired price: ${stringRequiredAi}
+2. kVCM allocation needed to reach the desired price: ${stringRequiredAi}
+
+3. Mean carbon price: ${(d3.sum(
+  carbonClasses,
+  d => d.price * d.liquidity,
+) / d3.sum(carbonClasses, d => d.liquidity)).toLocaleString(
+  "en-GB",
+  { maximumSignificantDigits: 3 },
+)} USD/tCO2eq
+
+4. Total carbon value: ${d3.sum(
+  carbonClasses,
+  d => d.price * d.liquidity,
+).toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+)} USD
+
+4. kVCM market cap: ${(inputAPrice * inputASupply).toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+)} USD
 
 ## Analysis
 
