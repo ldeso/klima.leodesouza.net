@@ -76,9 +76,9 @@ const carbonClasses = [
   },
   {
     name: "Renewables – Large Scale (Avoidance – Other)",
-    price: 0.5,
+    price: 0.15,
     liquidity: 13556768,
-    kvcm: 0.0945,
+    kvcm: 0.25841,
     k2: 0,
   },
 ]
@@ -484,10 +484,31 @@ const stringRequiredAi = (() => {
   { maximumFractionDigits: 0 },
 )} USD
 
-4. kVCM market cap: ${(inputAPrice * inputASupply).toLocaleString(
+5. kVCM market cap: ${(inputAPrice * inputASupply).toLocaleString(
   "en-GB",
   { maximumFractionDigits: 0 },
 )} USD
+
+5. Total kVCM allocated: ${(() => {
+  const totalRequiredShare = d3.sum(carbonClasses, d => {
+    const deltaC = 1e-10;
+    const deltaA = d.price * deltaC * d.liquidity / (inputAPrice * inputASupply);
+    const requiredShare = computeAi(deltaA, deltaC, inputGi);
+    if (requiredShare === -1) {
+      return -1000000;
+    } else {
+      return requiredShare;
+    }
+  });
+  if (0 < totalRequiredShare && totalRequiredShare <= 1) {
+    return totalRequiredShare.toLocaleString(
+      "en-GB",
+      { style: "percent", maximumSignificantDigits: 3 },
+    );
+  } else {
+    return "Impossible!";
+  }
+})()}
 
 ## Analysis
 
