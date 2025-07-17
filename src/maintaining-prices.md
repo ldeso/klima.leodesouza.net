@@ -83,7 +83,7 @@ const carbonClasses = [
   },
 ]
 const defaultASupply = d3.sum(carbonClasses, d => d.liquidity);
-const defaultAPrice = 0.6;
+const defaultAPrice = 1.5;
 const defaultTogglePriceRetirement = false;
 const defaultTogglePriceSaleTx = false;
 const defaultTogglePriceRetirementTx = false;
