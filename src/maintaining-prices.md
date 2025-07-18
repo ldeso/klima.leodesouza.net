@@ -46,7 +46,7 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
 
   | Carbon Class         | tCO2eq       | USD/tCO2eq | kVCM       | K2      |
   |:-------------------- | ------------:| ----------:| ----------:| -------:|
-  | OAE                  |      700     |   700.00 $ |     0.022% |     0 % |
+  | OAE                  |       14     |   700.00 $ |     0.022% |     0 % |
   | BCHAR                |     1050     |   150.00 $ |     0.349% |     0 % |
   | Mangrove Restoration |     1063     |    35.00 $ |     0.082% |     0 % |
   | REDD+                |  1107984     |     1.50 $ |     3.748% |     0 % |
@@ -67,7 +67,7 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
 
   | Carbon Class         | tCO2eq       | USD/tCO2eq | kVCM       | K2      |
   |:-------------------- | ------------:| ----------:| ----------:| -------:|
-  | OAE                  |      700     |   165.66 $ |     0.022% |     0 % |
+  | OAE                  |       14     |   165.66 $ |     0.022% |     0 % |
   | BCHAR                |     1050     |    34.98 $ |     0.349% |     0 % |
   | Mangrove Restoration |     1063     |     8.13 $ |     0.082% |     0 % |
   | REDD+                |  1107984     |     0.35 $ |     3.748% |     0 % |
@@ -80,7 +80,7 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
 
   | Carbon Class         | tCO2eq       | USD/tCO2eq | kVCM        | K2      |
   |:-------------------- | ------------:| ----------:| -----------:| -------:|
-  | OAE                  |      700     |   700.00 $ |      0.093% |     0 % |
+  | OAE                  |       14     |   700.00 $ |      0.093% |     0 % |
   | BCHAR                |     1050     |   150.00 $ |      1.505% |     0 % |
   | Mangrove Restoration |     1063     |    35.00 $ |      0.354% |     0 % |
   | REDD+                |  1107984     |     1.50 $ |     17.252% |     0 % |
