@@ -15,6 +15,80 @@ import * as Util from "./components/util.js"
 
 _How easily can the Klima Foundation maintaining carbon prices after launch?_
 
+## Context
+
+- Net asset value: ${d3.sum(
+  carbonClasses,
+  d => d.price * d.liquidity,
+).toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+)} USD
+
+- Maximum allocated treasury-owned kVCM: ${(0.1 + 0.875 * 1337420.69 / 9839061.6).toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)}
+
+<!-- - Allocatable treasury share of K2: https://app.klimaprotocol.com/ -->
+
+## Results
+
+### Proposition 1: Large Market Cap
+
+- "Treasury kVCM allocations must be sufficient to price carbon classes"
+
+- Token price: 3 USD/kVCM
+
+- kVCM market cap: 45,184,704 USD
+
+- Treasury allocations:
+
+  | Carbon Class         | tCO2eq       | USD/tCO2eq | kVCM       | K2      |
+  |:-------------------- | ------------:| ----------:| ----------:| -------:|
+  | OAE                  |      700     |   700.00 $ |     0.022% |     0 % |
+  | BCHAR                |     1050     |   150.00 $ |     0.349% |     0 % |
+  | Mangrove Restoration |     1063     |    35.00 $ |     0.082% |     0 % |
+  | REDD+                |  1107984     |     1.50 $ |     3.748% |     0 % |
+  | IFM                  |   298455     |     1.20 $ |     0.796% |     0 % |
+  | Landfill Gas         |    96234     |     0.90 $ |     0.192% |     0 % |
+  | Renewables           | 13556768     |     0.15 $ |     4.607% |     0 % |
+  | **TOTAL**            | **15061568** | **0.29 $** | **9.796%** | **0 %** |
+
+### Proposition 2: Trust Users
+
+- "Market cap must stay close to net asset value"
+
+- Token price: 0.7 USD/kVCM
+
+- Market cap: 10,543,098 USD
+
+- Treasury allocations:
+
+  | Carbon Class         | tCO2eq       | USD/tCO2eq | kVCM       | K2      |
+  |:-------------------- | ------------:| ----------:| ----------:| -------:|
+  | OAE                  |      700     |   165.66 $ |     0.022% |     0 % |
+  | BCHAR                |     1050     |    34.98 $ |     0.349% |     0 % |
+  | Mangrove Restoration |     1063     |     8.13 $ |     0.082% |     0 % |
+  | REDD+                |  1107984     |     0.35 $ |     3.748% |     0 % |
+  | IFM                  |   298455     |     0.28 $ |     0.796% |     0 % |
+  | Landfill Gas         |    96234     |     0.21 $ |     0.192% |     0 % |
+  | Renewables           | 13556768     |     0.15 $ |     4.607% |     0 % |
+  | **TOTAL**            | **15061568** |            | **9.796%** | **0 %** |
+
+- Treasury allocations + user allocations:
+
+  | Carbon Class         | tCO2eq       | USD/tCO2eq | kVCM        | K2      |
+  |:-------------------- | ------------:| ----------:| -----------:| -------:|
+  | OAE                  |      700     |   700.00 $ |      0.093% |     0 % |
+  | BCHAR                |     1050     |   150.00 $ |      1.505% |     0 % |
+  | Mangrove Restoration |     1063     |    35.00 $ |      0.354% |     0 % |
+  | REDD+                |  1107984     |     1.50 $ |     17.252% |     0 % |
+  | IFM                  |   298455     |     1.20 $ |      3.457% |     0 % |
+  | Landfill Gas         |    96234     |     0.90 $ |      0.825% |     0 % |
+  | Renewables           | 13556768     |     0.04 $ |     21.626% |     0 % |
+  | **TOTAL**            | **15061568** | **0.29 $** | **45.111%** | **0 %** |
+
 ## Interactive Simulation
 
 ```js
@@ -278,7 +352,7 @@ const paramPriceSaleCurrentMax = Form.computeTrueDeltaA(
 const stringPriceSaleCurrent = `Current price: ${
   paramPriceSaleCurrent.toLocaleString(
     "en-GB",
-    { maximumSignificantDigits: 3 },
+    { minimumFractionDigits: 2, maximumFractionDigits: 2 },
   )
 } USD`;
 const stringPriceRetirementCurrent = `Current retirement price: ${
@@ -456,7 +530,7 @@ const stringRequiredAi = (() => {
   } else {
     return requiredShare.toLocaleString(
       "en-GB",
-      { style: "percent", maximumSignificantDigits: 3 },
+      { style: "percent", minimumFractionDigits: 3, maximumFractionDigits: 3 },
     )
   }
 })();
@@ -503,7 +577,7 @@ const stringRequiredAi = (() => {
   if (0 < totalRequiredShare && totalRequiredShare <= 1) {
     return totalRequiredShare.toLocaleString(
       "en-GB",
-      { style: "percent", maximumSignificantDigits: 3 },
+      { style: "percent", minimumFractionDigits: 3, maximumFractionDigits: 3 },
     );
   } else {
     return "Impossible!";
