@@ -83,7 +83,7 @@ const carbonClasses = [
   },
 ]
 const defaultASupply = d3.sum(carbonClasses, d => d.liquidity);
-const defaultAPrice = 1.5;
+const defaultAPrice = 3;
 const defaultTogglePriceRetirement = false;
 const defaultTogglePriceSaleTx = false;
 const defaultTogglePriceRetirementTx = false;
@@ -509,6 +509,11 @@ const stringRequiredAi = (() => {
     return "Impossible!";
   }
 })()}
+
+6. Treasury-owned kVCM: ${(0.1 + 0.875 * 1337420.69 / 9839061.6).toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)}
 
 ## Analysis
 
