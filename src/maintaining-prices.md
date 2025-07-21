@@ -73,7 +73,7 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
   | REDD+                |  1107984     |     0.35 $ |     3.748% |     0 % |
   | IFM                  |   298455     |     0.28 $ |     0.796% |     0 % |
   | Landfill Gas         |    96234     |     0.21 $ |     0.192% |     0 % |
-  | Renewables           | 13556768     |     0.15 $ |     4.607% |     0 % |
+  | Renewables           | 13556768     |     0.04 $ |     4.607% |     0 % |
   | **TOTAL**            | **15061568** |            | **9.796%** | **0 %** |
 
 - Treasury allocations + user allocations:
@@ -86,7 +86,7 @@ _How easily can the Klima Foundation maintaining carbon prices after launch?_
   | REDD+                |  1107984     |     1.50 $ |     17.252% |     0 % |
   | IFM                  |   298455     |     1.20 $ |      3.457% |     0 % |
   | Landfill Gas         |    96234     |     0.90 $ |      0.825% |     0 % |
-  | Renewables           | 13556768     |     0.04 $ |     21.626% |     0 % |
+  | Renewables           | 13556768     |     0.15 $ |     21.626% |     0 % |
   | **TOTAL**            | **15061568** | **0.29 $** | **45.111%** | **0 %** |
 
 ## Interactive Simulation
