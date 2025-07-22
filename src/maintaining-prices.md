@@ -449,8 +449,8 @@ legendStrings.push(stringPriceDesired);
 legendColors.push(4);
 legendStrings.push(stringPriceReachable);
 legendColors.push(5);
-// legendStrings.push("Max. Allocation");
-// legendColors.push(6);
+legendStrings.push("Target prices");
+legendColors.push(6);
 ```
 
 ```js
@@ -493,6 +493,7 @@ Plot.plot({
       stroke: "key",
       // strokeDasharray: 4,
     }),
+    Plot.dot(carbonClasses, { x: "liquidity", y: "price", fill: () => "Target prices" }),
     Plot.dot(priceCurrentData, { x: "supply", y: "price", fill: "key" }),
     // Plot.ruleX(priceCurrentData, {
     //   x: "supply",
