@@ -275,8 +275,8 @@ const stringASupply_ = inputASupply_.toLocaleString(
 const stringLiquidTonnes = inputLiquidTonnes.toLocaleString(
   "en-GB",
   {
-    minimumFractionDigits: Math.max(0, 2 - Util.numDigits(paramDeltaCiTonnes)),
-    maximumFractionDigits: Math.max(0, 2 - Util.numDigits(paramDeltaCiTonnes)),
+    minimumFractionDigits: Math.max(0, 5 - Util.numDigits(paramDeltaCiTonnes)),
+    maximumFractionDigits: Math.max(0, 5 - Util.numDigits(paramDeltaCiTonnes)),
   },
 ) + " tCO2eq";
 const stringABurnt = "−" + paramABurnt.toLocaleString(
@@ -289,8 +289,8 @@ const stringABurnt = "−" + paramABurnt.toLocaleString(
 const stringDeltaCiTonnes = "−" + paramDeltaCiTonnes.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(2, Util.numDigits(paramDeltaCiTonnes)),
-    maximumSignificantDigits: Math.max(2, Util.numDigits(paramDeltaCiTonnes)),
+    minimumSignificantDigits: Math.max(5, Util.numDigits(paramDeltaCiTonnes)),
+    maximumSignificantDigits: Math.max(5, Util.numDigits(paramDeltaCiTonnes)),
   },
 ) + " tCO2eq";
 const stringAPrice_ = "$" + paramAPrice_.toLocaleString(
