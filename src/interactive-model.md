@@ -45,27 +45,27 @@ const viewASupply = Inputs.range([1e6, 1e10], {
 const viewPresentTonnes = Inputs.range([0, 1e9], {
   label: tex`\bar C_i \text{ (present-value tonnes of class } i
     \text{ in AAM)}`,
-  step: 1,
+  step: 1e-3,
   value: defaultPresentTonnes,
-  transform: Ops.piecewiseLogTransform(),
-  invert: Ops.piecewiseLogInvert(),
+  transform: Ops.piecewiseLogTransform(1e-3),
+  invert: Ops.piecewiseLogInvert(1e-3),
 });
-const viewDeltaTonnes = Inputs.range([1e-1, 1e7], {
+const viewDeltaTonnes = Inputs.range([1e-3, 1e7], {
   label: tex`\text{Present-value tonnes bought by AAM}`,
-  step: 1e-1,
+  step: 1e-3,
   value: defaultDeltaTonnes,
   transform: Math.log,
 });
 const viewAi = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
-  step: 1e-3,
+  step: 1e-6,
   value: defaultAi,
-  transform: Ops.piecewiseLogTransform(1e-3),
-  invert: Ops.piecewiseLogInvert(1e-3),
+  transform: Ops.piecewiseLogTransform(1e-6),
+  invert: Ops.piecewiseLogInvert(1e-6),
 });
 const viewGi = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
-  step: 1e-3,
+  step: 1e-6,
   value: defaultGi,
 });
 const viewZeroCarbon = Inputs.button(
@@ -193,9 +193,9 @@ const viewASupply_ = Inputs.range([1e6, 1e10], {
   value: defaultASupply,
   transform: Math.log,
 });
-const viewLiquidTonnes = Inputs.range([1, 1e9], {
+const viewLiquidTonnes = Inputs.range([1e-3, 1e9], {
   label: tex`\text{Liquid tonnes of class } i \text{ in AAM}`,
-  step: 1,
+  step: 1e-3,
   value: defaultLiquidTonnes,
   transform: Math.log,
 });
@@ -207,14 +207,14 @@ const viewABurnt = Inputs.range([1e-1, 1e6], {
 });
 const viewAi_ = Inputs.range([0, 1], {
   label: tex`A_i \text{ (share of \textbf{A}~stake pricing class } i \text)`,
-  step: 1e-3,
+  step: 1e-6,
   value: defaultAi,
-  transform: Ops.piecewiseLogTransform(1e-3),
-  invert: Ops.piecewiseLogInvert(1e-3),
+  transform: Ops.piecewiseLogTransform(1e-6),
+  invert: Ops.piecewiseLogInvert(1e-6),
 });
 const viewGi_ = Inputs.range([0, 1], {
   label: tex`G_i \text{ (share of \textbf{G}~stake pricing class } i \text)`,
-  step: 1e-3,
+  step: 1e-6,
   value: defaultGi,
 });
 const viewUnweighed = Inputs.button(
