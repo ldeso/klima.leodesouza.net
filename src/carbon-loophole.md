@@ -13,7 +13,7 @@ import * as Util from "./components/util.js"
      href="#carbon-loophole">Carbon Loophole</a>
 </h1>
 
-_When is it worth it to retire carbon before selling carbon to the protocol?_
+_Is it worth it to pre-retire carbon before selling carbon to the protocol?_
 
 ## Interactive Simulation
 
@@ -42,8 +42,20 @@ const stringPriceSupply = "Price-Supply Curve";
 ```
 
 ```js
+const viewSaleNormal = Inputs.button([[stringSaleNormal, () =>
+  Util.setInput(viewDeltaCRetired, 0)
+]]);
+```
+
+```js
+const viewSaleBoosted = Inputs.button([[stringSaleBoosted, () =>
+  Util.setInput(viewDeltaCRetired, inputCInitial * 0.9)
+]]);
+```
+
+```js
 const viewCInitial = Inputs.range([1, 1e8], {
-  label: "Carbon class supply",
+  label: "Carbon supply",
   step: 1,
   value: defaultCInitial,
   transform: Math.log,
@@ -109,6 +121,13 @@ if (inputCInitial === defaultCInitial && inputASupply === defaultASupply &&
   viewReset.classList.add("u-hidden");
 } else {
   viewReset.classList.remove("u-hidden");
+}
+if (inputDeltaCRetired === 0) {
+  viewSaleNormal.classList.add("u-disabled");
+  viewSaleBoosted.classList.remove("u-disabled");
+} else {
+  viewSaleBoosted.classList.add("u-disabled");
+  viewSaleNormal.classList.remove("u-disabled");
 }
 ```
 
@@ -271,15 +290,13 @@ Plot.plot({
 ```
 
 ```js
-Inputs.button([[stringSaleNormal, () => Util.setInput(viewDeltaCRetired, 0)]])
+display(viewSaleNormal);
+display(viewSaleBoosted);
 ```
 
 ```js
-Inputs.button([[stringSaleBoosted, () => {
-  if (inputDeltaCRetired === 0) {
-    Util.setInput(viewDeltaCRetired, inputCInitial * 0.9);
-  }
-}]])
+const inputDeltaCRetired = view(viewDeltaCRetired);
+const inputDeltaCSold = view(viewDeltaCSold);
 ```
 
 ```js
@@ -288,11 +305,6 @@ const inputASupply = view(viewASupply);
 const inputAPrice = view(viewAPrice);
 const inputAi = view(viewAi);
 const inputGi = view(viewGi);
-```
-
-```js
-const inputDeltaCRetired = view(viewDeltaCRetired);
-const inputDeltaCSold = view(viewDeltaCSold);
 ```
 
 ```js
