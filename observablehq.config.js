@@ -15,6 +15,7 @@ export default {
     { name: "Carbon Selling Strategies", path: "/carbon-selling-strategies" },
     { name: "Smart Contract Review", path: "/smart-contract-review" },
     { name: "Maintaining Prices", path: "/maintaining-prices" },
+    { name: "Carbon Loophole", path: "/carbon-loophole" },
   ],
   toc: true,
   pager: false,
