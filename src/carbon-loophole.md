@@ -22,8 +22,12 @@ retire almost all the carbon that's already in the portfolio beforehand.
 
 ## How to Prevent this Scenario?
 
-- Modify the model?
 - Supervise the introduction of new carbon classes?
+
+- Modify the model to use a time-weighted average price instead of using an
+"instantaneous" price (similar to [Uniswap V2 price
+oracles](https://docs.uniswap.org/contracts/v2/concepts/core-concepts/oracles))?
+
 - Well-defined "open hours" when users can sell carbon, separate "open hours"
 when people can retire carbon, and "closed hours" when people can only adjust
 their allocations?
