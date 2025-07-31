@@ -54,7 +54,7 @@ export function logRange(start, end, density) {
   const logStart = Math.log10(start);
   const logEnd = Math.log10(end);
   const logSpan = logEnd - logStart;
-  const steps = Math.round(density*logSpan);
+  const steps = Math.max(1, Math.round(density * logSpan));
   return d3.range(steps + 1).map(i => Math.pow(10, i*logSpan/steps + logStart));
 }
 

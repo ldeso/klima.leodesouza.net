@@ -111,9 +111,9 @@ input[type="number"] {
   font-variant-numeric: tabular-nums;
 }
 
-.u-disabled {
+/* .u-disabled {
   display: none !important;
-}
+} */
 
 .u-hidden {
   visibility: hidden;

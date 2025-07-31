@@ -41,17 +41,17 @@ const stringProfitLoophole = "Pre-Retirement + Boosted Sale";
 const stringPriceSupply = "Price-Supply Curve";
 ```
 
-```js
+<!-- ```js
 const viewSaleNormal = Inputs.button([[stringSaleNormal, () =>
   Util.setInput(viewDeltaCRetired, 0)
 ]]);
-```
+``` -->
 
-```js
+<!-- ```js
 const viewSaleBoosted = Inputs.button([[stringSaleBoosted, () =>
   Util.setInput(viewDeltaCRetired, inputCInitial * 0.9)
 ]]);
-```
+``` -->
 
 ```js
 const viewCInitial = Inputs.range([1, 1e8], {
@@ -122,13 +122,13 @@ if (inputCInitial === defaultCInitial && inputASupply === defaultASupply &&
 } else {
   viewReset.classList.remove("u-hidden");
 }
-if (inputDeltaCRetired === 0) {
-  viewSaleNormal.classList.add("u-disabled");
-  viewSaleBoosted.classList.remove("u-disabled");
-} else {
-  viewSaleBoosted.classList.add("u-disabled");
-  viewSaleNormal.classList.remove("u-disabled");
-}
+// if (inputDeltaCRetired === 0) {
+//   viewSaleNormal.classList.add("u-disabled");
+//   viewSaleBoosted.classList.remove("u-disabled");
+// } else {
+//   viewSaleBoosted.classList.add("u-disabled");
+//   viewSaleNormal.classList.remove("u-disabled");
+// }
 ```
 
 ```js
@@ -237,7 +237,9 @@ const dotsData = [
   },
 ];
 
-const valueRetirement = -vecPriceRetirement[0] * inputDeltaCRetired;
+const valueRetirement = inputDeltaCRetired === 0 ? 0 : (
+  -vecPriceRetirement[0] * inputDeltaCRetired
+);
 const valueSaleLoophole = vecPriceSaleBoosted.at(-1) * inputDeltaCSold;
 const valueSaleDirect = inputAPrice * inputASupply * Form.computeTrueDeltaA(
   inputAi,
@@ -250,10 +252,7 @@ const barsData = [
   { key: stringSaleNormal, value: valueSaleDirect },
   { key: stringRetirement, value: valueRetirement },
   { key: stringSaleBoosted, value: valueSaleLoophole },
-  {
-    key: stringProfitLoophole,
-    value: valueSaleLoophole + (Number.isNaN(valueRetirement) ? 0 : valueRetirement),
-  },
+  { key: stringProfitLoophole, value: valueSaleLoophole + valueRetirement },
 ];
 ```
 
@@ -289,10 +288,10 @@ Plot.plot({
 })
 ```
 
-```js
+<!-- ```js
 display(viewSaleNormal);
 display(viewSaleBoosted);
-```
+``` -->
 
 ```js
 const inputDeltaCRetired = view(viewDeltaCRetired);
