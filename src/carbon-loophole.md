@@ -20,6 +20,14 @@ _Is it worth it to pre-retire carbon before selling carbon to the protocol?_
 When a users plans to sell carbon to the protocol, it is often very lucrative to
 retire almost all the carbon that's already in the portfolio beforehand.
 
+## How to Prevent this Scenario?
+
+- Modify the model?
+- Supervise the introduction of new carbon classes?
+- Well-defined "open hours" when users can sell carbon, separate "open hours"
+when people can retire carbon, and "closed hours" when people can only adjust
+their allocations?
+
 ## Interactive Simulation
 
 ```js
