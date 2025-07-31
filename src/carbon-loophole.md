@@ -52,7 +52,7 @@ const stringPriceSupply = "Price-Supply Curve";
 ```js
 const barCiMin = vecBarCiRetirement[0] / 10;
 const barCiMax = vecBarCiSaleNormal.at(-1) * 10;
-const priceMin = vecBarCiRetirement[0] === 0 ? (
+const priceMin = inputDeltaCRetired === 0 ? (
   vecPriceSaleNormal.at(-1) / 10
 ) : (
   Math.min(vecPriceRetirement[0], vecPriceSaleNormal.at(-1)) / 10
@@ -105,7 +105,7 @@ const viewGi = Inputs.range([0, 1], {
 ```
 
 ```js
-const viewDeltaCRetired = Inputs.range([0, inputCInitial * (1 - 1e-4)], {
+const viewDeltaCRetired = Inputs.range([0, inputCInitial - 1e-1], {
   label: "Carbon retired",
   step: 1e-1,
   value: inputCInitial * 0.9,
