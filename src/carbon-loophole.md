@@ -15,6 +15,11 @@ import * as Util from "./components/util.js"
 
 _Is it worth it to pre-retire carbon before selling carbon to the protocol?_
 
+## Selling Carbon at a Premium
+
+When a users plans to sell carbon to the protocol, it is often very lucrative to
+retire almost all the carbon that's already in the portfolio beforehand.
+
 ## Interactive Simulation
 
 ```js
@@ -413,12 +418,4 @@ Plot.plot({
     Plot.dot(dotsData, { x: "supply", y: "price", fill: "key" }),
   ],
 })
-```
-
-```js
-priceMax
-```
-
-```js
-vecPriceSaleBoosted
 ```
