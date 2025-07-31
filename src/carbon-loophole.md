@@ -143,9 +143,9 @@ const vecPrice = vecBarCi.map(paramBarCi =>
   ) / TONNES_MIN
 );
 
-const linesData = [];
+const dashedData = [];
 for (let i = 0; i < vecBarCi.length; i++) {
-  linesData.push({
+  dashedData.push({
     key: stringPriceSupply,
     price: vecPrice[i],
     supply: vecBarCi[i],
@@ -154,7 +154,7 @@ for (let i = 0; i < vecBarCi.length; i++) {
 
 const vecBarCiRetirement = Util.logRange(
   inputCInitial - inputDeltaCRetired,
-  inputCInitial,
+  inputCInitial - TONNES_MIN,
   nDotsPerInterval,
 );
 
@@ -167,7 +167,7 @@ const vecPriceRetirement = vecBarCiRetirement.map(paramBarCi =>
 );
 
 const vecBarCiSaleNormal = Util.logRange(
-  inputCInitial,
+  inputCInitial + TONNES_MIN,
   inputCInitial + inputDeltaCSold,
   nDotsPerInterval,
 );
@@ -182,7 +182,7 @@ const vecPriceSaleNormal = vecBarCiSaleNormal.map(paramBarCi =>
 );
 
 const vecBarCiSaleBoosted = Util.logRange(
-  inputCInitial - inputDeltaCRetired,
+  inputCInitial - inputDeltaCRetired + TONNES_MIN,
   inputCInitial - inputDeltaCRetired + inputDeltaCSold,
   nDotsPerInterval,
 );
@@ -196,28 +196,59 @@ const vecPriceSaleBoosted = vecBarCiSaleBoosted.map(paramBarCi =>
   ) / (paramBarCi - inputCInitial + inputDeltaCRetired)
 );
 
-const arrowsData = [];
+const linesData = [];
 for (let i = 0; i < vecBarCiSaleBoosted.length; i++) {
-  arrowsData.push({
+  linesData.push({
     key: stringSaleNormal,
     price: vecPriceSaleNormal[i],
     supply: vecBarCiSaleNormal[i],
   });
 }
 for (let i = 0; i < vecBarCiRetirement.length; i++) {
-  arrowsData.push({
+  linesData.push({
     key: stringRetirement,
     price: vecPriceRetirement[i],
     supply: vecBarCiRetirement[i],
   });
 }
 for (let i = 0; i < vecBarCiSaleBoosted.length; i++) {
-  arrowsData.push({
+  linesData.push({
     key: stringSaleBoosted,
     price: vecPriceSaleBoosted[i],
     supply: vecBarCiSaleBoosted[i],
   });
 }
+
+const arrowsData = [
+  {
+    key: stringSaleNormal,
+    price1: vecPriceSaleNormal.slice(-10)[0],
+    price2: vecPriceSaleNormal.at(-1),
+    supply1: vecBarCiSaleNormal.slice(-10)[0],
+    supply2: vecBarCiSaleNormal.at(-1),
+  },
+  {
+    key: stringRetirement,
+    price1: vecPriceRetirement.slice(0, 9).at(-1),
+    price2: vecPriceRetirement[0],
+    supply1: vecBarCiRetirement.slice(0, 9).at(-1),
+    supply2: vecBarCiRetirement[0],
+  },
+  {
+    key: stringPriceSupply,
+    price1: vecPriceRetirement[0],
+    price2: vecPriceSaleBoosted[0],
+    supply1: vecBarCiRetirement[0],
+    supply2: vecBarCiRetirement[0],
+  },
+  {
+    key: stringSaleBoosted,
+    price1: vecPriceSaleBoosted.slice(-10)[0],
+    price2: vecPriceSaleBoosted.at(-1),
+    supply1: vecBarCiSaleBoosted.slice(-10)[0],
+    supply2: vecBarCiSaleBoosted.at(-1),
+  },
+];
 
 const dotsData = [
   {
@@ -333,13 +364,22 @@ Plot.plot({
   clip: true,
   marks: [
     Plot.frame(),
-    Plot.lineY(arrowsData, {
+    Plot.arrow(arrowsData, {
+      x1: "supply1",
+      x2: "supply2",
+      y1: "price1",
+      y2: "price2",
+      inset: 4,
+      stroke: "key",
+      strokeWidth: 1,
+    }),
+    Plot.lineY(linesData, {
       x: "supply",
       y: "price",
       stroke: "key",
       strokeWidth: 1,
     }),
-    Plot.lineY(linesData, {
+    Plot.lineY(dashedData, {
       x: "supply",
       y: "price",
       stroke: "key",
