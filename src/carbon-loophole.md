@@ -18,6 +18,9 @@ _Is it worth it to pre-retire carbon before selling carbon to the protocol?_
 ## Interactive Simulation
 
 ```js
+const TONNES_MIN = 1e-10;
+const nDotsPerInterval = 100;
+
 const defaultCInitial = 100;
 const defaultASupply = 1e7;
 const defaultAPrice = 0.15;
@@ -26,19 +29,22 @@ const defaultGi = 1e-3;
 const defaultDeltaCRetired = 90;
 const defaultDeltaCSold = 900;
 
-const TONNES_MIN = 1e-10;
-
-const barCiMin = 1;
-const barCiMax = 1e4;
-const priceMin = 1e-2;
-const priceMax = 1e6;
-const nDotsPerInterval = 100;
-
 const stringSaleNormal = "Normal Sale";
 const stringRetirement = "Pre-Retirement";
 const stringSaleBoosted = "Boosted Sale";
 const stringProfitLoophole = "Pre-Retirement + Boosted Sale";
 const stringPriceSupply = "Price-Supply Curve";
+```
+
+```js
+const barCiMin = vecBarCiRetirement[0] / 10;
+const barCiMax = vecBarCiSaleNormal.at(-1) * 10;
+const priceMin = vecBarCiRetirement[0] === 0 ? (
+  vecPriceSaleNormal.at(-1) / 10
+) : (
+  Math.min(vecPriceRetirement[0], vecPriceSaleNormal.at(-1)) / 10
+);
+const priceMax = vecPriceSaleBoosted[0] * 10;
 ```
 
 <!-- ```js
@@ -151,10 +157,12 @@ for (let i = 0; i < vecBarCi.length; i++) {
     supply: vecBarCi[i],
   });
 }
+```
 
+```js
 const vecBarCiRetirement = Util.logRange(
   inputCInitial - inputDeltaCRetired,
-  inputCInitial - TONNES_MIN,
+  inputCInitial * (1 - TONNES_MIN),
   nDotsPerInterval,
 );
 
@@ -167,7 +175,7 @@ const vecPriceRetirement = vecBarCiRetirement.map(paramBarCi =>
 );
 
 const vecBarCiSaleNormal = Util.logRange(
-  inputCInitial + TONNES_MIN,
+  inputCInitial * (1 + TONNES_MIN),
   inputCInitial + inputDeltaCSold,
   nDotsPerInterval,
 );
@@ -182,7 +190,7 @@ const vecPriceSaleNormal = vecBarCiSaleNormal.map(paramBarCi =>
 );
 
 const vecBarCiSaleBoosted = Util.logRange(
-  inputCInitial - inputDeltaCRetired + TONNES_MIN,
+  (inputCInitial - inputDeltaCRetired) * (1 + TONNES_MIN),
   inputCInitial - inputDeltaCRetired + inputDeltaCSold,
   nDotsPerInterval,
 );
@@ -228,6 +236,13 @@ const arrowsData = [
     supply2: vecBarCiSaleNormal.at(-1),
   },
   {
+    key: stringPriceSupply,
+    price1: vecPriceSaleNormal[0],
+    price2: vecPriceRetirement.at(-1),
+    supply1: vecBarCiRetirement.at(-1),
+    supply2: vecBarCiRetirement.at(-1),
+  },
+  {
     key: stringRetirement,
     price1: vecPriceRetirement.slice(0, 9).at(-1),
     price2: vecPriceRetirement[0],
@@ -251,6 +266,16 @@ const arrowsData = [
 ];
 
 const dotsData = [
+  {
+    key: stringPriceSupply,
+    price: vecPriceSaleNormal[0],
+    supply: vecBarCiSaleNormal[0],
+  },
+  {
+    key: stringPriceSupply,
+    price: vecPriceRetirement.at(-1),
+    supply: vecBarCiRetirement.at(-1),
+  },
   {
     key: stringSaleNormal,
     price: vecPriceSaleNormal.at(-1),
@@ -388,4 +413,12 @@ Plot.plot({
     Plot.dot(dotsData, { x: "supply", y: "price", fill: "key" }),
   ],
 })
+```
+
+```js
+priceMax
+```
+
+```js
+vecPriceSaleBoosted
 ```
