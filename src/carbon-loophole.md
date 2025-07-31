@@ -110,7 +110,7 @@ const viewDeltaCRetired = Inputs.range([0, inputCInitial - 1e-1], {
   step: 1e-1,
   value: inputCInitial * 0.9,
 });
-const viewDeltaCSold = Inputs.range([1, 1e8], {
+const viewDeltaCSold = Inputs.range([1, 9e8], {
   label: "Carbon sold after retirement",
   step: 1,
   value: inputCInitial * 9,
