@@ -20,6 +20,157 @@ _Is it worth it to pre-retire carbon before selling carbon to the protocol?_
 When a users plans to sell carbon to the protocol, it is often very lucrative to
 retire almost all the carbon that's already in the portfolio beforehand.
 
+Let's look at an example where the initial kVCM supply is
+${inputASupply.toLocaleString("en-GB")}&nbsp;tokens with a unit price of
+$${inputAPrice.toLocaleString("en-GB", { maximumFractionDigits: 2 })}.
+
+A user wants to sell ${inputDeltaCSold.toLocaleString("en-GB")}&nbsp;tCO2eq from
+a carbon class&nbsp;${tex`i`} with
+${tex`\bar C_i = `}&nbsp;${inputCInitial.toLocaleString("en-GB")}&nbsp;tCO2eq
+in the portfolio, for which the allocations are
+${tex`A_i =`}&nbsp;${inputAi.toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)} and ${tex`G_i =`}&nbsp;${inputGi.toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)}.
+
+### Normal Sale
+
+Selling the carbon directly causes a relative change
+${tex`\Delta \bar C_i =`}&nbsp;+${(inputDeltaCSold/inputCInitial).toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)} in the portfolio.
+
+From [Equation&nbsp;(19)](/#equation-19), we can compute the amount of kVCM
+tokens minted from the sale as ${tex`\Delta A =`}&nbsp;+${
+  (valueSaleDirect / (inputAPrice*inputASupply)).toLocaleString(
+    "en-GB",
+    { style: "percent", maximumSignificantDigits: 3 },
+  )
+}, or about&nbsp;${(valueSaleDirect/inputAPrice).toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+)}&nbsp;kVCM tokens.
+
+With a token price of $${inputAPrice}, this means the users earns
+$${valueSaleDirect.toLocaleString("en-GB", { maximumFractionDigits: 2 })}
+<svg width="15" height="15" fill="#1f77b4">
+  <rect width="100%" height="100%"></rect>
+</svg>
+
+### Pre-Retirement
+
+Before selling, the user decides to retire
+${(inputDeltaCRetired).toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 1 },
+)}&nbsp;tCO2eq. This is causes a relative change
+${tex`\Delta C_i =`}&nbsp;−${(inputDeltaCRetired/inputCInitial).toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)} in the portfolio.
+
+From [Equation&nbsp;(22)](/#equation-22), we can compute the amount of kVCM
+tokens burnt for the retirement as ${tex`\Delta A =`}&nbsp;−${
+  (Math.abs(valueRetirement) / (inputAPrice * inputASupply)).toLocaleString(
+    "en-GB",
+    { style: "percent", maximumSignificantDigits: 3 },
+  )
+}, or about&nbsp;${(Math.abs(valueRetirement) / inputAPrice).toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+)}&nbsp;kVCM tokens.
+
+With a token price of $${inputAPrice}, this means the users pays
+$${Math.abs(valueRetirement).toLocaleString("en-GB", { maximumFractionDigits: 2 })}
+<svg width="15" height="15" fill="#d62728">
+  <rect width="100%" height="100%"></rect>
+</svg>
+
+### Boosted Sale
+
+The user executes the sale **after the retirement**, which means at the time of
+the sale there are ${tex`\bar C_i = `}&nbsp;${
+  (inputCInitial - inputDeltaCRetired).toLocaleString("en-GB")
+}&nbsp;tCO2eq in the portfolio. This boosted sale causes a relative change
+${tex`\Delta \bar C_i =`}&nbsp;+${
+  (inputDeltaCSold / (inputCInitial - inputDeltaCRetired)).toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)} in the portfolio.
+
+We compute the amount of minted kVCM tokens as
+${tex`\Delta A =`}&nbsp;+${(
+  valueSaleBoosted / (inputAPrice * inputASupply * (1 - deltARetirement))
+).toLocaleString(
+  "en-GB",
+  { style: "percent", maximumSignificantDigits: 3 },
+)}, which is about&nbsp;${(valueSaleBoosted / inputAPrice).toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+)}&nbsp;kVCM tokens.
+
+With a token price of $${inputAPrice}, this means the users earns about
+$${valueSaleBoosted.toLocaleString("en-GB", { maximumFractionDigits: 2 })}
+<svg width="15" height="15" fill="#2ca02c">
+  <rect width="100%" height="100%"></rect>
+</svg>
+
+### Pre-Retirement + Boosted Sale
+
+```js
+if (valueRetirement + valueSaleBoosted > valueSaleDirect) {
+  display(html`<p>
+    In the above scenario, retiring carbon before selling is <strong>worth
+    it</strong> for the user as it lands a higher profit of
+    $${valueSaleBoosted.toLocaleString("en-GB", { maximumFractionDigits: 2 })} −
+    $${Math.abs(valueRetirement).toLocaleString(
+      "en-GB",
+      { maximumFractionDigits: 2 },
+    )} = $${(valueRetirement + valueSaleBoosted).toLocaleString(
+      "en-GB",
+      { maximumFractionDigits: 2 },
+    )}
+    <svg width="15" height="15" fill="#9467bd">
+      <rect width="100%" height="100%"></rect>
+    </svg>
+  </p>`)
+} else if (valueRetirement + valueSaleBoosted > 0) {
+  display(html`<p>
+    In the above scenario, retiring carbon before selling is <strong>not worth
+    it</strong> for the user as it lands a lower profit of
+    $${valueSaleBoosted.toLocaleString("en-GB", { maximumFractionDigits: 2 })} −
+    $${(Math.abs(valueRetirement)).toLocaleString(
+      "en-GB",
+      { maximumFractionDigits: 2 },
+    )} = $${(valueRetirement + valueSaleBoosted).toLocaleString(
+      "en-GB",
+      { maximumFractionDigits: 2 },
+    )}
+    <svg width="15" height="15" fill="#9467bd">
+      <rect width="100%" height="100%"></rect>
+    </svg>
+  </p>`)
+} else {
+  display(html`<p>
+    In the above scenario, retiring carbon before selling is <strong>not worth
+    it</strong> for the user as it lands a loss of
+    $${valueSaleBoosted.toLocaleString("en-GB", { maximumFractionDigits: 2 })} −
+    $${(-valueRetirement).toLocaleString("en-GB", { maximumFractionDigits: 2 })}
+    = −$${Math.abs(valueRetirement + valueSaleBoosted).toLocaleString(
+      "en-GB",
+      { maximumFractionDigits: 2 },
+    )}
+    <svg width="15" height="15" fill="#9467bd">
+      <rect width="100%" height="100%"></rect>
+    </svg>
+  </p>`)
+}
+```
+
 ## How to Prevent this Scenario?
 
 - Supervise the introduction of new carbon classes?
@@ -191,6 +342,12 @@ const vecPriceRetirement = vecBarCiRetirement.map(paramBarCi =>
   ) / (paramBarCi - inputCInitial)
 );
 
+const deltARetirement = Form.computeDeltaARetirement(
+  inputAi,
+  inputGi,
+  inputDeltaCRetired / inputCInitial,
+);
+
 const vecBarCiSaleNormal = Util.logRange(
   inputCInitial * (1 + TONNES_MIN),
   inputCInitial + inputDeltaCSold,
@@ -213,7 +370,7 @@ const vecBarCiSaleBoosted = Util.logRange(
 );
 
 const vecPriceSaleBoosted = vecBarCiSaleBoosted.map(paramBarCi =>
-  inputAPrice * inputASupply * Form.computeTrueDeltaA(
+  inputAPrice * inputASupply * (1 - deltARetirement) * Form.computeTrueDeltaA(
     inputAi,
     inputGi,
     inputCInitial - inputDeltaCRetired,
@@ -313,7 +470,7 @@ const dotsData = [
 const valueRetirement = inputDeltaCRetired === 0 ? 0 : (
   -vecPriceRetirement[0] * inputDeltaCRetired
 );
-const valueSaleLoophole = vecPriceSaleBoosted.at(-1) * inputDeltaCSold;
+const valueSaleBoosted = vecPriceSaleBoosted.at(-1) * inputDeltaCSold;
 const valueSaleDirect = inputAPrice * inputASupply * Form.computeTrueDeltaA(
   inputAi,
   inputGi,
@@ -324,8 +481,8 @@ const valueSaleDirect = inputAPrice * inputASupply * Form.computeTrueDeltaA(
 const barsData = [
   { key: stringSaleNormal, value: valueSaleDirect },
   { key: stringRetirement, value: valueRetirement },
-  { key: stringSaleBoosted, value: valueSaleLoophole },
-  { key: stringProfitLoophole, value: valueSaleLoophole + valueRetirement },
+  { key: stringSaleBoosted, value: valueSaleBoosted },
+  { key: stringProfitLoophole, value: valueRetirement + valueSaleBoosted },
 ];
 ```
 
@@ -389,7 +546,12 @@ Plot.plot({
   color: {
     legend: true,
     range: [0, 3, 2, 7].map(i => d3.schemeCategory10[i]),
-    domain: [stringSaleNormal, stringRetirement, stringSaleBoosted, stringPriceSupply],
+    domain: [
+      stringSaleNormal,
+      stringRetirement,
+      stringSaleBoosted,
+      stringPriceSupply,
+    ],
   },
   x: {
     type: "log",
