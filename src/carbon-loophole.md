@@ -173,15 +173,13 @@ if (valueRetirement + valueSaleBoosted > valueSaleDirect) {
 
 ## How to Prevent this Scenario?
 
-- Supervise the introduction of new carbon classes?
+The protocol works in phases. There is always a phase between a retirement and a
+consecutive sale where users are aware of the current supply and are able to
+modify their allocations for that class.
 
-- Modify the model to use a time-weighted average price instead of using an
-"instantaneous" price (similar to [Uniswap V2 price
-oracles](https://docs.uniswap.org/contracts/v2/concepts/core-concepts/oracles))?
-
-- Well-defined "open hours" when users can sell carbon, separate "open hours"
-when people can retire carbon, and "closed hours" when people can only adjust
-their allocations?
+Users can defend themselves by dropping their kVCM allocations between the
+retirement and the consecutive sale: this which will correct the price before
+the attacker is able to extract value.
 
 ## Interactive Simulation
 

@@ -16,6 +16,7 @@ export default {
     { name: "Smart Contract Review", path: "/smart-contract-review" },
     { name: "Maintaining Prices", path: "/maintaining-prices" },
     { name: "Carbon Loophole", path: "/carbon-loophole" },
+    { name: "Price Manipulation", path: "/price-manipulation" },
   ],
   toc: true,
   pager: false,
