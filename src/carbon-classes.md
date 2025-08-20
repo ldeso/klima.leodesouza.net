@@ -759,3 +759,6 @@ follows, in order of preference.
     ```
 
     </div>
+
+    Note that devaluating carbon may reduce the rate of adoption as it
+    discourages selling carbon to the protocol.
