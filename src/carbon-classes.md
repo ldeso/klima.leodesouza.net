@@ -1,5 +1,5 @@
 ---
-title: Maintaining Prices
+title: Carbon Classes
 ---
 
 ```js
