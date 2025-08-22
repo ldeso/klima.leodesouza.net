@@ -25,12 +25,12 @@ class is included.
 const defaultCarbonClasses = [
   { name: "OAE", supply: 12, price: 500 },
   { name: "BCHAR", supply: 500, price: 130 },
-  { name: "Deforestation (2008–2016)", supply: 750_000, price: 0.8 },
-  { name: "Deforestation (2017–2026)", supply: 25_000, price: 1.6 },
-  { name: "IFM", supply: 200_000, price: 1 },
+  { name: "Defores. (2008+)", supply: 750_000, price: 0.8 },
+  { name: "Defores. (2017+)", supply: 25_000, price: 1.6 },
+  { name: "IFM", supply: 180_000, price: 1 },
   { name: "Landfill Gas", supply: 90_000, price: 0.7 },
-  { name: "Renewables", supply: 13_000_000, price: 0.2 },
-  { name: "Deforestation (All)", supply: 775_000, price: 0.8 },
+  // { name: "Renewables", supply: 13_000_000, price: 0.2 },
+  // { name: "Deforestation (All)", supply: 775_000, price: 0.8 },
 ];
 for (const d of defaultCarbonClasses) {
   d.nav = d.supply * d.price;
@@ -267,19 +267,19 @@ Inputs.table(allocatedCarbonClasses, {
 })
 ```
 
-There are two observations to make from the above table:
+Two observations can be made from the above table:
 
 1. The kVCM allocated to a carbon class is is roughly proportional to its
 proportion of the asset value.
 
-2. The total kVCM allocation&nbsp;(${
+2. The total kVCM allocation&nbsp;(here ${
   vecAi.some(x => x === -1) ? "N/A" : d3.sum(vecAi).toLocaleString("en-GB", {
     style: "percent",
     minimumSignificantDigits: 3,
     maximumSignificantDigits: 3,
   })
 }) is always roughly equal to the ratio between the net asset value and the kVCM
-market cap&nbsp;(${(1/ratioAMCapNav).toLocaleString("en-GB", {
+market cap&nbsp;(here ${(1/ratioAMCapNav).toLocaleString("en-GB", {
   style: "percent",
   minimumSignificantDigits: 3,
   maximumSignificantDigits: 3,
@@ -290,9 +290,9 @@ kVCM market cap.
 
 ### Setting the kVCM Market Cap in Practice
 
-In practice, only up to 50% of the kVCM can be allocated to carbon classes as
-the other 50% are required for liquidity. In order to reach the desired carbon
-prices and supply, the kVCM market cap must therefore be set to:
+In practice, only up to roughly 20% of the kVCM can be allocated to carbon
+classes by the Klima Foundation. In order to reach the desired carbon prices and
+supply, the kVCM market cap must therefore be set to (at least):
 
 <div id="equation-3">
 
@@ -306,7 +306,7 @@ prices and supply, the kVCM market cap must therefore be set to:
 </div>
 
 ```js
-const defaultATotal = 0.5;
+const defaultATotal = 0.2;
 const stepATotal = 0.01;
 const viewATotal = Inputs.range([stepATotal, 1], {
   label: "Total kVCM Allocation",
@@ -386,20 +386,23 @@ Inputs.table(computedCarbonClasses, {
 })
 ```
 
-If the kVCM market cap is considered too high, there are two possibilites to
-make it smaller.
+If the kVCM market cap is considered too high, reducing carbon supply can make
+it smaller.
 
 ## Reducing Supply
 
-Reducing the supply of carbon classes that have a higher asset value makes the
-difference between carbon kVCM allocations smaller. When kVCM allocations are
-closer to each other, the required kVCM market cap becomes slighly closer to the
-total net asset value.
+Reducing the supply of the carbon class with the highest asset value not only
+makes the market cap smaller, but it also reduces the difference between kVCM
+allocations.
+
+Here is an example where the supply of the carbon
+class&nbsp;"${inputCarbonClasses[highestNavIdx].name}" is reduced
+by&nbsp;${(1 - reduction).toLocaleString("en-GB", { style: "percent" })}.
 
 <div id="equation-4">
 
 ```tex
-\text{kVCM market cap} = ${normRatioAMCapNav.toLocaleString(
+\text{kVCM market cap} = ${reducedRatioAMCapNav.toLocaleString(
   "en-GB",
   { minimumSignificantDigits: 3, maximumSignificantDigits: 3 },
 )} \times \text{net asset value} \tag{4}
@@ -408,11 +411,12 @@ total net asset value.
 </div>
 
 ```js
-const minNav = d3.min(inputCarbonClasses, d => d.nav);
+const highestNavIdx = d3.maxIndex(inputCarbonClasses, d => d.nav);
+const highestNav = inputCarbonClasses[highestNavIdx].nav;
 
-const minNavTotal = minNav * inputCarbonClasses.length;
+const minNavTotal = navTotal - highestNav;
 const maxNavTotal = navTotal;
-const defaultNav = Math.round(minNavTotal + 0.2 * (maxNavTotal - minNavTotal));
+const defaultNav = Math.round(minNavTotal + 0.5 * (maxNavTotal - minNavTotal));
 const stepNav = 1;
 const viewNav = Inputs.range([minNavTotal, maxNavTotal], {
   label: "Net Asset Value (USD)",
@@ -449,60 +453,65 @@ if (inputNav === defaultNav && inputATotal === defaultATotal) {
 ```
 
 ```js
-const normalization = (inputNav - minNavTotal) / (maxNavTotal - minNavTotal);
+const reduction = (inputNav - minNavTotal) / (maxNavTotal - minNavTotal);
 
-const normVecSupply = [];
-let normNav = 0;
+const reducedVecSupply = [];
+let reducedNav = 0;
 for (let i = 0; i < inputCarbonClasses.length; i++) {
   const { supply, price } = inputCarbonClasses[i];
-  const minSupply = minNav / price;
-  const normSupply = minSupply + normalization * (supply - minSupply);
-  normVecSupply.push(normSupply);
-  normNav += normSupply * price;
+  const reducedSupply = supply * (i === highestNavIdx ? reduction : 1);
+  reducedVecSupply.push(reducedSupply);
+  reducedNav += reducedSupply * price;
 };
 ```
 
 ```js
-let normAMarketCap = normNav;
-let normATotal = NaN;
-const normVecAi = vecAi.slice();
-while (!(normATotal < inputATotal)) {
-  normATotal = 0;
+let reducedAMarketCap = reducedNav;
+let reducedATotal = NaN;
+const reducedVecAi = vecAi.slice();
+while (!(reducedATotal < inputATotal)) {
+  reducedATotal = 0;
   for (let i = 0; i < inputCarbonClasses.length; i++) {
     const d = inputCarbonClasses[i];
     const deltaC = 1e-10;
-    const deltaA = normVecSupply[i] * d.price * deltaC / normAMarketCap;
-    normVecAi[i] = computeAi(deltaA, deltaC);
-    if (normVecAi[i] === -1) {
-      normATotal = NaN;
+    const deltaA = reducedVecSupply[i] * d.price * deltaC / reducedAMarketCap;
+    reducedVecAi[i] = computeAi(deltaA, deltaC);
+    if (reducedVecAi[i] === -1) {
+      reducedATotal = NaN;
     }
-    normATotal += normVecAi[i];
+    reducedATotal += reducedVecAi[i];
   }
-  normAMarketCap *= 1.00001;
+  reducedAMarketCap *= 1.00001;
 }
-const normRatioAMCapNav = normAMarketCap / normNav;
+const reducedRatioAMCapNav = reducedAMarketCap / reducedNav;
 ```
 
+This corresponds to a **kVCM market cap of ${reducedAMarketCap.toLocaleString(
+  "en-GB",
+  { maximumFractionDigits: 0 },
+)}&nbsp;USD** and the following kVCM allocations:
+
 ```js
-const normCarbonClasses = [];
+const reducedCarbonClasses = [];
 for (let i = 0; i < inputCarbonClasses.length; i++) {
-  normCarbonClasses.push({
+  reducedCarbonClasses.push({
     name: inputCarbonClasses[i].name,
-    supply: normVecSupply[i],
+    supply: reducedVecSupply[i],
     price: inputCarbonClasses[i].price,
-    nav: normVecSupply[i] * inputCarbonClasses[i].price,
-    kvcm: 100 * normVecAi[i],
+    nav: reducedVecSupply[i] * inputCarbonClasses[i].price,
+    kvcm: 100 * reducedVecAi[i],
   });
 }
-normCarbonClasses.push({
+reducedCarbonClasses.push({
   name: "Total",
+  supply: d3.sum(reducedVecSupply),
   nav: inputNav,
-  kvcm: 100 * normATotal,
+  kvcm: 100 * reducedATotal,
 });
 ```
 
 ```js
-Inputs.table(normCarbonClasses, {
+Inputs.table(reducedCarbonClasses, {
   header: {
     name: "Carbon Class",
     supply: "Supply (tCO2eq)",
@@ -514,16 +523,14 @@ Inputs.table(normCarbonClasses, {
 })
 ```
 
-This approach has the advantage of leaving carbon prices untouched. Its
-disadvantage, on the other hand, is that the total net asset value has to be
-greatly reduced to have a significant effect.
+This approach has the advantage of leaving carbon prices untouched.
 
-The next section shows how the kVCM market cap can be further reduced by
+<!-- The next section shows how the kVCM market cap can be further reduced by
 voluntarily mispricing carbon at launch.
 
 ## Devaluating Carbon
 
-To further reduce the kVCM market cap, allcarbon prices can be devaluated at
+To further reduce the kVCM market cap, carbon prices can be devaluated at
 launch. This changes the total net asset value used by the model without
 changing the "true total net asset value". Here is an example where prices are
 devaluated by ${inputDeval.toLocaleString("en-GB", { style: "percent" })}:
@@ -604,11 +611,12 @@ const devalRatioAMCapNav = devalAMarketCap / navTotal;
 ```js
 const devalCarbonClasses = [];
 for (let i = 0; i < inputCarbonClasses.length; i++) {
+  const price = inputCarbonClasses[i].price * (inputCarbonClasses[i].name === "Renewables" ? (1 - inputDeval) : 1);
   devalCarbonClasses.push({
     name: inputCarbonClasses[i].name,
     supply: inputCarbonClasses[i].supply,
-    price: devalVecPrice[i],
-    nav: inputCarbonClasses[i].supply * devalVecPrice[i],
+    price: price,
+    nav: inputCarbonClasses[i].supply * price,
     kvcm: 100 * devalVecAi[i],
   });
 }
@@ -635,130 +643,156 @@ Inputs.table(devalCarbonClasses, {
 
 The main disadvantage of this method is that if the protocol's carbon prices are
 too low, nobody will be interested in selling carbon to the protocol, which will
-reduce its rate of adoption.
+reduce its rate of adoption. -->
 
 ## Conclusion
 
-My recommendation for carbon prices and kVCM allocations at launch are as
-follows, in order of preference.
+### Without the "Landfill Gas" Carbon Class
 
-1. Do not devaluate carbon and assume 40% kVCM allocation at launch:
+My recommendation for carbon prices and kVCM allocations at launch is to assume
+that 20% of the total kVCM tokens will be allocated to carbon classes, and to
+reduce the supply of the carbon class "Deforest. (2008+)" to
+375,000&nbsp;tCO2eq:
 
-    ```js
-    Inputs.table([
-      {
-        name: "OAE",
-        supply: 12,
-        price: 500,
-        kvcm: 0.237,
-      },
-      {
-        name: "BCHAR",
-        supply: 500,
-        price: 130,
-        kvcm: 2.593,
-      },
-      {
-        name: "Deforestation (2008–2016)",
-        supply: 750_000,
-        price: 0.8,
-        kvcm: 27.371,
-      },
-      {
-        name: "Deforestation (2017–2026)",
-        supply: 25_000,
-        price: 1.6,
-        kvcm: 1.588,
-      },
-      {
-        name: "IFM",
-        supply: 200_000,
-        price: 1,
-        kvcm: 8.212,
-      },
-      {
-        name: "Total",
-        kvcm: 40,
-      },
-    ], {
-      header: {
-        name: "Carbon Class",
-        supply: "Supply (tCO2eq)",
-        price: "Price (USD)",
-        kvcm: "kVCM (%)",
-      },
-      select: false,
-    })
-    ```
+```js
+Inputs.table([
+  {
+    name: "OAE",
+    supply: 12,
+    price: 500,
+    nav: 12 * 500,
+    kvcm: 0.196,
+  },
+  {
+    name: "BCHAR",
+    supply: 500,
+    price: 130,
+    nav: 500 * 130,
+    kvcm: 2.141,
+  },
+  {
+    name: "Defores. (2008+)",
+    supply: 375_000,
+    price: 0.8,
+    nav: 375_000 * 0.8,
+    kvcm: 10.305,
+  },
+  {
+    name: "Defores. (2017+)",
+    supply: 25_000,
+    price: 1.6,
+    nav: 25_000 * 1.6,
+    kvcm: 1.312,
+  },
+  {
+    name: "IFM",
+    supply: 180_000,
+    price: 1,
+    nav: 180_000 * 1,
+    kvcm: 6.047,
+  },
+  {
+    name: "Total",
+    supply: 580_512,
+    // price: "(avg.) 1.018",
+    nav: 591_000,
+    kvcm: 20,
+  },
+], {
+  header: {
+    name: "Carbon Class",
+    supply: "Supply (tCO2eq)",
+    price: "Price (USD)",
+    nav: "NAV (USD)",
+    kvcm: "kVCM (%)",
+  },
+  select: false,
+})
+```
 
-    This gives:
+This corresponds to a **market cap of 3,069,463&nbsp;USD**, or:
 
-    <div id="equation-6">
+<div id="equation-5">
 
-    ```tex
-    \text{kVCM market cap} = 2.79 \times \text{net asset value} \tag{6}
-    ```
+```tex
+\text{kVCM market cap} = 5.19 \times \text{net asset value} \tag{5}
+```
 
-    </div>
+</div>
 
-2. Devaluate carbon prices by 30%:
+### With the "Landfill Gas" Carbon Class
 
-    ```js
-    Inputs.table([
-      {
-        name: "OAE",
-        supply: 12,
-        price: 350,
-        kvcm: 0.237,
-      },
-      {
-        name: "BCHAR",
-        supply: 500,
-        price: 91,
-        kvcm: 2.593,
-      },
-      {
-        name: "Deforestation (2008–2016)",
-        supply: 750_000,
-        price: 0.56,
-        kvcm: 27.371,
-      },
-      {
-        name: "Deforestation (2017–2026)",
-        supply: 25_000,
-        price: 1.12,
-        kvcm: 1.588,
-      },
-      {
-        name: "IFM",
-        supply: 200_000,
-        price: 0.7,
-        kvcm: 8.212,
-      },
-      {
-        name: "Total",
-        kvcm: 40,
-      },
-    ], {
-      header: {
-        name: "Carbon Class",
-        supply: "Supply (tCO2eq)",
-        price: "Price (USD)",
-        kvcm: "kVCM (%)",
-      },
-      select: false,
-    })
-    ```
+If the "Landfill Gas" carbon class would be part of the carbon classes at
+launch, I would recommend reducing the supply of the carbon class "Defores.
+(2008+)" to 300,000&nbsp;tCO2eq:
 
-    This gives:
+```js
+Inputs.table([
+  {
+    name: "OAE",
+    supply: 12,
+    price: 500,
+    nav: 12 * 500,
+    kvcm: 0.196,
+  },
+  {
+    name: "BCHAR",
+    supply: 500,
+    price: 130,
+    nav: 500 * 130,
+    kvcm: 2.149,
+  },
+  {
+    name: "Defores. (2008+)",
+    supply: 300_000,
+    price: 0.8,
+    nav: 300_000 * 0.8,
+    kvcm: 8.184,
+  },
+  {
+    name: "Defores. (2017+)",
+    supply: 25_000,
+    price: 1.6,
+    nav: 25_000 * 1.6,
+    kvcm: 1.317,
+  },
+  {
+    name: "IFM",
+    supply: 180_000,
+    price: 1,
+    nav: 180_000 * 1,
+    kvcm: 6.071,
+  },
+  {
+    name: "Landfill Gas",
+    supply: 90_000,
+    price: 0.7,
+    nav: 90_000 * 0.7,
+    kvcm: 2.082,
+  },
+  {
+    name: "Total",
+    supply: 580_512,
+    // price: "(avg.) 1.018",
+    nav: 591_000,
+    kvcm: 20,
+  },
+], {
+  header: {
+    name: "Carbon Class",
+    supply: "Supply (tCO2eq)",
+    price: "Price (USD)",
+    nav: "NAV (USD)",
+    kvcm: "kVCM (%)",
+  },
+  select: false,
+})
+```
 
-    <div id="equation-7">
+This corresponds to a **market cap of 3,057,617&nbsp;USD**, which gives:
 
-    ```tex
-    \text{kVCM market cap} = 1.84 \times \text{true net asset value} \tag{7}
-    ```
+<div id="equation-6">
 
-    </div>
-
-    Note that devaluating carbon may reduce the rate of adoption as it
-    discourages selling carbon to the protocol.
+```tex
+\text{kVCM market cap} = 5.15 \times \text{net asset value} \tag{6}
+```
