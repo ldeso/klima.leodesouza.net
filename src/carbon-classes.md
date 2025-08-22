@@ -29,6 +29,7 @@ const defaultCarbonClasses = [
   { name: "Defores. (2017+)", supply: 25_000, price: 1.6 },
   { name: "IFM", supply: 180_000, price: 1 },
   { name: "Landfill Gas", supply: 90_000, price: 0.7 },
+  { name: "Wind Energy", supply: 330_000, price: 0.2 },
   // { name: "Renewables", supply: 13_000_000, price: 0.2 },
   // { name: "Deforestation (All)", supply: 775_000, price: 0.8 },
 ];
@@ -647,58 +648,237 @@ reduce its rate of adoption. -->
 
 ## Conclusion
 
-### Without the "Landfill Gas" Carbon Class
-
 My recommendation for carbon prices and kVCM allocations at launch is to assume
 that 20% of the total kVCM tokens will be allocated to carbon classes, and to
-reduce the supply of the carbon class "Deforest. (2008+)" to
-375,000&nbsp;tCO2eq:
+reduce the supply of the carbon class "Deforest. (2008+)" until the kVCM market
+cap reaches roughly 3,000,000&nbsp;USD:
 
 ```js
-Inputs.table([
-  {
-    name: "OAE",
-    supply: 12,
-    price: 500,
-    nav: 12 * 500,
-    kvcm: 0.196,
-  },
-  {
-    name: "BCHAR",
-    supply: 500,
-    price: 130,
-    nav: 500 * 130,
-    kvcm: 2.141,
-  },
-  {
-    name: "Defores. (2008+)",
-    supply: 375_000,
-    price: 0.8,
-    nav: 375_000 * 0.8,
-    kvcm: 10.305,
-  },
-  {
-    name: "Defores. (2017+)",
-    supply: 25_000,
-    price: 1.6,
-    nav: 25_000 * 1.6,
-    kvcm: 1.312,
-  },
-  {
-    name: "IFM",
-    supply: 180_000,
-    price: 1,
-    nav: 180_000 * 1,
-    kvcm: 6.047,
-  },
-  {
-    name: "Total",
-    supply: 580_512,
-    // price: "(avg.) 1.018",
-    nav: 591_000,
-    kvcm: 20,
-  },
-], {
+const optionalClasses = view(Inputs.checkbox(["Landfill Gas", "Wind Energy"], {
+  label: "Optional Carbon Classes:",
+}));
+```
+
+```js
+const conclusionClasses = [];
+let conclusionAMarketCap = 0;
+let conclusionRatioAMCapNav = 0;
+if (optionalClasses.includes("Landfill Gas")) {
+  if (optionalClasses.includes("Wind Energy")) {
+    conclusionClasses.push({
+      name: "OAE",
+      supply: 12,
+      price: 500,
+      nav: 12 * 500,
+      kvcm: 0.196,
+    });
+    conclusionClasses.push({
+      name: "BCHAR",
+      supply: 500,
+      price: 130,
+      nav: 500 * 130,
+      kvcm: 2.142,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2008+)",
+      supply: 225_000,
+      price: 0.8,
+      nav: 225_000 * 0.8,
+      kvcm: 6.05,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2017+)",
+      supply: 25_000,
+      price: 1.6,
+      nav: 25_000 * 1.6,
+      kvcm: 1.312,
+    });
+    conclusionClasses.push({
+      name: "IFM",
+      supply: 180_000,
+      price: 1,
+      nav: 180_000 * 1,
+      kvcm: 6.05,
+    });
+    conclusionClasses.push({
+      name: "Landfill Gas",
+      supply: 90_000,
+      price: 0.7,
+      nav: 90_000 * 0.7,
+      kvcm: 2.075,
+    });
+    conclusionClasses.push({
+      name: "Wind Energy",
+      supply: 330_000,
+      price: 0.2,
+      nav: 330_000 * 0.2,
+      kvcm: 2.175,
+    });
+    conclusionClasses.push({
+      name: "Total",
+      supply: 850_512,
+      nav: 600_000,
+      kvcm: 20,
+    });
+    conclusionAMarketCap = 3_068_001;
+    conclusionRatioAMCapNav = 5.11;
+
+  } else {
+    conclusionClasses.push({
+      name: "OAE",
+      supply: 12,
+      price: 500,
+      nav: 12 * 500,
+      kvcm: 0.196,
+    });
+    conclusionClasses.push({
+      name: "BCHAR",
+      supply: 500,
+      price: 130,
+      nav: 500 * 130,
+      kvcm: 2.149,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2008+)",
+      supply: 300_000,
+      price: 0.8,
+      nav: 300_000 * 0.8,
+      kvcm: 8.184,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2017+)",
+      supply: 25_000,
+      price: 1.6,
+      nav: 25_000 * 1.6,
+      kvcm: 1.317,
+    });
+    conclusionClasses.push({
+      name: "IFM",
+      supply: 180_000,
+      price: 1,
+      nav: 180_000 * 1,
+      kvcm: 6.071,
+    });
+    conclusionClasses.push({
+      name: "Landfill Gas",
+      supply: 90_000,
+      price: 0.7,
+      nav: 90_000 * 0.7,
+      kvcm: 2.082,
+    });
+    conclusionClasses.push({
+      name: "Total",
+      supply: 595_512,
+      nav: 594_000,
+      kvcm: 20,
+    });
+    conclusionAMarketCap = 3_057_617;
+    conclusionRatioAMCapNav = 5.15;
+  }
+
+} else {
+  if (optionalClasses.includes("Wind Energy")) {
+    conclusionClasses.push({
+      name: "OAE",
+      supply: 12,
+      price: 500,
+      nav: 12 * 500,
+      kvcm: 0.195,
+    });
+    conclusionClasses.push({
+      name: "BCHAR",
+      supply: 500,
+      price: 130,
+      nav: 500 * 130,
+      kvcm: 2.138,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2008+)",
+      supply: 300_000,
+      price: 0.8,
+      nav: 300_000 * 0.8,
+      kvcm: 8.143,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2017+)",
+      supply: 25_000,
+      price: 1.6,
+      nav: 25_000 * 1.6,
+      kvcm: 1.31,
+    });
+    conclusionClasses.push({
+      name: "IFM",
+      supply: 180_000,
+      price: 1,
+      nav: 180_000 * 1,
+      kvcm: 6.041,
+    });
+    conclusionClasses.push({
+      name: "Wind Energy",
+      supply: 330_000,
+      price: 0.2,
+      nav: 330_000 * 0.2,
+      kvcm: 2.172,
+    });
+    conclusionClasses.push({
+      name: "Total",
+      supply: 835_512,
+      nav: 597_000,
+      kvcm: 20,
+    });
+    conclusionAMarketCap = 3_072_506;
+    conclusionRatioAMCapNav = 5.15;
+
+  } else {
+    conclusionClasses.push({
+      name: "OAE",
+      supply: 12,
+      price: 500,
+      nav: 12 * 500,
+      kvcm: 0.196,
+    });
+    conclusionClasses.push({
+      name: "BCHAR",
+      supply: 500,
+      price: 130,
+      nav: 500 * 130,
+      kvcm: 2.141,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2008+)",
+      supply: 375_000,
+      price: 0.8,
+      nav: 375_000 * 0.8,
+      kvcm: 10.305,
+    });
+    conclusionClasses.push({
+      name: "Defores. (2017+)",
+      supply: 25_000,
+      price: 1.6,
+      nav: 25_000 * 1.6,
+      kvcm: 1.312,
+    });
+    conclusionClasses.push({
+      name: "IFM",
+      supply: 180_000,
+      price: 1,
+      nav: 180_000 * 1,
+      kvcm: 6.047,
+    });
+    conclusionClasses.push({
+      name: "Total",
+      supply: 580_512,
+      nav: 591_000,
+      kvcm: 20,
+    });
+    conclusionAMarketCap = 3_069_463;
+    conclusionRatioAMCapNav = 5.19;
+  }
+}
+```
+
+```js
+Inputs.table(conclusionClasses, {
   header: {
     name: "Carbon Class",
     supply: "Supply (tCO2eq)",
@@ -710,89 +890,17 @@ Inputs.table([
 })
 ```
 
-This corresponds to a **market cap of 3,069,463&nbsp;USD**, or:
+This corresponds to a **market cap of ${
+  conclusionAMarketCap.toLocaleString("en-GB")
+}&nbsp;USD**, or:
 
 <div id="equation-5">
 
 ```tex
-\text{kVCM market cap} = 5.19 \times \text{net asset value} \tag{5}
+\text{kVCM market cap} = ${conclusionRatioAMCapNav.toLocaleString(
+  "en-GB",
+  { minimumSignificantDigits: 3, maximumSignificantDigits: 3 },
+)} \times \text{net asset value} \tag{5}
 ```
 
 </div>
-
-### With the "Landfill Gas" Carbon Class
-
-If the "Landfill Gas" carbon class would be part of the carbon classes at
-launch, I would recommend reducing the supply of the carbon class "Defores.
-(2008+)" to 300,000&nbsp;tCO2eq:
-
-```js
-Inputs.table([
-  {
-    name: "OAE",
-    supply: 12,
-    price: 500,
-    nav: 12 * 500,
-    kvcm: 0.196,
-  },
-  {
-    name: "BCHAR",
-    supply: 500,
-    price: 130,
-    nav: 500 * 130,
-    kvcm: 2.149,
-  },
-  {
-    name: "Defores. (2008+)",
-    supply: 300_000,
-    price: 0.8,
-    nav: 300_000 * 0.8,
-    kvcm: 8.184,
-  },
-  {
-    name: "Defores. (2017+)",
-    supply: 25_000,
-    price: 1.6,
-    nav: 25_000 * 1.6,
-    kvcm: 1.317,
-  },
-  {
-    name: "IFM",
-    supply: 180_000,
-    price: 1,
-    nav: 180_000 * 1,
-    kvcm: 6.071,
-  },
-  {
-    name: "Landfill Gas",
-    supply: 90_000,
-    price: 0.7,
-    nav: 90_000 * 0.7,
-    kvcm: 2.082,
-  },
-  {
-    name: "Total",
-    supply: 580_512,
-    // price: "(avg.) 1.018",
-    nav: 591_000,
-    kvcm: 20,
-  },
-], {
-  header: {
-    name: "Carbon Class",
-    supply: "Supply (tCO2eq)",
-    price: "Price (USD)",
-    nav: "NAV (USD)",
-    kvcm: "kVCM (%)",
-  },
-  select: false,
-})
-```
-
-This corresponds to a **market cap of 3,057,617&nbsp;USD**, which gives:
-
-<div id="equation-6">
-
-```tex
-\text{kVCM market cap} = 5.15 \times \text{net asset value} \tag{6}
-```
