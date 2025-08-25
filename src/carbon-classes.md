@@ -23,14 +23,15 @@ class is included.
 
 ```js
 const defaultCarbonClasses = [
-  { name: "OAE", supply: 12, price: 500 },
-  { name: "BCHAR", supply: 500, price: 130 },
-  { name: "Defores. (2008+)", supply: 750_000, price: 0.8 },
-  { name: "Defores. (2017+)", supply: 25_000, price: 1.6 },
-  { name: "IFM", supply: 180_000, price: 1 },
-  { name: "Landfill Gas", supply: 90_000, price: 0.7 },
-  { name: "Wind Energy", supply: 330_000, price: 0.2 },
-  // { name: "Renewables", supply: 13_000_000, price: 0.2 },
+  { name: "OAE", supply: 12, price: 550 },
+  { name: "BCHAR", supply: 534, price: 130 },
+  { name: "Defores. (2008+)", supply: 102_000, price: 0.8 },
+  { name: "Defores. (2017+)", supply: 27_000, price: 1.6 },
+  { name: "Bulk Hydro", supply: 647_000, price: 0.3 },
+  { name: "Wind (2008+)", supply: 325_000, price: 0.35 },
+  { name: "Wind (2017+)", supply: 230_000, price: 0.5 },
+  { name: "Landfill Gas", supply: 80_000, price: 0.7 },
+  { name: "IFM", supply: 0.3 * 180_000, price: 1 },
   // { name: "Deforestation (All)", supply: 775_000, price: 0.8 },
 ];
 for (const d of defaultCarbonClasses) {
@@ -38,7 +39,7 @@ for (const d of defaultCarbonClasses) {
 }
 
 const viewCarbonClasses = Inputs.table(defaultCarbonClasses, {
-  value: defaultCarbonClasses.slice(0, 5),
+  value: defaultCarbonClasses.slice(0, 8),
   header: {
     name: "Carbon Class",
     supply: "Supply (tCO2eq)",
@@ -236,7 +237,7 @@ This equation is equivalent to:
 </div>
 
 In order to price carbon classes accurately with this market cap, kVCM
-allocations have to be set as follows:
+allocations would have to be set as follows:
 
 ```js
 const allocatedCarbonClasses = [];
@@ -526,135 +527,15 @@ Inputs.table(reducedCarbonClasses, {
 
 This approach has the advantage of leaving carbon prices untouched.
 
-<!-- The next section shows how the kVCM market cap can be further reduced by
-voluntarily mispricing carbon at launch.
-
-## Devaluating Carbon
-
-To further reduce the kVCM market cap, carbon prices can be devaluated at
-launch. This changes the total net asset value used by the model without
-changing the "true total net asset value". Here is an example where prices are
-devaluated by ${inputDeval.toLocaleString("en-GB", { style: "percent" })}:
-
-<div id="equation-5">
-
-```tex
-\text{kVCM market cap} = ${devalRatioAMCapNav.toLocaleString(
-  "en-GB",
-  { minimumSignificantDigits: 3, maximumSignificantDigits: 3 },
-)} \times \text{true net asset value} \tag{5}
-```
-
-</div>
-
-```js
-const defaultDeval = 0.2;
-const stepDeval = 0.01;
-const maxDeval = 1 - stepDeval;
-const viewDeval = Inputs.range([0, maxDeval], {
-  label: "Devaluation",
-  step: stepDeval,
-  value: defaultDeval,
-});
-const inputDeval = view(viewDeval);
-```
-
-```js
-Inputs.bind(Inputs.range([stepATotal, 1], {
-  label: "Total kVCM Allocation",
-  step: stepATotal,
-  value: defaultATotal,
-}), viewATotal)
-```
-
-```js
-const viewResetDeval = Inputs.button(
-  [["Reset", () => {
-    Util.setInput(viewDeval, defaultDeval);
-    Util.setInput(viewATotal, defaultATotal);
-  }]],
-);
-display(viewResetDeval);
-```
-
-```js
-if (inputDeval === defaultDeval && inputATotal === defaultATotal) {
-  viewResetDeval.classList.add("u-hidden");
-} else {
-  viewResetDeval.classList.remove("u-hidden");
-}
-```
-
-```js
-const devalVecPrice = inputCarbonClasses.map(d => d.price * (1 - inputDeval));
-const devalNav = navTotal * (1 - inputDeval);
-
-let devalAMarketCap = devalNav;
-let devalATotal = NaN;
-const devalVecAi = vecAi.slice();
-while (!(devalATotal < inputATotal)) {
-  devalATotal = 0;
-  for (let i = 0; i < inputCarbonClasses.length; i++) {
-    const d = inputCarbonClasses[i];
-    const deltaC = 1e-10;
-    const deltaA = d.supply * devalVecPrice[i] * deltaC / devalAMarketCap;
-    devalVecAi[i] = computeAi(deltaA, deltaC);
-    if (devalVecAi[i] === -1) {
-      devalATotal = NaN;
-    }
-    devalATotal += devalVecAi[i];
-  }
-  devalAMarketCap *= 1.00001;
-}
-const devalRatioAMCapNav = devalAMarketCap / navTotal;
-```
-
-```js
-const devalCarbonClasses = [];
-for (let i = 0; i < inputCarbonClasses.length; i++) {
-  const price = inputCarbonClasses[i].price * (inputCarbonClasses[i].name === "Renewables" ? (1 - inputDeval) : 1);
-  devalCarbonClasses.push({
-    name: inputCarbonClasses[i].name,
-    supply: inputCarbonClasses[i].supply,
-    price: price,
-    nav: inputCarbonClasses[i].supply * price,
-    kvcm: 100 * devalVecAi[i],
-  });
-}
-devalCarbonClasses.push({
-  name: "Total",
-  nav: devalNav,
-  kvcm: 100 * devalATotal,
-});
-```
-
-```js
-Inputs.table(devalCarbonClasses, {
-  align: { kvcm: "right" },
-  header: {
-    name: "Carbon Class",
-    supply: "Supply (tCO2eq)",
-    price: "Price (USD)",
-    nav: "NAV (USD)",
-    kvcm: "kVCM (%)",
-  },
-  select: false,
-})
-```
-
-The main disadvantage of this method is that if the protocol's carbon prices are
-too low, nobody will be interested in selling carbon to the protocol, which will
-reduce its rate of adoption. -->
-
 ## Conclusion
 
 My recommendation for carbon prices and kVCM allocations at launch is to assume
 that 20% of the total kVCM tokens will be allocated to carbon classes, and to
-reduce the supply of the carbon class "Deforest. (2008+)" until the kVCM market
+reduce the supply of the carbon class "Bulk Hydro" until the kVCM market
 cap reaches roughly 3,000,000&nbsp;USD:
 
 ```js
-const optionalClasses = view(Inputs.checkbox(["Landfill Gas", "Wind Energy"], {
+const optionalClasses = view(Inputs.checkbox(["Landfill Gas", "IFM"], {
   label: "Optional Carbon Classes:",
 }));
 ```
@@ -664,221 +545,231 @@ const conclusionClasses = [];
 let conclusionAMarketCap = 0;
 let conclusionRatioAMCapNav = 0;
 if (optionalClasses.includes("Landfill Gas")) {
-  if (optionalClasses.includes("Wind Energy")) {
+  if (optionalClasses.includes("IFM")) {
     conclusionClasses.push({
       name: "OAE",
       supply: 12,
-      price: 500,
-      nav: 12 * 500,
-      kvcm: 0.196,
+      price: 550,
+      kvcm: 0.218,
     });
     conclusionClasses.push({
       name: "BCHAR",
-      supply: 500,
+      supply: 534,
       price: 130,
-      nav: 500 * 130,
-      kvcm: 2.142,
+      kvcm: 2.317,
     });
     conclusionClasses.push({
       name: "Defores. (2008+)",
-      supply: 225_000,
+      supply: 102_000,
       price: 0.8,
-      nav: 225_000 * 0.8,
-      kvcm: 6.05,
+      kvcm: 2.73,
     });
     conclusionClasses.push({
       name: "Defores. (2017+)",
-      supply: 25_000,
+      supply: 27_000,
       price: 1.6,
-      nav: 25_000 * 1.6,
-      kvcm: 1.312,
+      kvcm: 1.436,
     });
     conclusionClasses.push({
-      name: "IFM",
-      supply: 180_000,
-      price: 1,
-      nav: 180_000 * 1,
-      kvcm: 6.05,
+      name: "Bulk Hydro",
+      supply: 194_100,
+      price: 0.3,
+      kvcm: 1.94,
+    });
+    conclusionClasses.push({
+      name: "Wind (2008+)",
+      supply: 325_000,
+      price: 0.35,
+      kvcm: 3.826,
+    });
+    conclusionClasses.push({
+      name: "Wind (2017+)",
+      supply: 230_000,
+      price: 0.5,
+      kvcm: 3.869,
     });
     conclusionClasses.push({
       name: "Landfill Gas",
-      supply: 90_000,
+      supply: 80_000,
       price: 0.7,
-      nav: 90_000 * 0.7,
-      kvcm: 2.075,
+      kvcm: 1.865,
     });
     conclusionClasses.push({
-      name: "Wind Energy",
-      supply: 330_000,
-      price: 0.2,
-      nav: 330_000 * 0.2,
-      kvcm: 2.175,
+      name: "IFM",
+      supply: 54_000,
+      price: 1,
+      kvcm: 1.798,
     });
-    conclusionClasses.push({
-      name: "Total",
-      supply: 850_512,
-      nav: 600_000,
-      kvcm: 20,
-    });
-    conclusionAMarketCap = 3_068_001;
-    conclusionRatioAMCapNav = 5.11;
+    conclusionAMarketCap = 3_030_728;
+    conclusionRatioAMCapNav = 5.06;
 
   } else {
     conclusionClasses.push({
       name: "OAE",
       supply: 12,
-      price: 500,
-      nav: 12 * 500,
-      kvcm: 0.196,
+      price: 550,
+      kvcm: 0.216,
     });
     conclusionClasses.push({
       name: "BCHAR",
-      supply: 500,
+      supply: 534,
       price: 130,
-      nav: 500 * 130,
       kvcm: 2.149,
     });
     conclusionClasses.push({
       name: "Defores. (2008+)",
-      supply: 300_000,
+      supply: 102_000,
       price: 0.8,
-      nav: 300_000 * 0.8,
-      kvcm: 8.184,
+      kvcm: 2.705,
     });
     conclusionClasses.push({
       name: "Defores. (2017+)",
-      supply: 25_000,
+      supply: 27_000,
       price: 1.6,
-      nav: 25_000 * 1.6,
-      kvcm: 1.317,
+      kvcm: 1.423,
     });
     conclusionClasses.push({
-      name: "IFM",
-      supply: 180_000,
-      price: 1,
-      nav: 180_000 * 1,
-      kvcm: 6.071,
+      name: "Bulk Hydro",
+      supply: 388_200,
+      price: 0.3,
+      kvcm: 3.884,
+    });
+    conclusionClasses.push({
+      name: "Wind (2008+)",
+      supply: 325_000,
+      price: 0.35,
+      kvcm: 3.792,
+    });
+    conclusionClasses.push({
+      name: "Wind (2017+)",
+      supply: 230_000,
+      price: 0.5,
+      kvcm: 3.834,
     });
     conclusionClasses.push({
       name: "Landfill Gas",
-      supply: 90_000,
+      supply: 80_000,
       price: 0.7,
-      nav: 90_000 * 0.7,
-      kvcm: 2.082,
+      kvcm: 1.848,
     });
-    conclusionClasses.push({
-      name: "Total",
-      supply: 595_512,
-      nav: 594_000,
-      kvcm: 20,
-    });
-    conclusionAMarketCap = 3_057_617;
-    conclusionRatioAMCapNav = 5.15;
+    conclusionAMarketCap = 3_057_794;
+    conclusionRatioAMCapNav = 5.08;
   }
 
 } else {
-  if (optionalClasses.includes("Wind Energy")) {
+  if (optionalClasses.includes("IFM")) {
     conclusionClasses.push({
       name: "OAE",
       supply: 12,
-      price: 500,
-      nav: 12 * 500,
-      kvcm: 0.195,
+      price: 550,
+      kvcm: 0.217,
     });
     conclusionClasses.push({
       name: "BCHAR",
-      supply: 500,
+      supply: 534,
       price: 130,
-      nav: 500 * 130,
-      kvcm: 2.138,
+      kvcm: 2.304,
     });
     conclusionClasses.push({
       name: "Defores. (2008+)",
-      supply: 300_000,
+      supply: 102_000,
       price: 0.8,
-      nav: 300_000 * 0.8,
-      kvcm: 8.143,
+      kvcm: 2.714,
     });
     conclusionClasses.push({
       name: "Defores. (2017+)",
-      supply: 25_000,
+      supply: 27_000,
       price: 1.6,
-      nav: 25_000 * 1.6,
-      kvcm: 1.31,
+      kvcm: 1.428,
+    });
+    conclusionClasses.push({
+      name: "Bulk Hydro",
+      supply: 388_200,
+      price: 0.3,
+      kvcm: 3.897,
+    });
+    conclusionClasses.push({
+      name: "Wind (2008+)",
+      supply: 325_000,
+      price: 0.35,
+      kvcm: 3.805,
+    });
+    conclusionClasses.push({
+      name: "Wind (2017+)",
+      supply: 230_000,
+      price: 0.5,
+      kvcm: 3.847,
     });
     conclusionClasses.push({
       name: "IFM",
-      supply: 180_000,
+      supply: 54_000,
       price: 1,
-      nav: 180_000 * 1,
-      kvcm: 6.041,
+      kvcm: 1.788,
     });
-    conclusionClasses.push({
-      name: "Wind Energy",
-      supply: 330_000,
-      price: 0.2,
-      nav: 330_000 * 0.2,
-      kvcm: 2.172,
-    });
-    conclusionClasses.push({
-      name: "Total",
-      supply: 835_512,
-      nav: 597_000,
-      kvcm: 20,
-    });
-    conclusionAMarketCap = 3_072_506;
-    conclusionRatioAMCapNav = 5.15;
+    conclusionAMarketCap = 3_047_758;
+    conclusionRatioAMCapNav = 5.08;
 
   } else {
     conclusionClasses.push({
       name: "OAE",
       supply: 12,
-      price: 500,
-      nav: 12 * 500,
-      kvcm: 0.196,
+      price: 550,
+      kvcm: 0.208,
     });
     conclusionClasses.push({
       name: "BCHAR",
-      supply: 500,
+      supply: 534,
       price: 130,
-      nav: 500 * 130,
-      kvcm: 2.141,
+      kvcm: 2.206,
     });
     conclusionClasses.push({
       name: "Defores. (2008+)",
-      supply: 375_000,
+      supply: 102_000,
       price: 0.8,
-      nav: 375_000 * 0.8,
-      kvcm: 10.305,
+      kvcm: 2.598,
     });
     conclusionClasses.push({
       name: "Defores. (2017+)",
-      supply: 25_000,
+      supply: 27_000,
       price: 1.6,
-      nav: 25_000 * 1.6,
-      kvcm: 1.312,
+      kvcm: 1.367,
     });
     conclusionClasses.push({
-      name: "IFM",
-      supply: 180_000,
-      price: 1,
-      nav: 180_000 * 1,
-      kvcm: 6.047,
+      name: "Bulk Hydro",
+      supply: 647_000,
+      price: 0.3,
+      kvcm: 6.298,
     });
     conclusionClasses.push({
-      name: "Total",
-      supply: 580_512,
-      nav: 591_000,
-      kvcm: 20,
+      name: "Wind (2008+)",
+      supply: 325_000,
+      price: 0.35,
+      kvcm: 3.641,
     });
-    conclusionAMarketCap = 3_069_463;
-    conclusionRatioAMCapNav = 5.19;
+    conclusionClasses.push({
+      name: "Wind (2017+)",
+      supply: 230_000,
+      price: 0.5,
+      kvcm: 3.682,
+    });
+    conclusionAMarketCap = 3_182_057;
+    conclusionRatioAMCapNav = 5.10;
   }
 }
+for (const d of conclusionClasses) {
+  d.nav = d.supply * d.price;
+}
+conclusionClasses.push({
+  name: "Total",
+  supply: d3.sum(conclusionClasses, d => d.supply),
+  nav: d3.sum(conclusionClasses, d => d.nav),
+  kvcm: d3.sum(conclusionClasses, d => d.kvcm),
+});
 ```
 
 ```js
 Inputs.table(conclusionClasses, {
+  columns: ["name", "supply", "price", "nav", "kvcm"],
   header: {
     name: "Carbon Class",
     supply: "Supply (tCO2eq)",
