@@ -418,7 +418,7 @@ const highestNav = inputCarbonClasses[highestNavIdx].nav;
 
 const minNavTotal = navTotal - highestNav;
 const maxNavTotal = navTotal;
-const defaultNav = Math.round(minNavTotal + 0.5 * (maxNavTotal - minNavTotal));
+const defaultNav = Math.round(minNavTotal + 0.6 * (maxNavTotal - minNavTotal));
 const stepNav = 1;
 const viewNav = Inputs.range([minNavTotal, maxNavTotal], {
   label: "Net Asset Value (USD)",
@@ -614,7 +614,7 @@ if (optionalClasses.includes("Landfill Gas")) {
       name: "BCHAR",
       supply: 534,
       price: 130,
-      kvcm: 2.149,
+      kvcm: 2.297,
     });
     conclusionClasses.push({
       name: "Defores. (2008+)",
