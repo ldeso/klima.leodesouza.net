@@ -18,6 +18,7 @@ export default {
     { name: "Carbon Loophole", path: "/carbon-loophole" },
     { name: "Price Manipulation", path: "/price-manipulation" },
     { name: "Carbon Classes", path: "/carbon-classes" },
+    { name: "Rate Limits", path: "/rate-limits" },
   ],
   toc: true,
   pager: false,
