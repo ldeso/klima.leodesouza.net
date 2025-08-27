@@ -167,18 +167,18 @@ const RATE_LIMIT_K2 = inputRateLimitK2;
 
 const state = {
   valuesRaw: {
-    carbon: 1100,         // tCO2eq
-    kvcmAlloc: 200_000,   // kVCM
-    k2Alloc: 200_000,     // K2
+    carbon:        1_100, // tCO2eq
+    kvcmAlloc:   200_000, // kVCM
+    k2Alloc:     200_000, // K2
     kvcmTotal: 1_000_000, // kVCM
-    k2Total: 1_000_000,   // K2
+    k2Total:   1_000_000, // K2
   },
   snapshots: {
-    carbon: { value: 1100, time: 0, rate: RATE_LIMIT },
-    kvcmAlloc: { value: 200_000, time: 0, rate: RATE_LIMIT },
-    k2Alloc: { value: 200_000, time: 0, rate: RATE_LIMIT_K2 },
+    carbon:    { value:     1_100, time: 0, rate: RATE_LIMIT },
+    kvcmAlloc: { value:   200_000, time: 0, rate: RATE_LIMIT },
+    k2Alloc:   { value:   200_000, time: 0, rate: RATE_LIMIT_K2 },
     kvcmTotal: { value: 1_000_000, time: 0, rate: RATE_LIMIT },
-    k2Total: { value: 1_000_000, time: 0, rate: RATE_LIMIT_K2 },
+    k2Total:   { value: 1_000_000, time: 0, rate: RATE_LIMIT_K2 },
   },
   time: 0,                // hours
 };
