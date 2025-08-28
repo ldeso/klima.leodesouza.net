@@ -47,11 +47,11 @@ const states = [{
     k2Total: 1_000_000,
   },
   snapshots: {
-    carbon: { value: 1100, time: 0, rate: RATE_LIMIT },
-    kvcmAlloc: { value: 200_000, time: 0, rate: RATE_LIMIT },
-    k2Alloc: { value: 200_000, time: 0, rate: RATE_LIMIT_K2 },
-    kvcmTotal: { value: 1_000_000, time: 0, rate: RATE_LIMIT },
-    k2Total: { value: 1_000_000, time: 0, rate: RATE_LIMIT_K2 },
+    carbon: { value: 1100, time: -4, rate: RATE_LIMIT },
+    kvcmAlloc: { value: 200_000, time: -4, rate: RATE_LIMIT },
+    k2Alloc: { value: 200_000, time: -4, rate: RATE_LIMIT_K2 },
+    kvcmTotal: { value: 1_000_000, time: -4, rate: RATE_LIMIT },
+    k2Total: { value: 1_000_000, time: -4, rate: RATE_LIMIT_K2 },
   },
   time: -4,
 }];
@@ -67,34 +67,24 @@ const timeMin = -4;
 const timeMax = 32;
 
 const data = [];
-for (const state of states) {
-  const { valuesRaw, snapshots, time } = state;
+for (const { valuesRaw, snapshots } of states) {
+  for (const name in snapshots) {
+    const { value, time } = snapshots[name];
+    data.push({ type: "Snapshot", name, value, time });
+  }
+}
+for (let time = timeMin; time < timeMax + 0.001; time += 0.01) {
+  const i = d3.maxIndex(states, state => state.time > time ? NaN : state.time);
+  const { valuesRaw, snapshots } = states[i];
   for (const name in valuesRaw) {
     const value = valuesRaw[name];
     data.push({ type: "Raw", name, value, time });
-  }
-  for (const name in snapshots) {
-    const { value, time } = snapshots[name];
-    if (data.every(d =>
-      d.type !== "Snapshot" || d.name !== name || d.time !== time
-    )) {
-      data.push({ type: "Snapshot", name, value, time });
-      for (let t = time; t < timeMax + 0.01; t += 0.1) {
-        let limit;
-        if (name === "carbon" || name === "kvcmTotal" || name === "k2Total") {
-          limit = 0;
-        } else {
-          limit = 1_000_000_000_000;
-        }
-        data.push({
-          type: "Effective",
-          name,
-          value: computeEffectiveValue(name, { [name]: limit }, snapshots, t),
-          time,
-          snapTime: t,
-        });
-      }
-    }
+    data.push({
+      type: "Effective",
+      name,
+      value: computeEffectiveValue(name, { [name]: value }, snapshots, time),
+      time,
+    });
   }
 }
 ```
@@ -138,13 +128,11 @@ display(Plot.plot({
       x: "time",
       y: "value",
       stroke: "type",
-      curve: "step-after",
     }),
     Plot.lineY(data, {
       filter: d => d.name === name && d.type === "Effective" ? d.value : null,
-      x: "snapTime",
+      x: "time",
       y: "value",
-      z: "time",
       stroke: "type",
       size: 1,
       strokeDasharray: 4,
