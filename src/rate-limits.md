@@ -18,26 +18,6 @@ _How to implement rate limits?_
 ## Interactive Simulation
 
 ```js
-const inputRateLimit = view(Inputs.range([1e-4, 1e2], {
-  label: "Hourly rate limit",
-  step: 1e-4,
-  value: 1e-1,
-  transform: Math.log,
-}));
-
-const inputRateLimitK2 = view(Inputs.range([1e-4, 1e2], {
-  label: "Hourly rate limit (K2)",
-  step: 1e-4,
-  value: 1e-1,
-  transform: Math.log,
-}));
-
-const inputName = view(Inputs.select(
-  ["carbon", "kvcmAlloc", "k2Alloc", "kvcmTotal", "k2Total"],
-));
-```
-
-```js
 const states = [{
   valuesRaw: {
     carbon: 1100,
@@ -77,16 +57,77 @@ for (let time = timeMin; time < timeMax + 0.001; time += 0.01) {
   const i = d3.maxIndex(states, state => state.time > time ? NaN : state.time);
   const { valuesRaw, snapshots } = states[i];
   for (const name in valuesRaw) {
-    const value = valuesRaw[name];
-    data.push({ type: "Raw", name, value, time });
-    data.push({
-      type: "Effective",
-      name,
-      value: computeEffectiveValue(name, { [name]: value }, snapshots, time),
-      time,
-    });
+    data.push({ type: "Raw", name, value: valuesRaw[name], time });
   }
+
+  const valuesEffective = computeEffectiveValues(valuesRaw, snapshots, time);
+  for (const name in valuesEffective) {
+    data.push({ type: "Effective", name, value: valuesEffective[name], time });
+  }
+
+  const name = "price";
+  const carbonDelta = 1e-10;
+  const kvcmDeltaSwap = computePriceSwap(valuesEffective, carbonDelta);
+  data.push({
+    type: "Hypothetical Swap Price",
+    name,
+    value: kvcmDeltaSwap / carbonDelta,
+    time,
+  });
+
+  const valuesRetirement = { ...valuesEffective, carbon: valuesRaw.carbon };
+  const kvcmDeltaRetirement = computePriceRetire(valuesRetirement, carbonDelta);
+  data.push({
+    type: "Hypothetical Retirement Price",
+    name,
+    value: kvcmDeltaRetirement / carbonDelta,
+    time,
+  });
 }
+```
+
+```js
+Plot.plot({
+  caption: "Evolution of the Price",
+  color: {
+    legend: true,
+    range: [0, 3, 2].map(i => d3.schemeCategory10[i]),
+    domain: ["Hypothetical Swap Price", "Hypothetical Retirement Price"],
+  },
+  x: { label: "Time (hour)", domain: [timeMin, timeMax] },
+  y: { label: "Price (kVCM/tCO2eq)", domain: [0, 1000] },
+  marginLeft: 50,
+  clip: true,
+  marks: [
+    Plot.frame(),
+    Plot.lineY(data, {
+      filter: d => d.name === "price" ? d.value : null,
+      x: "time",
+      y: "value",
+      stroke: "type",
+    }),
+  ],
+})
+```
+
+```js
+const inputRateLimit = view(Inputs.range([1e-4, 1e2], {
+  label: "Hourly rate limit",
+  step: 1e-4,
+  value: 0.0417,  // 1/24
+  transform: Math.log,
+}));
+
+const inputRateLimitK2 = view(Inputs.range([1e-4, 1e2], {
+  label: "Hourly rate limit (K2)",
+  step: 1e-4,
+  value: 1,
+  transform: Math.log,
+}));
+
+const inputName = view(Inputs.select(
+  ["carbon", "kvcmAlloc", "k2Alloc", "kvcmTotal", "k2Total"],
+));
 ```
 
 ```js
