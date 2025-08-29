@@ -53,33 +53,27 @@ for (const { valuesRaw, snapshots } of states) {
     data.push({ type: "Snapshot", name, value, time });
   }
 }
-for (let time = timeMin; time < timeMax + 0.001; time += 0.01) {
+for (let time = timeMin; time < timeMax + 0.002; time += 0.01) {
   const i = d3.maxIndex(states, state => state.time > time ? NaN : state.time);
   const { valuesRaw, snapshots } = states[i];
+  const valuesEffective = computeEffectiveValues(valuesRaw, snapshots, time);
   for (const name in valuesRaw) {
     data.push({ type: "Raw", name, value: valuesRaw[name], time });
-  }
-
-  const valuesEffective = computeEffectiveValues(valuesRaw, snapshots, time);
-  for (const name in valuesEffective) {
     data.push({ type: "Effective", name, value: valuesEffective[name], time });
   }
-
-  const name = "price";
   const carbonDelta = 1e-10;
   const kvcmDeltaSwap = computePriceSwap(valuesEffective, carbonDelta);
   data.push({
     type: "Hypothetical Swap Price",
-    name,
+    name: "price",
     value: kvcmDeltaSwap / carbonDelta,
     time,
   });
-
   const valuesRetirement = { ...valuesEffective, carbon: valuesRaw.carbon };
   const kvcmDeltaRetirement = computePriceRetire(valuesRetirement, carbonDelta);
   data.push({
     type: "Hypothetical Retirement Price",
-    name,
+    name: "price",
     value: kvcmDeltaRetirement / carbonDelta,
     time,
   });
@@ -95,7 +89,7 @@ Plot.plot({
     domain: ["Hypothetical Swap Price", "Hypothetical Retirement Price"],
   },
   x: { label: "Time (hour)", domain: [timeMin, timeMax] },
-  y: { label: "Price (kVCM/tCO2eq)", domain: [0, 1000] },
+  y: { label: "Price (kVCM/tCO2eq)", domain: [0, 500] },
   marginLeft: 50,
   clip: true,
   marks: [
@@ -111,14 +105,14 @@ Plot.plot({
 ```
 
 ```js
-const inputRateLimit = view(Inputs.range([1e-4, 1e2], {
+const hourlyRateLimit = view(Inputs.range([1e-4, 1e2], {
   label: "Hourly rate limit",
   step: 1e-4,
   value: 0.0417,  // 1/24
   transform: Math.log,
 }));
 
-const inputRateLimitK2 = view(Inputs.range([1e-4, 1e2], {
+const hourlyRateLimitK2 = view(Inputs.range([1e-4, 1e2], {
   label: "Hourly rate limit (K2)",
   step: 1e-4,
   value: 1,
@@ -191,8 +185,8 @@ display(Plot.plot({
 ## Implementation
 
 ```js echo
-const RATE_LIMIT = inputRateLimit;
-const RATE_LIMIT_K2 = inputRateLimitK2;
+const RATE_LIMIT = hourlyRateLimit;
+const RATE_LIMIT_K2 = hourlyRateLimitK2;
 
 const state = {
   valuesRaw: {
@@ -289,13 +283,15 @@ function executeChange(state, name, delta, time) {
 }
 
 function computeEffectiveValues(valuesRaw, snapshots, time) {
-  const valuesEffective = {
-    carbon: computeEffectiveValue("carbon", valuesRaw, snapshots, time),
-    kvcmAlloc: computeEffectiveValue("kvcmAlloc", valuesRaw, snapshots, time),
-    k2Alloc: computeEffectiveValue("k2Alloc", valuesRaw, snapshots, time),
-    kvcmTotal: computeEffectiveValue("kvcmTotal", valuesRaw, snapshots, time),
-    k2Total: computeEffectiveValue("k2Total", valuesRaw, snapshots, time),
-  };
+  const valuesEffective = {};
+  for (const name in valuesRaw) {
+    valuesEffective[name] = computeEffectiveValue(
+      name,
+      valuesRaw,
+      snapshots,
+      time,
+    );
+  }
   return valuesEffective;
 }
 
