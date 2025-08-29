@@ -183,6 +183,7 @@ Plot.plot({
     domain: [0, d3.max(data, d => d.name === "price" ? d.value : NaN)],
   },
   insetTop: 16,
+  marginLeft: 50,
   clip: true,
   marks: [
     Plot.frame(),
@@ -279,6 +280,7 @@ display(Plot.plot({
     domain: [0, d3.max(data, d => d.name === name ? d.value : NaN)],
   },
   insetTop: 16,
+  marginLeft: 50,
   clip: true,
   marks: [
     Plot.frame(),
