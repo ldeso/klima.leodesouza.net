@@ -17,21 +17,106 @@ _How to implement rate limits?_
 
 ## Interactive Simulation
 
+Initial state:
+
 ```js
+const defaultCInitial = 1100;
+const defaultASupply = 1_000_000;
+const defaultGSupply = 1_000_000;
+const defaultAPrice = 0.1;
+const defaultAi = 0.2;
+const defaultGi = 0.2;
+
+const viewCInitial = Inputs.range([1, 1e8], {
+  label: "Carbon supply",
+  step: 1,
+  value: defaultCInitial,
+  transform: Math.log,
+});
+const viewAi = Inputs.range([1e-5, 1], {
+  label: "kVCM allocation",
+  step: 1e-5,
+  value: defaultAi,
+  transform: Math.log,
+});
+const viewGi = Inputs.range([0, 1], {
+  label: "K2 allocation",
+  step: 1e-5,
+  value: defaultGi,
+});
+const viewASupply = Inputs.range([1, 1e10], {
+  label: "kVCM supply",
+  step: 1,
+  value: defaultASupply,
+  transform: Math.log,
+});
+const viewGSupply = Inputs.range([1, 1e10], {
+  label: "K2 supply",
+  step: 1,
+  value: defaultGSupply,
+  transform: Math.log,
+});
+const viewAPrice = Inputs.range([1e-5, 1e3], {
+  label: "kVCM price (USD/kVCM)",
+  step: 1e-5,
+  value: defaultAPrice,
+  transform: Math.log,
+});
+```
+
+```js
+const inputCInitial = view(viewCInitial);
+const inputAi = view(viewAi);
+const inputGi = view(viewGi);
+const inputASupply = view(viewASupply);
+const inputGSupply = view(viewGSupply);
+const inputAPrice = view(viewAPrice);
+```
+
+```js
+const viewResetInitial = Inputs.button(
+  [["Reset", () => {
+    Util.setInput(viewCInitial, defaultCInitial);
+    Util.setInput(viewAi, defaultAi);
+    Util.setInput(viewGi, defaultGi);
+    Util.setInput(viewASupply, defaultASupply);
+    Util.setInput(viewGSupply, defaultGSupply);
+    Util.setInput(viewAPrice, defaultAPrice);
+  }]],
+);
+```
+
+```js
+display(viewResetInitial);
+```
+
+```js
+if (inputCInitial === defaultCInitial && inputAi === defaultAi &&
+        inputGi === defaultGi && inputASupply === defaultASupply &&
+        inputGSupply === defaultGSupply &&inputAPrice === defaultAPrice) {
+  viewResetInitial.classList.add("u-hidden");
+} else {
+  viewResetInitial.classList.remove("u-hidden");
+}
+```
+
+```js
+const kvcmAllocInitial = inputAi * inputASupply;
+const k2AllocInitial = inputGi * inputGSupply;
 const states = [{
   valuesRaw: {
-    carbon: 1100,
-    kvcmAlloc: 200_000,
-    k2Alloc: 200_000,
-    kvcmTotal: 1_000_000,
-    k2Total: 1_000_000,
+    carbon: inputCInitial,
+    kvcmAlloc: kvcmAllocInitial,
+    k2Alloc: k2AllocInitial,
+    kvcmTotal: inputASupply,
+    k2Total: inputGSupply,
   },
   snapshots: {
-    carbon: { value: 1100, time: -4, rate: RATE_LIMIT },
-    kvcmAlloc: { value: 200_000, time: -4, rate: RATE_LIMIT },
-    k2Alloc: { value: 200_000, time: -4, rate: RATE_LIMIT_K2 },
-    kvcmTotal: { value: 1_000_000, time: -4, rate: RATE_LIMIT },
-    k2Total: { value: 1_000_000, time: -4, rate: RATE_LIMIT_K2 },
+    carbon: { value: inputCInitial, time: -4, rate: RATE_LIMIT },
+    kvcmAlloc: { value: kvcmAllocInitial, time: -4, rate: RATE_LIMIT },
+    k2Alloc: { value: k2AllocInitial, time: -4, rate: RATE_LIMIT_K2 },
+    kvcmTotal: { value: inputASupply, time: -4, rate: RATE_LIMIT },
+    k2Total: { value: inputGSupply, time: -4, rate: RATE_LIMIT_K2 },
   },
   time: -4,
 }];
@@ -47,26 +132,30 @@ const timeMin = -4;
 const timeMax = 32;
 
 const data = [];
-for (const { valuesRaw, snapshots } of states) {
+for (const { valuesRaw, snapshots, time } of states) {
+  for (const name in valuesRaw) {
+    const value = valuesRaw[name];
+    data.push({ type: "Raw", name, value, time });
+  }
   for (const name in snapshots) {
     const { value, time } = snapshots[name];
     data.push({ type: "Snapshot", name, value, time });
   }
 }
-for (let time = timeMin; time < timeMax + 0.002; time += 0.01) {
+for (let time = timeMin; time < timeMax + 0.001; time += 0.02) {
   const i = d3.maxIndex(states, state => state.time > time ? NaN : state.time);
   const { valuesRaw, snapshots } = states[i];
   const valuesEffective = computeEffectiveValues(valuesRaw, snapshots, time);
-  for (const name in valuesRaw) {
-    data.push({ type: "Raw", name, value: valuesRaw[name], time });
-    data.push({ type: "Effective", name, value: valuesEffective[name], time });
+  for (const name in valuesEffective) {
+    const value = valuesEffective[name];
+    data.push({ type: "Effective", name, value, time });
   }
   const carbonDelta = 1e-10;
   const kvcmDeltaSwap = computePriceSwap(valuesEffective, carbonDelta);
   data.push({
     type: "Hypothetical Swap Price",
     name: "price",
-    value: kvcmDeltaSwap / carbonDelta,
+    value: inputAPrice * kvcmDeltaSwap / carbonDelta,
     time,
   });
   const valuesRetirement = { ...valuesEffective, carbon: valuesRaw.carbon };
@@ -74,7 +163,7 @@ for (let time = timeMin; time < timeMax + 0.002; time += 0.01) {
   data.push({
     type: "Hypothetical Retirement Price",
     name: "price",
-    value: kvcmDeltaRetirement / carbonDelta,
+    value: inputAPrice * kvcmDeltaRetirement / carbonDelta,
     time,
   });
 }
@@ -89,15 +178,17 @@ Plot.plot({
     domain: ["Hypothetical Swap Price", "Hypothetical Retirement Price"],
   },
   x: { label: "Time (hour)", domain: [timeMin, timeMax] },
-  y: { label: "Price (kVCM/tCO2eq)", domain: [0, 500] },
-  marginLeft: 50,
+  y: {
+    label: "Price (USD)",
+    domain: [0, d3.max(data, d => d.name === "price" ? d.value : NaN)],
+  },
+  insetTop: 16,
   clip: true,
   marks: [
     Plot.frame(),
     Plot.lineY(data, {
-      filter: d => d.name === "price" ? d.value : null,
       x: "time",
-      y: "value",
+      y: d => d.name === "price" ? d.value : null,
       stroke: "type",
     }),
   ],
@@ -105,44 +196,74 @@ Plot.plot({
 ```
 
 ```js
-const hourlyRateLimit = view(Inputs.range([1e-4, 1e2], {
+const defaultRateLimit = 0.0417;  // 1/24
+const defaultRateLimitK2 = 1;
+const defaultName = "carbon";
+
+const viewRateLimit = Inputs.range([1e-4, 1e2], {
   label: "Hourly rate limit",
   step: 1e-4,
-  value: 0.0417,  // 1/24
+  value: defaultRateLimit,
   transform: Math.log,
-}));
-
-const hourlyRateLimitK2 = view(Inputs.range([1e-4, 1e2], {
+});
+const viewRateLimitK2 = Inputs.range([1e-4, 1e2], {
   label: "Hourly rate limit (K2)",
   step: 1e-4,
-  value: 1,
+  value: defaultRateLimitK2,
   transform: Math.log,
-}));
-
-const inputName = view(Inputs.select(
+});
+const viewName = Inputs.select(
   ["carbon", "kvcmAlloc", "k2Alloc", "kvcmTotal", "k2Total"],
-));
+);
+```
+
+```js
+const hourlyRateLimit = view(viewRateLimit);
+const hourlyRateLimitK2 = view(viewRateLimitK2);
+const inputName = view(viewName);
+```
+
+```js
+const viewResetGeneral = Inputs.button(
+  [["Reset", () => {
+    Util.setInput(viewRateLimit, defaultRateLimit);
+    Util.setInput(viewRateLimitK2, defaultRateLimitK2);
+  }]],
+);
+```
+
+```js
+display(viewResetGeneral);
+```
+
+```js
+if (hourlyRateLimit === defaultRateLimit &&
+        hourlyRateLimitK2 === defaultRateLimitK2) {
+  viewResetGeneral.classList.add("u-hidden");
+} else {
+  viewResetGeneral.classList.remove("u-hidden");
+}
 ```
 
 ```js
 const name = inputName;
 let caption;
-let y;
+let yLabel;
 if (name === "carbon") {
   caption = "Evolution of the Carbon Supply";
-  y = { label: "Carbon Supply (tCO2eq)", domain: [0, 1400] };
+  yLabel = "Carbon Supply (tCO2eq)";
 } else if (name === "kvcmAlloc") {
   caption = "Evolution of the kVCM Allocation";
-  y = { label: "kVCM Allocation (kVCM)", domain: [0, 400_000] };
+  yLabel = "kVCM Allocation (kVCM)";
 } else if (name === "k2Alloc") {
   caption = "Evolution of the K2 Allocation";
-  y = { label: "K2 Allocation (K2)", domain: [0, 400_000] };
+  yLabel = "K2 Allocation (K2)";
 } else if (name === "kvcmTotal") {
   caption = "Evolution of the kVCM Supply";
-  y = { label: "kVCM Supply (kVCM)", domain: [0, 1_200_000] };
+  yLabel = "kVCM Supply (kVCM)";
 } else {  // name === "k2Total"
   caption = "Evolution of the K2 Supply";
-  y = { label: "K2 Supply (K2)", domain: [0, 1_200_000] };
+  yLabel = "K2 Supply (K2)";
 }
 
 display(Plot.plot({
@@ -153,8 +274,11 @@ display(Plot.plot({
     domain: ["Raw", "Snapshot", "Effective"],
   },
   x: { label: "Time (hour)", domain: [timeMin, timeMax] },
-  y,
-  marginLeft: 50,
+  y: {
+    label: yLabel,
+    domain: [0, d3.max(data, d => d.name === name ? d.value : NaN)],
+  },
+  insetTop: 16,
   clip: true,
   marks: [
     Plot.frame(),
@@ -163,6 +287,7 @@ display(Plot.plot({
       x: "time",
       y: "value",
       stroke: "type",
+      curve: "step-after",
     }),
     Plot.lineY(data, {
       filter: d => d.name === name && d.type === "Effective" ? d.value : null,
