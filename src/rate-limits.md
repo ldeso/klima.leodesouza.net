@@ -100,10 +100,10 @@ const defaultChange = "Carbon Swap";
 const defaultDelta = 100;
 const defaultTime = 0;
 const defaultChanges = [
-  { change: "Carbon Retirement", delta: -100, time: 0 },
+  { change: "Carbon Retirement", delta: 100, time: 0 },
   { change: "kVCM Allocation", delta: 50_000, time: 8 },
   { change: "kVCM Allocation", delta: 50_000, time: 16 },
-  { change: "Carbon Retirement", delta: -100, time: 24 },
+  { change: "Carbon Retirement", delta: 100, time: 24 },
   { change: "Carbon Swap", delta: 150, time: 25 },
   { change: "kVCM Allocation", delta: 0, time: 48 },
 ];
