@@ -20,6 +20,9 @@ _How to implement rate limits?_
 Initial state:
 
 ```js
+const timeMin = -4;
+const timeMax = 32;
+
 const defaultCInitial = 1100;
 const defaultASupply = 1_000_000;
 const defaultGSupply = 1_000_000;
@@ -90,6 +93,86 @@ const viewResetInitial = Inputs.button(
 display(viewResetInitial);
 ```
 
+Add swaps, retirements and (de-)allocations:
+
+```js
+const defaultChange = "Carbon Swap";
+const defaultDelta = 100;
+const defaultTime = 0;
+const defaultChanges = [
+  { change: "Carbon Retirement", delta: -100, time: 0 },
+  { change: "kVCM Allocation", delta: 50_000, time: 8 },
+  { change: "kVCM Allocation", delta: 50_000, time: 16 },
+  { change: "Carbon Retirement", delta: -100, time: 24 },
+  { change: "Carbon Swap", delta: 150, time: 25 },
+  { change: "kVCM Allocation", delta: 0, time: 48 },
+];
+
+const changeMutable = Mutable("Carbon Swap");
+const deltaMutable = Mutable(defaultDelta);
+const timeMutable = Mutable(defaultTime);
+const changesMutable = Mutable(defaultChanges);
+
+const setChange = change => changeMutable.value = change;
+const setDelta = delta => deltaMutable.value = delta;
+const setTime = time => timeMutable.value = time;
+const addChange = () => changesMutable.value = changesMutable.value.concat({
+  change: changeMutable.value,
+  delta: deltaMutable.value,
+  time: timeMutable.value,
+});
+const resetChange = () => changesMutable.value = [];
+
+const viewChange = Inputs.select([
+  "Carbon Swap",
+  "Carbon Retirement",
+  "kVCM Allocation",
+  "kVCM Deallocation",
+  "K2 Allocation",
+  "K2 Deallocation",
+]);
+const viewDelta = Inputs.range([1, 1e10], {
+  label: "Delta",
+  step: 1,
+  value: defaultDelta,
+  transform: Math.log,
+});
+const viewTime = Inputs.range([timeMin, timeMax], {
+  label: "Time",
+  step: 1,
+  value: defaultTime,
+});
+
+const changeObs = Generators.observe(change => {
+  const inputted = () => setChange(change(viewChange.value));
+  viewChange.addEventListener("click", inputted);
+  change(viewChange.value);
+  return () => viewChange.removeEventListener("input", inputted);
+});
+const deltaObs = Generators.observe(change => {
+  const inputted = () => setDelta(change(viewDelta.value));
+  viewDelta.addEventListener("input", inputted);
+  change(viewDelta.value);
+  return () => viewDelta.removeEventListener("input", inputted);
+});
+const timeObs = Generators.observe(change => {
+  const inputted = () => setTime(change(viewTime.value));
+  viewTime.addEventListener("input", inputted);
+  change(viewTime.value);
+  return () => viewTime.removeEventListener("input", inputted);
+});
+```
+
+```js
+const viewAdd = Inputs.button(
+  [["Add", addChange], ["Reset", resetChange]],
+);
+const inputChange = view(viewChange);
+const inputDelta = view(viewDelta);
+const inputTime = view(viewTime);
+display(viewAdd);
+```
+
 ```js
 if (inputCInitial === defaultCInitial && inputAi === defaultAi &&
         inputGi === defaultGi && inputASupply === defaultASupply &&
@@ -121,15 +204,21 @@ const states = [{
   time: -4,
 }];
 
-states.push(executeRetire(states.at(-1), -100, 0));
-states.push(executeChange(states.at(-1), "kvcmAlloc", +50_000, 8));
-states.push(executeChange(states.at(-1), "kvcmAlloc", +50_000, 16));
-states.push(executeRetire(states.at(-1), -100, 24));
-states.push(executeSwap(states.at(-1), +150, 25));
-states.push(executeChange(states.at(-1), "kvcmAlloc", 0, 48));
-
-const timeMin = -4;
-const timeMax = 32;
+for (const { change, delta, time } of d3.sort(changesMutable, d => d.time)) {
+  if (change === "Carbon Swap") {
+    states.push(executeSwap(states.at(-1), delta, time));
+  } else if (change === "Carbon Retirement") {
+    states.push(executeRetire(states.at(-1), -delta, time));
+  } else if (change === "kVCM Allocation") {
+    states.push(executeChange(states.at(-1), "kvcmAlloc", delta, time));
+  } else if (change === "kVCM Deallocation") {
+    states.push(executeChange(states.at(-1), "kvcmAlloc", -delta, time));
+  } else if (change === "K2 Allocation") {
+    states.push(executeChange(states.at(-1), "k2Alloc", delta, time));
+  } else {
+    states.push(executeChange(states.at(-1), "k2Alloc", -delta, time));
+  }
+}
 
 const data = [];
 for (const { valuesRaw, snapshots, time } of states) {
