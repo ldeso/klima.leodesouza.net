@@ -143,8 +143,7 @@ for (const { valuesRaw, snapshots, time } of states) {
   }
 }
 for (let time = timeMin; time < timeMax + 0.001; time += 0.02) {
-  const i = d3.maxIndex(states, state => state.time > time ? NaN : state.time);
-  const { valuesRaw, snapshots } = states[i];
+  const { valuesRaw, snapshots } = states.filter(d => d.time <= time).at(-1);
   const valuesEffective = computeEffectiveValues(valuesRaw, snapshots, time);
   for (const name in valuesEffective) {
     const value = valuesEffective[name];
