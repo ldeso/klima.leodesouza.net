@@ -149,7 +149,7 @@ const viewTime = Inputs.range([timeMin, timeMax], {
   step: 1,
   value: defaultTime,
 });
-const viewDeleted = Inputs.number([1, null], { label: "Deleted", value: 1 });
+const viewDeleted = Inputs.number([1, null], { label: "Deleted #", value: 1 });
 
 const changeObs = Generators.observe(change => {
   const inputted = () => setChange(change(viewChange.value));
@@ -196,6 +196,19 @@ if (inputCInitial === defaultCInitial && inputAi === defaultAi &&
 } else {
   viewResetInitial.classList.remove("u-hidden");
 }
+```
+
+Current state changes:
+
+```js
+html`<table>
+  <thead><tr>
+    <th>#</th><th>Time</th><th>Change</th><th>Delta</th>
+  </tr></thead>
+  <tbody>${changesMutable.map(({ change, delta, time }, i) => html`<tr>
+    <td>${i + 1}</td><td>${time}</td><td>${change}</td><td>${delta}</td>
+  </tr>`)}</tbody>
+</table>`
 ```
 
 ```js
