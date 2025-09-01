@@ -132,9 +132,13 @@ const resetChange = () => changesMutable.value = [];
 const deleteChange = () =>
   changesMutable.value = changesMutable.value.toSpliced(idMutable.value, 1);
 
-const viewChange = Inputs.select(
-  ["Carbon Swap/Retirement", "kVCM Allocation", "K2 Allocation"]
-);
+const viewChange = Inputs.select([
+  "Carbon Swap/Retirement",
+  "kVCM Allocation",
+  "K2 Allocation",
+  "kVCM Supply",
+  "K2 Supply",
+]);
 const viewDelta = Inputs.range([-1e8, 1e8], {
   label: "Delta",
   step: 1,
@@ -265,8 +269,12 @@ for (const { change, delta, time } of d3.sort(changesMutable, d => d.time)) {
     }
   } else if (change === "kVCM Allocation") {
     states.push(executeChange(states.at(-1), "kvcmAlloc", delta, time));
-  } else { // change === "K2 Allocation"
+  } else if (change === "K2 Allocation") {
     states.push(executeChange(states.at(-1), "k2Alloc", delta, time));
+  } else if (change === "kVCM Supply") {
+    states.push(executeChange(states.at(-1), "kvcmTotal", delta, time));
+  } else { // change === "K2 Supply"
+    states.push(executeChange(states.at(-1), "k2Total", delta, time));
   }
 }
 
