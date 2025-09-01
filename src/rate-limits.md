@@ -105,7 +105,6 @@ const defaultChanges = [
   { change: "kVCM Allocation", delta: 50_000, time: 16 },
   { change: "Carbon Swap/Retirement", delta: -100, time: 24 },
   { change: "Carbon Swap/Retirement", delta: 150, time: 25 },
-  { change: "kVCM Allocation", delta: 0, time: 48 },
 ];
 const defaultId = defaultChanges.length;
 
@@ -183,10 +182,13 @@ const idObs = Generators.observe(change => {
 const viewAdd = Inputs.button(
   [["Add", addChange], ["Delete", deleteChange], ["Delete All", resetChange]],
 );
-const inputChange = view(viewChange);
-const inputDelta = view(viewDelta);
-const inputTime = view(viewTime);
-const inputId = view(viewId);
+display(viewChange);
+display(viewId);
+display(viewTime);
+display(viewDelta);
+```
+
+```js
 display(viewAdd);
 ```
 
@@ -288,6 +290,10 @@ for (const { valuesRaw, snapshots, time } of states) {
     const { value, time } = snapshots[name];
     data.push({ type: "Snapshot", name, value, time });
   }
+}
+for (const name in states.at(-1).valuesRaw) {
+  const value = states.at(-1).valuesRaw[name];
+  data.push({ type: "Raw", name, value, time: timeMax });
 }
 for (let time = timeMin; time < timeMax + 0.001; time += 0.02) {
   const { valuesRaw, snapshots } = states.filter(d => d.time <= time).at(-1);
