@@ -107,28 +107,30 @@ const defaultChanges = [
   { change: "Carbon Swap", delta: 150, time: 25 },
   { change: "kVCM Allocation", delta: 0, time: 48 },
 ];
+const defaultId = defaultChanges.length;
 
 const changeMutable = Mutable("Carbon Swap");
 const deltaMutable = Mutable(defaultDelta);
 const timeMutable = Mutable(defaultTime);
-const deletedMutable = Mutable(0);
+const idMutable = Mutable(defaultId);
 const changesMutable = Mutable(defaultChanges);
 
 const setChange = change => changeMutable.value = change;
 const setDelta = delta => deltaMutable.value = delta;
 const setTime = time => timeMutable.value = time;
-const setDeleted = i => deletedMutable.value = i;
-const addChange = () => changesMutable.value = changesMutable.value.concat({
-  change: changeMutable.value,
-  delta: deltaMutable.value,
-  time: timeMutable.value,
-});
+const setId = i => idMutable.value = i - 1;
+const addChange = () => changesMutable.value = changesMutable.value.toSpliced(
+  idMutable.value,
+  0,
+  {
+    change: changeMutable.value,
+    delta: deltaMutable.value,
+    time: timeMutable.value,
+  },
+);
 const resetChange = () => changesMutable.value = [];
 const deleteChange = () =>
-  changesMutable.value = changesMutable.value.toSpliced(
-    deletedMutable.value,
-    1,
-  );
+  changesMutable.value = changesMutable.value.toSpliced(idMutable.value, 1);
 
 const viewChange = Inputs.select([
   "Carbon Swap",
@@ -149,7 +151,7 @@ const viewTime = Inputs.range([timeMin, timeMax], {
   step: 1,
   value: defaultTime,
 });
-const viewDeleted = Inputs.number([1, null], { label: "Deleted #", value: 1 });
+const viewId = Inputs.number([1, null], { label: "#", value: defaultId + 1 });
 
 const changeObs = Generators.observe(change => {
   const inputted = () => setChange(change(viewChange.value));
@@ -169,22 +171,22 @@ const timeObs = Generators.observe(change => {
   change(viewTime.value);
   return () => viewTime.removeEventListener("input", inputted);
 });
-const deletedObs = Generators.observe(change => {
-  const inputted = () => setDeleted(change(viewDeleted.value) - 1);
-  viewDeleted.addEventListener("input", inputted);
-  change(viewDeleted.value);
-  return () => viewDeleted.removeEventListener("input", inputted);
+const idObs = Generators.observe(change => {
+  const inputted = () => setId(change(viewId.value));
+  viewId.addEventListener("input", inputted);
+  change(viewId.value);
+  return () => viewId.removeEventListener("input", inputted);
 });
 ```
 
 ```js
 const viewAdd = Inputs.button(
-  [["Add", addChange], ["Delete", deleteChange], ["Reset", resetChange]],
+  [["Add", addChange], ["Delete", deleteChange], ["Delete All", resetChange]],
 );
 const inputChange = view(viewChange);
 const inputDelta = view(viewDelta);
 const inputTime = view(viewTime);
-const inputDeleted = view(viewDeleted);
+const inputId = view(viewId);
 display(viewAdd);
 ```
 
