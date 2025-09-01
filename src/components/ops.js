@@ -23,3 +23,25 @@ export function piecewiseLogTransform(xTran = 1) {
 export function piecewiseLogInvert(xTran = 1) {
   return y => y > Math.log(xTran) ? Math.exp(y) : y - Math.log10(xTran) + xTran;
 }
+
+export function piecewiseSymLogTransform(xTran = 1) {
+  return x => {
+    const absX = Math.abs(x);
+    if (absX > xTran) {
+      return Math.sign(x) * (Math.log(absX) + xTran - Math.log(xTran));
+    } else {
+      return x;
+    }
+  };
+}
+
+export function piecewiseSymLogInvert(xTran = 1) {
+  return y => {
+    const absY = Math.abs(y);
+    if (absY > xTran) {
+      return Math.sign(y) * Math.exp(absY - xTran + Math.log(xTran));
+    } else {
+      return y;
+    }
+  };
+}

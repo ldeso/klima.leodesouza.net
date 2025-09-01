@@ -96,20 +96,20 @@ display(viewResetInitial);
 Edit state changes:
 
 ```js
-const defaultChange = "Carbon Swap";
+const defaultChange = "Carbon Swap/Retirement";
 const defaultDelta = 100;
 const defaultTime = 0;
 const defaultChanges = [
-  { change: "Carbon Retirement", delta: 100, time: 0 },
+  { change: "Carbon Swap/Retirement", delta: -100, time: 0 },
   { change: "kVCM Allocation", delta: 50_000, time: 8 },
   { change: "kVCM Allocation", delta: 50_000, time: 16 },
-  { change: "Carbon Retirement", delta: 100, time: 24 },
-  { change: "Carbon Swap", delta: 150, time: 25 },
+  { change: "Carbon Swap/Retirement", delta: -100, time: 24 },
+  { change: "Carbon Swap/Retirement", delta: 150, time: 25 },
   { change: "kVCM Allocation", delta: 0, time: 48 },
 ];
 const defaultId = defaultChanges.length;
 
-const changeMutable = Mutable("Carbon Swap");
+const changeMutable = Mutable("Carbon Swap/Retirement");
 const deltaMutable = Mutable(defaultDelta);
 const timeMutable = Mutable(defaultTime);
 const idMutable = Mutable(defaultId);
@@ -132,19 +132,15 @@ const resetChange = () => changesMutable.value = [];
 const deleteChange = () =>
   changesMutable.value = changesMutable.value.toSpliced(idMutable.value, 1);
 
-const viewChange = Inputs.select([
-  "Carbon Swap",
-  "Carbon Retirement",
-  "kVCM Allocation",
-  "kVCM Deallocation",
-  "K2 Allocation",
-  "K2 Deallocation",
-]);
-const viewDelta = Inputs.range([1, 1e10], {
+const viewChange = Inputs.select(
+  ["Carbon Swap/Retirement", "kVCM Allocation", "K2 Allocation"]
+);
+const viewDelta = Inputs.range([-1e8, 1e8], {
   label: "Delta",
   step: 1,
   value: defaultDelta,
-  transform: Math.log,
+  transform: Ops.piecewiseSymLogTransform(),
+  invert: y => Math.round(Ops.piecewiseSymLogInvert()(y)),
 });
 const viewTime = Inputs.range([timeMin, timeMax], {
   label: "Time",
@@ -205,11 +201,35 @@ Current state changes:
 ```js
 html`<table>
   <thead><tr>
-    <th>#</th><th>Time</th><th>Change</th><th>Delta</th>
+    <th>#</th>
+    <th>Time</th>
+    <th>State Change</th>
+    <th>Delta</th>
   </tr></thead>
-  <tbody>${changesMutable.map(({ change, delta, time }, i) => html`<tr>
-    <td>${i + 1}</td><td>${time}</td><td>${change}</td><td>${delta}</td>
-  </tr>`)}</tbody>
+  <tbody>${changesMutable.map(({ change, delta, time }, i) => {
+    const idString = (i + 1).toLocaleString("en-GB");
+    const timeString = time.toLocaleString("en-GB");
+    let changeString;
+    let deltaString = delta === 0 ? "" : (delta > 0 ? "+" : "−");
+    deltaString += Math.abs(delta).toLocaleString("en-GB");
+    if (change === "Carbon Swap/Retirement" && delta > 0) {
+      changeString = "Carbon Swap";
+    } else if (change === "Carbon Swap/Retirement" && delta < 0) {
+      changeString = "Carbon Retirement";
+    } else if (change === "kVCM Allocation" && delta < 0) {
+      changeString = "kVCM Deallocation";
+    } else if (change === "K2 Allocation" && delta < 0) {
+      changeString = "K2 Deallocation";
+    } else {
+      changeString = change;
+    }
+    return html`<tr>
+      <td>${idString}</td>
+      <td>${timeString}</td>
+      <td>${changeString}</td>
+      <td>${deltaString}</td>
+    </tr>`
+  })}</tbody>
 </table>`
 ```
 
@@ -237,16 +257,16 @@ const states = [{
 for (const { change, delta, time } of d3.sort(changesMutable, d => d.time)) {
   if (change === "Carbon Swap") {
     states.push(executeSwap(states.at(-1), delta, time));
-  } else if (change === "Carbon Retirement") {
-    states.push(executeRetire(states.at(-1), -delta, time));
+  } else if (change === "Carbon Swap/Retirement") {
+    if (delta > 0) {
+      states.push(executeSwap(states.at(-1), delta, time));
+    } else {
+      states.push(executeRetire(states.at(-1), delta, time));
+    }
   } else if (change === "kVCM Allocation") {
     states.push(executeChange(states.at(-1), "kvcmAlloc", delta, time));
-  } else if (change === "kVCM Deallocation") {
-    states.push(executeChange(states.at(-1), "kvcmAlloc", -delta, time));
-  } else if (change === "K2 Allocation") {
+  } else { // change === "K2 Allocation"
     states.push(executeChange(states.at(-1), "k2Alloc", delta, time));
-  } else {
-    states.push(executeChange(states.at(-1), "k2Alloc", -delta, time));
   }
 }
 
