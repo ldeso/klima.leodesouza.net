@@ -106,7 +106,7 @@ const defaultChanges = [
   { change: "Carbon Swap/Retirement", delta: -100, time: 24 },
   { change: "Carbon Swap/Retirement", delta: 150, time: 25 },
 ];
-const defaultId = defaultChanges.length;
+const defaultId = 0;
 
 const changeMutable = Mutable("Carbon Swap/Retirement");
 const deltaMutable = Mutable(defaultDelta);
@@ -118,15 +118,18 @@ const setChange = change => changeMutable.value = change;
 const setDelta = delta => deltaMutable.value = delta;
 const setTime = time => timeMutable.value = time;
 const setId = i => idMutable.value = i - 1;
-const addChange = () => changesMutable.value = changesMutable.value.toSpliced(
-  idMutable.value,
-  0,
-  {
-    change: changeMutable.value,
-    delta: deltaMutable.value,
-    time: timeMutable.value,
-  },
-);
+const addChange = () => {
+  const changesNewUnsorted = changesMutable.value.toSpliced(
+    idMutable.value,
+    0,
+    {
+      change: changeMutable.value,
+      delta: deltaMutable.value,
+      time: timeMutable.value,
+    },
+  );
+  changesMutable.value = d3.sort(changesNewUnsorted, d => d.time);
+};
 const resetChange = () => changesMutable.value = [];
 const deleteChange = () =>
   changesMutable.value = changesMutable.value.toSpliced(idMutable.value, 1);
@@ -211,17 +214,44 @@ html`<table>
     <th>Time</th>
     <th>State Change</th>
     <th>Delta</th>
+    <th>Price</th>
   </tr></thead>
   <tbody>${changesMutable.map(({ change, delta, time }, i) => {
     const idString = (i + 1).toLocaleString("en-GB");
     const timeString = time.toLocaleString("en-GB");
-    let changeString;
-    let deltaString = delta === 0 ? "" : (delta > 0 ? "+" : "−");
+
+    let deltaString;
+    if (delta > 0) {
+      deltaString = "+";
+    } else if (delta < 0) {
+      deltaString = "−";
+    } else {
+      deltaString = "";
+    }
     deltaString += Math.abs(delta).toLocaleString("en-GB");
+
+    let changeString;
+    let priceString = "";
     if (change === "Carbon Swap/Retirement" && delta > 0) {
       changeString = "Carbon Swap";
+      const carbonBefore = states[i].valuesRaw.carbon;
+      const carbonAfter = states[i + 1].valuesRaw.carbon;
+      const carbonDelta = carbonAfter - carbonBefore;
+      const kvcmBefore = states[i].valuesRaw.kvcmTotal;
+      const kvcmAfter = states[i + 1].valuesRaw.kvcmTotal;
+      const kvcmDelta = kvcmAfter - kvcmBefore;
+      const price = kvcmDelta / carbonDelta * inputAPrice;
+      priceString = "$" + price.toLocaleString("en-GB");
     } else if (change === "Carbon Swap/Retirement" && delta < 0) {
       changeString = "Carbon Retirement";
+      const carbonBefore = states[i].valuesRaw.carbon;
+      const carbonAfter = states[i + 1].valuesRaw.carbon;
+      const carbonDelta = carbonAfter - carbonBefore;
+      const kvcmBefore = states[i].valuesRaw.kvcmTotal;
+      const kvcmAfter = states[i + 1].valuesRaw.kvcmTotal;
+      const kvcmDelta = kvcmAfter - kvcmBefore;
+      const price = kvcmDelta / carbonDelta * inputAPrice;
+      priceString = "$" + price.toLocaleString("en-GB");
     } else if (change === "kVCM Allocation" && delta < 0) {
       changeString = "kVCM Deallocation";
     } else if (change === "K2 Allocation" && delta < 0) {
@@ -229,11 +259,13 @@ html`<table>
     } else {
       changeString = change;
     }
+
     return html`<tr>
       <td>${idString}</td>
       <td>${timeString}</td>
       <td>${changeString}</td>
       <td>${deltaString}</td>
+      <td>${priceString}</td>
     </tr>`
   })}</tbody>
 </table>`
@@ -260,7 +292,7 @@ const states = [{
   time: -4,
 }];
 
-for (const { change, delta, time } of d3.sort(changesMutable, d => d.time)) {
+for (const { change, delta, time } of changesMutable) {
   if (change === "Carbon Swap") {
     states.push(executeSwap(states.at(-1), delta, time));
   } else if (change === "Carbon Swap/Retirement") {
