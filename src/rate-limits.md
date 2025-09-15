@@ -150,7 +150,7 @@ const viewDelta = Inputs.range([-1e8, 1e8], {
 });
 const viewTime = Inputs.range([timeMin, timeMax], {
   label: "Time",
-  step: 1,
+  step: 0.1,
   value: defaultTime,
 });
 const viewId = Inputs.number([1, null], { label: "#", value: defaultId + 1 });
@@ -342,8 +342,7 @@ for (let time = timeMin; time < timeMax + 0.001; time += 0.02) {
     value: inputAPrice * kvcmDeltaSwap / carbonDelta,
     time,
   });
-  const valuesRetirement = { ...valuesEffective, carbon: valuesRaw.carbon };
-  const kvcmDeltaRetirement = computePriceRetire(valuesRetirement, carbonDelta);
+  const kvcmDeltaRetirement = computePriceRetire(valuesRaw, carbonDelta);
   data.push({
     type: "Hypothetical Retirement Price",
     name: "price",
@@ -366,6 +365,7 @@ Plot.plot({
     label: "Price (USD)",
     domain: [0, d3.max(data, d => d.name === "price" ? d.value : NaN)],
   },
+  grid: true,
   insetTop: 16,
   marginLeft: 50,
   clip: true,
@@ -463,6 +463,7 @@ display(Plot.plot({
     label: yLabel,
     domain: [0, d3.max(data, d => d.name === name ? d.value : NaN)],
   },
+  grid: true,
   insetTop: 16,
   marginLeft: 50,
   clip: true,
@@ -538,8 +539,7 @@ function executeSwap(state, carbonDelta, time) {
 function executeRetire(state, carbonDelta, time) {
   const { valuesRaw, snapshots } = state;
   const valuesEffective = computeEffectiveValues(valuesRaw, snapshots, time);
-  const valuesRetirement = { ...valuesEffective, carbon: valuesRaw.carbon };
-  const kvcmDelta = computePriceRetire(valuesRetirement, carbonDelta);
+  const kvcmDelta = computePriceRetire(valuesRaw, carbonDelta);
   const stateNew = {
     valuesRaw: {
       ...valuesRaw,
@@ -618,14 +618,16 @@ function computeEffectiveValue(name, valuesRaw, snapshots, time) {
 
 function rateLimited(valueRaw, snapshot, time) {
   const timeDelta = time - snapshot.time;
-  const valueLimit = snapshot.value * (1 + snapshot.rate * timeDelta);
+  // Can use fast and inaccurate exp implementation here to reduce cost
+  const valueLimit = snapshot.value / Math.exp(-snapshot.rate * timeDelta);
   const valueEffective = Math.min(valueRaw, valueLimit);
   return valueEffective;
 }
 
 function rateLimitedInv(valueRaw, snapshot, time) {
   const timeDelta = time - snapshot.time;
-  const valueLimit = snapshot.value / (1 + snapshot.rate * timeDelta);
+  // Can use fast and inaccurate exp implementation here to reduce cost
+  const valueLimit = snapshot.value * Math.exp(-snapshot.rate * timeDelta);
   const valueEffective = Math.max(valueRaw, valueLimit);
   return valueEffective;
 }
