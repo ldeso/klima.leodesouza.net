@@ -650,8 +650,8 @@ function computePriceSwap(valuesEffective, carbonDelta) {
   return kvcmDelta;
 }
 
-function computePriceRetire(valuesEffective, carbonDelta) {
-  const { carbon, kvcmAlloc, k2Alloc, kvcmTotal, k2Total } = valuesEffective;
+function computePriceRetire(valuesRaw, carbonDelta) {
+  const { carbon, kvcmAlloc, k2Alloc, kvcmTotal, k2Total } = valuesRaw;
   const Ai = kvcmAlloc / kvcmTotal;
   const Gi = k2Alloc / k2Total;
   const deltaCi = carbonDelta / carbon;
