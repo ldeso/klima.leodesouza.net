@@ -8,6 +8,11 @@ import * as Ops from "./components/ops.js"
 import * as Util from "./components/util.js"
 ```
 
+```js
+// const isDownladCsv = true;
+const isDownladCsv = false;
+```
+
 <h1 id="klima-2-0" class="u-center" tabindex="-1">
   <a class="observablehq-header-anchor" href="#klima-2-0">Klima&nbsp;2.0</a>
 </h1>
@@ -744,7 +749,12 @@ Y_t = \exp \left( \frac{Z_t}{365} \right) - 1 \tag{8}
 </div>
 
 ```js
-const vecY = Form.computeY(vecZ);
+const vecY = vecZ.map(z => Math.expm1(z / 365));
+display(100 * ((1 + d3.sum(vecY) / vecY.length)**365 - 1));
+```
+
+```js
+100 * d3.sum(vecY) / vecY.length
 ```
 
 Hence, any bond stake&nbsp;${tex`A_t`} will increase by&nbsp;${tex`\Delta A_t`}:
@@ -753,6 +763,15 @@ Hence, any bond stake&nbsp;${tex`A_t`} will increase by&nbsp;${tex`\Delta A_t`}:
 
 ```tex
 \Delta A_t = A_t \, Y_t \tag{9}
+```
+
+```js
+const vecA = vecS;
+const vecDeltaA_ = vecA.map((At, t) => At * vecY[t]);
+```
+
+```js
+vecDeltaA_
 ```
 
 </div>
@@ -764,6 +783,14 @@ as&nbsp;${tex`R`}:
 
 ```tex
 R = \sum_{t=1}^{40} \Delta A_t \tag{10}
+```
+
+```js
+const paramR = d3.sum(vecDeltaA_);
+```
+
+```js
+const inputI = 365 * paramR;
 ```
 
 </div>
@@ -824,6 +851,55 @@ const yieldParams = [
   { key: stringD, time: paramD },
   { key: stringC, time: Math.sqrt(paramC) },
 ];
+```
+
+```js
+function csvNumber(nFrac = 5, key = "value") {
+  return d => d[key].toLocaleString(
+    "en-US",
+    {
+      minimumFractionDigits: nFrac,
+      maximumFractionDigits: nFrac,
+      useGrouping: false,
+    },
+  );
+}
+
+function downloadCsv(content, filename) {
+  var blob = new Blob(
+    [new Uint8Array([0xEF, 0xBB, 0xBF]), content],
+    { type: "text/csv;charset=utf-8;" },
+  );
+  var el = document.createElement("a");
+  el.href = URL.createObjectURL(blob);
+  el.setAttribute("download", filename);
+  el.click();
+}
+```
+
+```js
+const vecTime = [...new Set(yieldData.map(csvNumber(0, "time")))];
+const vecStakeA = d3.filter(yieldData, getStake).map(csvNumber());
+const vecYieldTerm = d3.filter(yieldData, getYieldTerm).map(csvNumber());
+const vecRealYield = d3.filter(yieldData, getRealYield).map(csvNumber());
+const vecCumStake = d3.filter(yieldData, getCumStake).map(csvNumber());
+const vecDiscount = d3.filter(yieldData, getDiscount).map(csvNumber());
+const csv7 = '"Time to Expiry (Years)","Stake A (%)",' +
+        '"Yield Term Structure (%)","Real Yield (%)",' +
+        '"Cumulative Stake A (%)","Discount Curve (%)"\r\n' +
+        vecTime.map((t, i) =>
+          [
+            t,
+            vecStakeA[i],
+            vecYieldTerm[i],
+            vecRealYield[i],
+            vecCumStake[i],
+            vecDiscount[i],
+          ]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv7, "figure-7.csv");
+}
 ```
 
 <figure id="figure-7" class="u-center">
@@ -888,11 +964,11 @@ const inputD = view(Inputs.range([0.25, 10], {
   step: 0.01,
   value: 4.69,
 }));
-const inputI = view(Inputs.range([0, 0.1], {
-  label: tex`\text{Inflation }`,
-  step: 0.0002,
-  value: 0.0202,
-}));
+// const inputI = view(Inputs.range([0, 0.1], {
+//   label: tex`\text{Inflation }`,
+//   step: 0.0002,
+//   value: 0.0202,
+// }));
 ```
 
 ```js
@@ -953,6 +1029,19 @@ for (let paramS = 0; paramS < 1.01; paramS += 0.1) {
       value: Form.computeApproxDeltaA(paramS, paramE),
     });
   }
+}
+```
+
+```js
+const vecInflationE = inflationData.map(csvNumber(1, "e"));
+const vecInflationS = inflationData.map(csvNumber(1, "s"));
+const vecInflationVal = inflationData.map(csvNumber(2));
+const csv8 = '"Expiry Time E (Years)","Staking S (%)","ΔA"\r\n' +
+        vecInflationE.map((val, i) =>
+          [vecInflationE[i], vecInflationS[i], vecInflationVal[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv8, "figure-8.csv");
 }
 ```
 
@@ -1182,6 +1271,17 @@ const heldCarbonParam = [{ key: stringBarCi, value: 100 * paramBarCi }];
 ```
 
 ```js
+const vecLiqSchedule = d3.filter(carbonHeldData, getLiqSchedule).map(csvNumber());
+const csvEq16 = '"Time to Expiry (Years)","Liquidity Schedule (%)","Discount Curve (%)","Present-Value Carbon C̄ᵢ = 90%"\r\n' +
+        vecTime.map((t, i) =>
+          [t, vecLiqSchedule[i], vecDiscount[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csvEq16, "equation-16.csv");
+}
+```
+
+```js
 Plot.plot({
   caption: "Carbon Held in the AAM",
   color: {
@@ -1282,6 +1382,17 @@ const stringDeltaBarCi = "Present-Value Carbon Bought by AAM ΔC̄ᵢ = " +
 const boughtCarbonParam = [
   { key: stringDeltaBarCi, value: 100 * paramDeltaBarCi },
 ];
+```
+
+```js
+const vecCarbonBought = d3.filter(carbonBuyData, getCarbonBought).map(csvNumber());
+const csvEq17 = '"Time to Expiry (Years)","Carbon Bought by AAM (%)","Discount Curve (%)","Present-Value Carbon Bought by AAM ΔC̄ᵢ = 75.6%"\r\n' +
+        vecTime.map((t, i) =>
+          [t, vecCarbonBought[i], vecDiscount[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csvEq17, "equation-17.csv");
+}
 ```
 
 ```js
@@ -1399,6 +1510,17 @@ const getDeltaA = d => d.key === "ΔA" ? d.value : NaN;
 const getNormDeltaA = d => d.key === "Normalised ΔA" ? d.value : NaN;
 ```
 
+```js
+const vecAi = d3.filter(pricingData, getDeltaA).map(csvNumber(1, "ai"));
+const vecGi = d3.filter(pricingData, getDeltaA).map(csvNumber(1, "gi"));
+const vecDeltaA = d3.filter(pricingData, getDeltaA).map(csvNumber(2));
+const csv11 = '"Aᵢ","Gᵢ","ΔA"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecDeltaA[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv11, "figure-11.csv");
+}
+```
+
 <figure id="figure-11" class="u-center">
 <figcaption>Figure&nbsp;11: <strong>A</strong>&nbsp;Price
   Curves&nbsp;(${tex`\Delta A`}) when ${tex`\Delta \bar C_i = ${
@@ -1457,6 +1579,15 @@ const inputDeltaBarCi = view(Inputs.range([0.01, 1], {
   step: 0.01,
   value: 1,
 }));
+```
+
+```js
+const vecNormDeltaA = d3.filter(pricingData, getNormDeltaA).map(csvNumber(2));
+const csv12 = '"Aᵢ","Gᵢ","Normalised ΔA"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecNormDeltaA[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv12, "figure-12.csv");
+}
 ```
 
 <figure id="figure-12" class="u-center">
@@ -1587,6 +1718,15 @@ const stringDeltaBarCnull = inputDeltaBarCnull.toLocaleString(
 );
 ```
 
+```js
+const vecZeroCDeltaA = d3.filter(zeroCarbonData, getDeltaA).map(csvNumber(4));
+const csv13 = '"Aᵢ","Gᵢ","ΔA (tCO2eq)"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecZeroCDeltaA[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv13, "figure-13.csv");
+}
+```
+
 <figure id="figure-13" class="u-center">
 <figcaption>Figure&nbsp;13: <strong>A</strong>&nbsp;Price
   Curves&nbsp;(${tex`\Delta A`}) when&nbsp;${
@@ -1640,6 +1780,15 @@ const inputDeltaBarCnull = view(Inputs.range([1e-1, 1e5], {
   value: 1e2,
   transform: Math.log,
 }));
+```
+
+```js
+const vecZeroCNormDeltaA = d3.filter(zeroCarbonData, getNormDeltaA).map(csvNumber(2));
+const csv14 = '"Aᵢ","Gᵢ","Normalised ΔA"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecZeroCNormDeltaA[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv14, "figure-14.csv");
+}
 ```
 
 <figure id="figure-14" class="u-center">
@@ -1746,6 +1895,15 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
       value: -Form.computeDeltaCi(paramAi, paramGi, inputDeltaA),
     });
   }
+}
+```
+
+```js
+const vecDeltaCi_ = retirementData.map(csvNumber(2));
+const csv15 = '"Aᵢ","Gᵢ","-ΔCᵢ"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecDeltaCi_[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv15, "figure-15.csv");
 }
 ```
 
@@ -1871,6 +2029,15 @@ const getLiqDeltaCi = d => d.key === "deltac" ? d.value : NaN;
 const getLiqSpread = d => d.key === "spread" ? d.value : NaN;
 ```
 
+```js
+const vecLiqSpread = d3.filter(liquidationData, getLiqSpread).map(csvNumber(2));
+const csv16 = '"Aᵢ","Gᵢ","Carbon Spread ε"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecLiqSpread[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv16, "figure-16.csv");
+}
+```
+
 <figure id="figure-16" class="u-center">
 <figcaption>Figure&nbsp;16: Carbon ‘Spread’</figcaption>
 
@@ -1929,6 +2096,16 @@ const inputDeltaCinitial = view(Inputs.range([0.001, 1], {
 
 [Figure&nbsp;17](#figure-17) shows the component 'Spread' contributions on a
 Carbon sale and purchase of offset round trip.
+
+```js
+const vecLiqDeltaA = d3.filter(liquidationData, getLiqDeltaA).map(csvNumber(2));
+const vecLiqDeltaCi = d3.filter(liquidationData, getLiqDeltaCi).map(csvNumber(2));
+const csv17 = '"Aᵢ","Gᵢ","Carbon Spread Component ΔA","Carbon Spread Component ΔC"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecLiqDeltaA[i], vecLiqDeltaCi[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv17, "figure-17.csv");
+}
+```
 
 <figure id="figure-17" class="u-center">
 <figcaption>Figure&nbsp;17: Carbon ‘Spread’ Components</figcaption>
@@ -2113,6 +2290,15 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
 }
 ```
 
+```js
+const vecBetai = betaData.map(csvNumber(2));
+const csv19 = '"Aᵢ","Gᵢ","βᵢ"\r\n' +
+        vecAi.map((val, i) => [val, vecGi[i], vecBetai[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv19, "figure-19.csv");
+}
+```
+
 <figure id="figure-19" class="u-center">
 <figcaption>Figure&nbsp;19: Range of&nbsp;${tex`\beta_i`}</figcaption>
 
@@ -2267,6 +2453,27 @@ const stringNewBeta = "New β = " + paramNewBeta.toLocaleString(
 );
 ```
 
+```js
+const vecInitialG_ = d3.filter(betaContribData, getInitialG).map(csvNumber());
+const vecInitialBeta2 = d3.filter(betaContribData, getInitialBeta2).map(csvNumber());
+const vecNewG = d3.filter(betaContribData, getNewG).map(csvNumber(2));
+const vecNewBeta2 = d3.filter(betaContribData, getNewBeta2).map(csvNumber(2));
+const csv20 = '"Aᵢ Over 4 Classes","Initial βᵢ²","New βᵢ²","Initial Gᵢ",' +
+        '"New Gᵢ","Initial β = 0.5511","New β = 0.2719"\r\n' +
+        arrayAi.map((val, i) =>
+          [
+            csvNumber(2)({ value: val }),
+            vecInitialBeta2[i],
+            vecNewBeta2[i],
+            vecInitialG_[i],
+            vecNewG[i],
+          ]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv20, "figure-20.csv");
+}
+```
+
 <figure id="figure-20" class="u-center">
 <figcaption>Figure&nbsp;20: Example of <strong>G</strong>&nbsp;Stake
   on&nbsp;${tex`\beta`}</figcaption>
@@ -2397,6 +2604,17 @@ for (let paramGi = 0; paramGi < 1.01; paramGi += 0.1) {
 }
 ```
 
+```js
+const vecAq = lambdaGGData.map(csvNumber(1, "aq"));
+const vecGi_ = lambdaGGData.map(csvNumber(1, "gi"));
+const vecLambda = lambdaGGData.map(csvNumber());
+const csv22 = '"A_Q","Gᵢ","λ"\r\n' +
+        vecAq.map((val, i) => [val, vecGi_[i], vecLambda[i]]).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv22, "figure-22.csv");
+}
+```
+
 <figure id="figure-22" class="u-center">
 <figcaption>Figure&nbsp;22: <strong>G</strong>&nbsp;Stake
   Allocation&nbsp;(assuming&nbsp;${tex`G_G = 1 - G_i`})</figcaption>
@@ -2492,6 +2710,24 @@ for (let paramAG = 0; paramAG < 1.01; paramAG += 0.1) {
       });
     }
   }
+}
+```
+
+```js
+const lambdaGQDataAG = d3.filter(lambdaGQData, d =>
+        (d.key === "𝗔𝗚 Liquidity Pool Share") && (!Number.isNaN(d.value)));
+const lambdaGQDataAQ = d3.filter(lambdaGQData, d =>
+        (d.key === "𝗔𝗤 Liquidity Pool Share") && (!Number.isNaN(d.value)));
+const vecAq_ = lambdaGQDataAG.map(csvNumber(1, "aq"));
+const vecAg_ = lambdaGQDataAG.map(csvNumber(1, "ag"));
+const vecAGShare = lambdaGQDataAG.map(csvNumber(2));
+const vecAQShare = lambdaGQDataAQ.map(csvNumber(2));
+const csv23 = '"A_Q","A_G","λ_G_relative","λ_Q_relative"\r\n' +
+        vecAq_.map((val, i) =>
+          [val, vecAg_[i], vecAGShare[i], vecAQShare[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv23, "figure-23.csv");
 }
 ```
 
@@ -2775,8 +3011,8 @@ const stringASupply = inputASupply.toLocaleString(
 const stringPresentTonnes = inputPresentTonnes.toLocaleString(
   "en-GB",
   {
-    minimumFractionDigits: Math.max(0, 1 - Util.numDigits(paramDeltaTonnes)),
-    maximumFractionDigits: Math.max(0, 1 - Util.numDigits(paramDeltaTonnes)),
+    minimumFractionDigits: Math.max(0, 3 - Util.numDigits(paramDeltaTonnes)),
+    maximumFractionDigits: Math.max(0, 3 - Util.numDigits(paramDeltaTonnes)),
   },
 ) + " tCO2eq";
 const stringAEmitted = "+" + paramAEmitted.toLocaleString(
@@ -2789,8 +3025,8 @@ const stringAEmitted = "+" + paramAEmitted.toLocaleString(
 const stringDeltaTonnes = "+" + paramDeltaTonnes.toLocaleString(
   "en-GB",
   {
-    minimumSignificantDigits: Math.max(1, Util.numDigits(paramDeltaTonnes)),
-    maximumSignificantDigits: Math.max(1, Util.numDigits(paramDeltaTonnes)),
+    minimumSignificantDigits: Math.max(3, Util.numDigits(paramDeltaTonnes)),
+    maximumSignificantDigits: Math.max(3, Util.numDigits(paramDeltaTonnes)),
   },
 ) + " tCO2eq";
 const stringAPrice = "$" + paramAPrice.toLocaleString(
@@ -3083,6 +3319,14 @@ const cohortsDomain = [
       "pKlima Holders",
       "01X",
     ];
+```
+
+```js
+const csvCohorts = cohortsDomain.map(x => `"${x} (%)"`).join(',');
+const csv24 = csvCohorts + "\r\n40.0,40.0,5.0,5.0,4.5,3.0,2.5";
+if (isDownladCsv) {
+  downloadCsv(csv24, "figure-24.csv");
+}
 ```
 
 <figure id="figure-24" class="u-center">
@@ -3492,6 +3736,19 @@ const supplyParams = [
 ];
 ```
 
+```js
+const vecMonths = [...new Set(supplyData.map(csvNumber(0, "x")))];
+const vecLogisticCurve = d3.filter(supplyData, getLogisticCurve).map(csvNumber(5, "y"));
+const vecRateOfChange = d3.filter(supplyData, getRateOfChange).map(csvNumber(5, "y"));
+const csv25 = `"‘Life’ Span (Months)","Proportion of Supply (%)","Rate of Change (%/Month)","${stringP0}","${stringT}"\r\n` +
+        vecMonths.map((t, i) =>
+          [t, vecLogisticCurve[i], vecRateOfChange[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv25, "figure-25.csv");
+}
+```
+
 <figure id="figure-25" class="u-center">
 <figcaption>Figure&nbsp;25: Incentive Issuance</figcaption>
 
@@ -3571,6 +3828,118 @@ const inputT = view(Inputs.range([2, 60], {
   step: 1,
   value: 24,
 }));
+```
+
+```js
+const getIncentives = d => d.cohort === "Incentives";
+const getKlima = d => d.cohort === "Klima Holders";
+const getProduct = d => d.cohort === "Product Design";
+const getEcosystem = d => d.cohort === "Ecosystem Grant";
+const getTreasury = d => d.cohort === "DAO / Treasury";
+const getPKlima = d => d.cohort === "pKlima Holders";
+const get01X = d => d.cohort === "01X";
+
+const vecCircStacked = d3.filter(supplyData, d =>
+  d.key === "Circulating Supply (Stacked)");
+const vecCircStackedIncentives = d3.filter(vecCircStacked, getIncentives).map(csvNumber(5, "y"));
+const vecCircStackedKlima = d3.filter(vecCircStacked, getKlima).map(csvNumber(5, "y"));
+const vecCircStackedProduct = d3.filter(vecCircStacked, getProduct).map(csvNumber(5, "y"));
+const vecCircStackedEcosystem = d3.filter(vecCircStacked, getEcosystem).map(csvNumber(5, "y"));
+const vecCircStackedTreasury = d3.filter(vecCircStacked, getTreasury).map(csvNumber(5, "y"));
+const vecCircStackedPKlima = d3.filter(vecCircStacked, getPKlima).map(csvNumber(5, "y"));
+const vecCircStacked01X = d3.filter(vecCircStacked, get01X).map(csvNumber(5, "y"));
+const csv26CircStacked = '"Time (Months)",' + csvCohorts + "\r\n" +
+        vecMonths.map((t, i) =>
+          [
+            t,
+            vecCircStackedIncentives[i],
+            vecCircStackedKlima[i],
+            vecCircStackedProduct[i],
+            vecCircStackedEcosystem[i],
+            vecCircStackedTreasury[i],
+            vecCircStackedPKlima[i],
+            vecCircStacked01X[i],
+          ]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv26CircStacked, "figure-26-circulating-stacked.csv");
+}
+
+const vecCircUnstacked = d3.filter(supplyData, d =>
+  d.key === "Circulating Supply (Unstacked)");
+const vecCircUnstackedIncentives = d3.filter(vecCircUnstacked, getIncentives).map(csvNumber(5, "y"));
+const vecCircUnstackedKlima = d3.filter(vecCircUnstacked, getKlima).map(csvNumber(5, "y"));
+const vecCircUnstackedProduct = d3.filter(vecCircUnstacked, getProduct).map(csvNumber(5, "y"));
+const vecCircUnstackedEcosystem = d3.filter(vecCircUnstacked, getEcosystem).map(csvNumber(5, "y"));
+const vecCircUnstackedTreasury = d3.filter(vecCircUnstacked, getTreasury).map(csvNumber(5, "y"));
+const vecCircUnstackedPKlima = d3.filter(vecCircUnstacked, getPKlima).map(csvNumber(5, "y"));
+const vecCircUnstacked01X = d3.filter(vecCircUnstacked, get01X).map(csvNumber(5, "y"));
+const csv26CircUnstacked = '"Time (Months)",' + csvCohorts + "\r\n" +
+        vecMonths.map((t, i) =>
+          [
+            t,
+            vecCircUnstackedIncentives[i],
+            vecCircUnstackedKlima[i],
+            vecCircUnstackedProduct[i],
+            vecCircUnstackedEcosystem[i],
+            vecCircUnstackedTreasury[i],
+            vecCircUnstackedPKlima[i],
+            vecCircUnstacked01X[i],
+          ]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv26CircUnstacked, "figure-26-circulating-unstacked.csv");
+}
+
+const vecTotStacked = d3.filter(supplyData, getTotalStacked);
+const vecTotStackedIncentives = d3.filter(vecTotStacked, getIncentives).map(csvNumber(5, "y"));
+const vecTotStackedKlima = d3.filter(vecTotStacked, getKlima).map(csvNumber(5, "y"));
+const vecTotStackedProduct = d3.filter(vecTotStacked, getProduct).map(csvNumber(5, "y"));
+const vecTotStackedEcosystem = d3.filter(vecTotStacked, getEcosystem).map(csvNumber(5, "y"));
+const vecTotStackedTreasury = d3.filter(vecTotStacked, getTreasury).map(csvNumber(5, "y"));
+const vecTotStackedPKlima = d3.filter(vecTotStacked, getPKlima).map(csvNumber(5, "y"));
+const vecTotStacked01X = d3.filter(vecTotStacked, get01X).map(csvNumber(5, "y"));
+const csv26TotStacked = '"Time (Months)",' + csvCohorts + "\r\n" +
+        vecMonths.map((t, i) =>
+          [
+            t,
+            vecTotStackedIncentives[i],
+            vecTotStackedKlima[i],
+            vecTotStackedProduct[i],
+            vecTotStackedEcosystem[i],
+            vecTotStackedTreasury[i],
+            vecTotStackedPKlima[i],
+            vecTotStacked01X[i],
+          ]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv26TotStacked, "figure-26-total-stacked.csv");
+}
+
+const vecTotUnstacked = d3.filter(supplyData, d => d.key === "Total Supply (Unstacked)");
+const vecTotUnstackedIncentives = d3.filter(vecTotUnstacked, getIncentives).map(csvNumber(5, "y"));
+const vecTotUnstackedKlima = d3.filter(vecTotUnstacked, getKlima).map(csvNumber(5, "y"));
+const vecTotUnstackedProduct = d3.filter(vecTotUnstacked, getProduct).map(csvNumber(5, "y"));
+const vecTotUnstackedEcosystem = d3.filter(vecTotUnstacked, getEcosystem).map(csvNumber(5, "y"));
+const vecTotUnstackedTreasury = d3.filter(vecTotUnstacked, getTreasury).map(csvNumber(5, "y"));
+const vecTotUnstackedPKlima = d3.filter(vecTotUnstacked, getPKlima).map(csvNumber(5, "y"));
+const vecTotUnstacked01X = d3.filter(vecTotUnstacked, get01X).map(csvNumber(5, "y"));
+const csv26TotUnstacked = '"Time (Months)",' + csvCohorts + "\r\n" +
+        vecMonths.map((t, i) =>
+          [
+            t,
+            vecTotUnstackedIncentives[i],
+            vecTotUnstackedKlima[i],
+            vecTotUnstackedProduct[i],
+            vecTotUnstackedEcosystem[i],
+            vecTotUnstackedTreasury[i],
+            vecTotUnstackedPKlima[i],
+            vecTotUnstacked01X[i],
+          ]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv26TotUnstacked, "figure-26-total-unstacked.csv");
+}
 ```
 
 <figure id="figure-26" class="u-center">
@@ -3655,6 +4024,40 @@ Plot.plot({
 ```
 
 </figure>
+
+```js
+const vecDiff = d3.filter(supplyData, d =>
+  d.key === "Total Supply Differential (Unstacked)");
+const vecDiffIncentives = d3.filter(vecDiff, getIncentives).map(csvNumber(5, "y"));
+const vecDiffKlima = d3.filter(vecDiff, getKlima).map(csvNumber(5, "y"));
+const vecDiffProduct = d3.filter(vecDiff, getProduct).map(csvNumber(5, "y"));
+const vecDiffEcosystem = d3.filter(vecDiff, getEcosystem).map(csvNumber(5, "y"));
+const vecDiffTreasury = d3.filter(vecDiff, getTreasury).map(csvNumber(5, "y"));
+const vecDiffPKlima = d3.filter(vecDiff, getPKlima).map(csvNumber(5, "y"));
+const vecDiff01X = d3.filter(vecDiff, get01X).map(csvNumber(5, "y"));
+const vecAPY_ = vecAPY.map(x => csvNumber(5)({ value: x }));
+const vecAPR_ = vecAPR.map(x => csvNumber(5)({ value: x }));
+
+const csv27 = '"Time (Months)",' + csvCohorts + ',"APY (%/Year)","APR (%/Year)"\r\n' +
+        vecMonths.map((t, i) =>
+          [
+            t,
+            vecDiffIncentives[i],
+            vecDiffKlima[i],
+            vecDiffProduct[i],
+            vecDiffEcosystem[i],
+            vecDiffTreasury[i],
+            vecDiffPKlima[i],
+            vecDiff01X[i],
+            vecAPY_[i],
+            vecAPR_[i],
+          ]
+        ).join("\r\n");
+
+if (isDownladCsv) {
+  downloadCsv(csv27, "figure-27.csv");
+}
+```
 
 <figure id="figure-27" class="u-center">
 <figcaption>Figure&nbsp;27: <strong>KlimaX</strong>&nbsp;Token Supply Risk
@@ -3770,6 +4173,19 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
 }
 ```
 
+```js
+const vecUpsilonL = upsilonData.map(csvNumber(2, "l"));
+const vecUpsilonG = upsilonData.map(csvNumber(2, "g"));
+const vecUpsilon = upsilonData.map(csvNumber(2));
+const csv29 = '"Liquidity L","Stake G","Relative Utilisation υ"\r\n' +
+        vecUpsilonL.map((val, i) =>
+          [val, vecUpsilonG[i], vecUpsilon[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv29, "figure-29.csv");
+}
+```
+
 <figure id="figure-29" class="u-center">
 <figcaption>Figure&nbsp;29: Upsilon&nbsp;${tex`\upsilon`} range of
   values</figcaption>
@@ -3841,6 +4257,19 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
       });
     }
   }
+}
+```
+
+```js
+const vecEtaL = upsilonData.map(csvNumber(2, "l"));
+const vecEtaG = upsilonData.map(csvNumber(2, "g"));
+const vecEta = upsilonData.map(csvNumber(2));
+const csvEq36 = '"Liquidity L","Stake G","Absolute Utilisation η"\r\n' +
+        vecEtaL.map((val, i) =>
+          [val, vecEtaG[i], vecEta[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csvEq36, "equation-36.csv");
 }
 ```
 
@@ -4080,6 +4509,24 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.1) {
 ```
 
 ```js
+const allocationSQDataA = d3.filter(allocationSQData, d =>
+        (d.key === "𝗔 Bonds Allocation") && (!Number.isNaN(d.value)));
+const allocationPoolDataG = d3.filter(allocationPoolData, d =>
+        (d.key === "𝗔𝗚 Pool Allocation") && (!Number.isNaN(d.value)));
+const vecSQLiqL = allocationSQDataA.map(csvNumber(1, "l"));
+const vecSQDStakeG = allocationSQDataA.map(csvNumber(1, "g"));
+const vecSQAllocIA = allocationSQDataA.map(csvNumber(2));
+const vecPoolAllocIAG = allocationPoolDataG.map(csvNumber(2));
+const csv30 = '"Liquidity L","Stake G","Allocation I_staking","Allocation I_pool"\r\n' +
+        vecSQLiqL.map((val, i) =>
+          [val, vecSQDStakeG[i], vecSQAllocIA[i], vecPoolAllocIAG[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv30, "figure-30.csv");
+}
+```
+
+```js
 const plotAllocationPool = Plot.plot({
   caption: html`2. <span class="u-overline"><strong>AG</strong></span>
     and&nbsp;<span class="u-overline"><strong>AQ</strong></span>&nbsp;Liquidity
@@ -4160,6 +4607,19 @@ for (let paramG = 0; paramG < 1.01; paramG += 0.05) {
       });
     }
   }
+}
+```
+
+```js
+const treasuryDataL = treasuryData.map(csvNumber(2, "l"));
+const treasuryDataG = treasuryData.map(csvNumber(2, "g"));
+const treasuryDataI = treasuryData.map(csvNumber(2));
+const csv31 = '"Liquidity L","Stake G","Allocation I_treasury"\r\n' +
+        treasuryDataL.map((val, i) =>
+          [val, treasuryDataG[i], treasuryDataI[i]]
+        ).join("\r\n");
+if (isDownladCsv) {
+  downloadCsv(csv31, "figure-31.csv");
 }
 ```
 

@@ -105,6 +105,7 @@ const defaultChanges = [
   { change: "kVCM Allocation", delta: 50_000, time: 16 },
   { change: "Carbon Swap/Retirement", delta: -100, time: 24 },
   { change: "Carbon Swap/Retirement", delta: 150, time: 25 },
+  // { change: "kVCM Supply", delta: 1000000000, time: 0 },
 ];
 const defaultId = 0;
 
@@ -342,7 +343,7 @@ for (let time = timeMin; time < timeMax + 0.001; time += 0.02) {
     value: inputAPrice * kvcmDeltaSwap / carbonDelta,
     time,
   });
-  const kvcmDeltaRetirement = computePriceRetire(valuesRaw, carbonDelta);
+  const kvcmDeltaRetirement = computePriceRetire(valuesEffective, carbonDelta);
   data.push({
     type: "Hypothetical Retirement Price",
     name: "price",
@@ -381,7 +382,8 @@ Plot.plot({
 ```
 
 ```js
-const defaultRateLimit = 0.0417;  // 1/24
+// const defaultRateLimit = 0.0417;  // 1/24
+const defaultRateLimit = 0.0289;  // ln(2)/24
 const defaultRateLimitK2 = 1;
 const defaultName = "carbon";
 
@@ -530,7 +532,21 @@ function executeSwap(state, carbonDelta, time) {
       carbon: valuesRaw.carbon + carbonDelta,
       kvcmTotal: valuesRaw.kvcmTotal + kvcmDelta,
     },
-    snapshots,
+    snapshots: {
+      ...snapshots,
+      carbon: maybeUpdatedSnapshot(
+        snapshots.carbon,
+        valuesEffective.carbon,
+        valuesRaw.carbon,
+        time,
+      ),
+      kvcmTotal: maybeUpdatedSnapshot(
+        snapshots.kvcmTotal,
+        valuesEffective.kvcmTotal,
+        valuesRaw.kvcmTotal,
+        time,
+      ),
+    },
     time,
   };
   return stateNew;
@@ -539,7 +555,7 @@ function executeSwap(state, carbonDelta, time) {
 function executeRetire(state, carbonDelta, time) {
   const { valuesRaw, snapshots } = state;
   const valuesEffective = computeEffectiveValues(valuesRaw, snapshots, time);
-  const kvcmDelta = computePriceRetire(valuesRaw, carbonDelta);
+  const kvcmDelta = computePriceRetire(valuesEffective, carbonDelta);
   const stateNew = {
     valuesRaw: {
       ...valuesRaw,
@@ -608,11 +624,17 @@ function computeEffectiveValues(valuesRaw, snapshots, time) {
 
 function computeEffectiveValue(name, valuesRaw, snapshots, time) {
   let valueEffective;
-  if (name === "carbon" || name === "kvcmTotal" || name === "k2Total") {
-    valueEffective = rateLimitedInv(valuesRaw[name], snapshots[name], time);
-  } else {
-    valueEffective = rateLimited(valuesRaw[name], snapshots[name], time);
-  }
+    valueEffective = valuesRaw[name];
+
+  // if (name === "carbon") {
+  //   valueEffective = rateLimitedInv(valuesRaw[name], snapshots[name], time);
+  // } else if (name === "kvcmTotal" || name === "k2Total") {
+  //   // valueEffective = valuesRaw[name];
+  // // if (name === "carbon" || name === "kvcmTotal" || name === "k2Total") {
+  //   valueEffective = rateLimitedInv(valuesRaw[name], snapshots[name], time);
+  // } else {
+  //   valueEffective = rateLimited(valuesRaw[name], snapshots[name], time);
+  // }
   return valueEffective;
 }
 
@@ -629,6 +651,22 @@ function rateLimitedInv(valueRaw, snapshot, time) {
   // Can use fast and inaccurate exp implementation here to reduce cost
   const valueLimit = snapshot.value * Math.exp(-snapshot.rate * timeDelta);
   const valueEffective = Math.max(valueRaw, valueLimit);
+  return valueEffective;
+}
+
+function rateLimited2(valueRaw, snapshot, time) {
+  const timeDelta = time - snapshot.time;
+  // Can use fast and inaccurate exp implementation here to reduce cost
+  const valueLimit = snapshot.value / Math.exp(-snapshot.rate * timeDelta);
+  const valueEffective = Math.max(valueRaw, valueLimit);
+  return valueEffective;
+}
+
+function rateLimitedInv2(valueRaw, snapshot, time) {
+  const timeDelta = time - snapshot.time;
+  // Can use fast and inaccurate exp implementation here to reduce cost
+  const valueLimit = snapshot.value * Math.exp(-snapshot.rate * timeDelta);
+  const valueEffective = Math.min(valueRaw, valueLimit);
   return valueEffective;
 }
 

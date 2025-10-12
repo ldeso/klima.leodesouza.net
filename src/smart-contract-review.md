@@ -13,9 +13,11 @@ import * as Util from "./components/util.js";
     Contract Review</a>
 </h1>
 
-_Does the smart contract implement carbon transactions like the white paper?_
+_Is the smart contract implemented like in the white paper?_
 
 ## Carbon Transaction
+
+### Inputs
 
 ```js
 const defaultASupply = 2e7;
@@ -95,7 +97,7 @@ if (inputPresentTonnes === 0) {
 ```
 
 ```ts
-// klima-v2 @ 8f73f16
+// klima-v2 @ 0a9f93b
 import Decimal from "npm:decimal.js";
 
 Decimal.set({ precision: 60, rounding: Decimal.ROUND_DOWN });
@@ -104,7 +106,7 @@ function toBigDecimal(val: bigint): Decimal {
   return new Decimal(val.toString()).div(new Decimal("1e18"));
 }
 
-// @todo double check this for use. currently not being used as no classBalances are zero
+// @todo DOUBLE CHECK INTEGRATION FOR TESTING.
 function calculateZeroCarbonScenario(
   amount: Decimal,
   klimaStake: Decimal,
@@ -129,18 +131,25 @@ function calculateZeroCarbonScenario(
   return leftTerm.mul(bracketSquared);
 }
 
+function mulDivFloor(a: bigint, b: bigint, c: bigint): bigint {
+  return (a * b) / c;
+}
+
 function calculateKlimaSwapPrice(
   amountBigInt: bigint,
   klimaCirculatingSupply: bigint,
   maturityData: MaturityData[],
+  minActiveMaturity: number,
+  maxActiveMaturity: number,
   klimaStakeBigInt: bigint,
   klimaXStakeBigInt: bigint,
   targetMaturityId: number
-): SwapTestCase["klimaPrice"] {
+): TestCase["swapKlimaPrice"] {
   const ONE = new Decimal(1);
 
   let discountedDelta = new Decimal(0);
   let discountFactor = new Decimal(1);
+
   if (targetMaturityId === 0) {
     discountedDelta = toBigDecimal(amountBigInt);
   } else {
@@ -148,21 +157,44 @@ function calculateKlimaSwapPrice(
       (m) => Number(m.maturityId) === targetMaturityId
     );
     if (maturity) {
-      discountedDelta = toBigDecimal(amountBigInt).mul(
-        toBigDecimal(BigInt(maturity.discountFactor))
+      const discountedAmount = mulDivFloor(
+        amountBigInt,
+        maturity.discountFactor,
+        BigInt(1e18)
       );
+      discountedDelta = toBigDecimal(discountedAmount);
       discountFactor = toBigDecimal(BigInt(maturity.discountFactor));
     }
   }
   // 4. Apply discounting to AAM balances (Equation 16)
-  let totalDiscountedBalance = new Decimal(0);
-  for (const maturity of maturityData) {
-    const maturityAmount = toBigDecimal(BigInt(maturity.maturityAmount));
-    const discountFactor = toBigDecimal(BigInt(maturity.discountFactor));
 
-    totalDiscountedBalance = totalDiscountedBalance.plus(
-      maturityAmount.mul(discountFactor)
+  let liquidBalance = new Decimal(0);
+  let totalDiscountedBalance = new Decimal(0);
+  let totalDiscountedForwardTonnage = new Decimal(0);
+
+  for (const maturity of maturityData) {
+    const discountedAmount = mulDivFloor(
+      maturity.maturityAmount,
+      maturity.discountFactor,
+      BigInt(1e18)
     );
+
+    if (maturity.maturityId < minActiveMaturity) {
+      liquidBalance = liquidBalance.plus(toBigDecimal(discountedAmount));
+    } else if (
+      maturity.maturityId >= minActiveMaturity &&
+      maturity.maturityId <= maxActiveMaturity
+    ) {
+      totalDiscountedForwardTonnage = totalDiscountedForwardTonnage.plus(
+        toBigDecimal(discountedAmount)
+      );
+    }
+
+    totalDiscountedBalance = liquidBalance.plus(totalDiscountedForwardTonnage);
+
+    if (maturity.maturityId > maxActiveMaturity) {
+      break;
+    }
   }
   const klimaSupplyDecimal = toBigDecimal(klimaCirculatingSupply);
 
@@ -210,7 +242,7 @@ function calculateKlimaRetirementPrice(
   klimaXStakeBigInt: bigint,
   liquidClassBalance: bigint,
   klimaCirculatingSupply: bigint
-): RetirementTestCase["klimaRetirementPrice"] {
+): TestCase["retirementKlimaPrice"] {
   const ONE = new Decimal(1);
   // solve whitepaper equation for ΔA
   // ΔA = 1 − exp( −ln(1 + ΔC) · (A + ½·A²·(1 − G)²) )
@@ -284,6 +316,8 @@ const totalAEmittedSmartContract = parseFloat(calculateKlimaSwapPrice(
     maturityAmount: BigInt(1e18 * inputPresentTonnes),
     maturityId: 0,
   }],
+  0,
+  39,
   BigInt(1e18 * inputAi),
   BigInt(1e18 * inputGi),
   0,
@@ -328,7 +362,7 @@ const stringABurntDiff = "~" + diffABurnt.toLocaleString(
 ) + " KLIMA";
 ```
 
-## KLIMA Variation
+### KLIMA Variation
 
 The above carbon transaction results in the following amounts of KLIMA emitted
 or burnt by the protocol:
@@ -339,8 +373,22 @@ or burnt by the protocol:
 | Smart Contract | ${stringAEmittedSmartContract} | ${stringABurntSmartContract} |
 | **Difference** | ${stringAEmittedDiff}          | ${stringABurntDiff}          |
 
-## Conclusion
+### Conclusion
 
 The current smart contract implementation results are _identical_ to the white
 paper implementation results, with a small expected error caused by the use of
 floating point arithmetics.
+
+## Bond Yield
+
+### Inputs
+
+
+
+### Yield
+
+
+
+### Conclusion
+
+

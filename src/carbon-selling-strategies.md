@@ -204,6 +204,212 @@ Selling carbon in a single transaction results in a total emission of:
 
 <p class = "u-tabular u-center">${stringAEmitted2}&nbsp;KLIMA</p>
 
+```js
+const vecDeltaBarCi = d3.range(-0.99, 5.001, 0.01);
+const vecDeltaTonnes = vecDeltaBarCi.map(i => i * inputPresentTonnes);
+```
+
+```js
+const vecDeltaA1 = vecDeltaBarCi.map(paramDeltaBarCi => {
+  const paramDeltaTonnes = paramDeltaBarCi * inputPresentTonnes;
+  return inputASupply * computeMultiDeltaA(
+    inputAi,
+    inputGi,
+    inputPresentTonnes,
+    paramDeltaTonnes,
+    inputASupply,
+    inputNTimes,
+    inputIsAStaked,
+  ) / paramDeltaTonnes;
+});
+const vecDeltaA2 = vecDeltaBarCi.map(paramDeltaBarCi => {
+  const paramDeltaTonnes = paramDeltaBarCi * inputPresentTonnes;
+  return inputASupply * Form.computeTrueDeltaA(
+    inputAi,
+    inputGi,
+    inputPresentTonnes,
+    paramDeltaTonnes,
+  ) / paramDeltaTonnes;
+});
+
+const deltaAData = [];
+for (let i = 0; i < vecDeltaBarCi.length; i++) {
+  deltaAData.push({
+    key: "Multiple Transactions",
+    price: vecDeltaA1[i],
+    supply: vecDeltaBarCi[i],
+  });
+  deltaAData.push({
+    key: "Single Transaction",
+    price: vecDeltaA2[i],
+    supply: vecDeltaBarCi[i],
+  });
+}
+
+const stringBarCi = `Present-Value Carbon C̄ᵢ = ${
+  inputPresentTonnes.toLocaleString(
+    "en-GB",
+    { maximumFractionDigits: 0 },
+  )
+} tCO2eq`;
+
+const paramPresentTonnes = [
+  {
+    key: "Multiple Transactions",
+    price: totalAEmitted1 / inputDeltaTonnes,
+    supply: inputDeltaTonnes / inputPresentTonnes,
+    string: stringBarCi,
+  },
+  {
+    key: "Single Transaction",
+    price: totalAEmitted2 / inputDeltaTonnes,
+    supply: inputDeltaTonnes / inputPresentTonnes,
+    string: stringBarCi,
+  },
+];
+
+// const paramTargetTonnes = [
+//   {
+//     key: "Target Tonnes",
+//     supply: inputPresentTonnes + inputDeltaTonnes,
+//   },
+// ];
+```
+
+```js
+Plot.plot({
+  caption: "Carbon Price vs. Relative Evolution of Carbon Supply",
+  color: {
+    legend: true,
+    // range: [2, 5, 6].map(i => d3.schemeCategory10[i]),
+    domain: ["Single Transaction", "Multiple Transactions", stringBarCi, "Target Tonnes"],
+  },
+  x: {
+    // type: "log",
+    label: "Relative Evolution of Carbon Supply (%)",
+    // labelAnchor: "right",
+    // labelArrow: true,
+  },
+  y: {
+    // type: "log",
+    label: "Carbon Price (KLIMA/tCO2eq)",
+    // domain: [0, 100],
+    // grid: true,
+  },
+  insetTop: 16,
+  clip: true,
+  marks: [
+    Plot.frame(),
+    Plot.ruleX(paramPresentTonnes, { x: "supply", stroke: "string", strokeDasharray: 4 }),
+    // Plot.ruleX(paramTargetTonnes, { x: "supply", stroke: "key", strokeDasharray: 4 }),
+    // Plot.rectY(paramPresentTonnes, { x1: 1, x2: "supply", y1: 1e-2, y2: "price", fill: "string" }),
+    // Plot.ruleY(paramPresentTonnes, { x1: 1, x2: "supply", y: "price", stroke: "string" }),
+    Plot.lineY(deltaAData, { x: "supply", y: "price", stroke: "key" }),
+    Plot.dotY(paramPresentTonnes, { x: "supply", y: "price", fill: "key" }),
+  ],
+})
+```
+
+```js
+// const vecPresentTonnes = d3.range(19).map(i => Math.pow(10, i/2));
+// const vecDeltaA1 = vecPresentTonnes.map(paramPresentTonnes =>
+//   inputASupply * computeMultiDeltaA(
+//     inputAi,
+//     inputGi,
+//     paramPresentTonnes,
+//     inputDeltaTonnes,
+//     inputASupply,
+//     inputNTimes,
+//     inputIsAStaked,
+//   ) / inputDeltaTonnes
+// );
+// const vecDeltaA2 = vecPresentTonnes.map(paramPresentTonnes =>
+//   inputASupply * Form.computeTrueDeltaA(
+//     inputAi,
+//     inputGi,
+//     paramPresentTonnes,
+//     inputDeltaTonnes,
+//   ) / inputDeltaTonnes
+// );
+
+// const deltaAData = [];
+// for (let i = 0; i < vecPresentTonnes.length; i++) {
+//   deltaAData.push({
+//     key: "Multiple Transactions",
+//     price: vecDeltaA1[i],
+//     supply: vecPresentTonnes[i],
+//   });
+//   deltaAData.push({
+//     key: "Single Transaction",
+//     price: vecDeltaA2[i],
+//     supply: vecPresentTonnes[i],
+//   });
+// }
+
+// const stringBarCi = `Present-Value Carbon C̄ᵢ = ${
+//   inputPresentTonnes.toLocaleString(
+//     "en-GB",
+//     { maximumFractionDigits: 0 },
+//   )
+// } tCO2eq`;
+
+// const paramPresentTonnes = [
+//   {
+//     key: "Multiple Transactions",
+//     price: totalAEmitted1 / inputDeltaTonnes,
+//     supply: inputPresentTonnes,
+//     string: stringBarCi,
+//   },
+//   {
+//     key: "Single Transaction",
+//     price: totalAEmitted2 / inputDeltaTonnes,
+//     supply: inputPresentTonnes,
+//     string: stringBarCi,
+//   },
+// ];
+
+// const paramTargetTonnes = [
+//   {
+//     key: "Target Tonnes",
+//     supply: inputPresentTonnes + inputDeltaTonnes,
+//   },
+// ];
+```
+
+```js
+// Plot.plot({
+//   caption: "Carbon Price vs. Carbon Supply",
+//   color: {
+//     legend: true,
+//     // range: [2, 5, 6].map(i => d3.schemeCategory10[i]),
+//     domain: ["Single Transaction", "Multiple Transactions", stringBarCi, "Target Tonnes"],
+//   },
+//   x: {
+//     type: "log",
+//     label: "Carbon Supply (tCO2eq)",
+//     // labelAnchor: "right",
+//     // labelArrow: true,
+//   },
+//   y: {
+//     type: "log",
+//     label: "Carbon Price (KLIMA/tCO2eq)",
+//     // domain: [0, 100],
+//     // grid: true,
+//   },
+//   insetTop: 16,
+//   clip: true,
+//   marks: [
+//     Plot.frame(),
+//     Plot.ruleX(paramPresentTonnes, { x: "supply", stroke: "string", strokeDasharray: 4 }),
+//     Plot.ruleX(paramTargetTonnes, { x: "supply", stroke: "key", strokeDasharray: 4 }),
+//     // Plot.rectY(paramPresentTonnes, { x1: 1, x2: "supply", y1: 1e-2, y2: "price", fill: "string" }),
+//     // Plot.ruleY(paramPresentTonnes, { x1: 1, x2: "supply", y: "price", stroke: "string" }),
+//     Plot.lineY(deltaAData, { x: "supply", y: "price", stroke: "key" }),
+//     Plot.dotY(paramPresentTonnes, { x: "supply", y: "price", fill: "key" }),
+//   ],
+// })
+```
+
 ## Analysis
 
 [Figure&nbsp;1](#figure-1) shows the proportion of minted Klima while selling

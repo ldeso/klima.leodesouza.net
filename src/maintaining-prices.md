@@ -108,54 +108,124 @@ function computeAi(deltaA, deltaC, Gi) {
 const carbonClasses = [
   {
     name: "OAE (Removal – High Durability)",
-    price: 700,
+    price: 550, // Max 700
     liquidity: 14,
     kvcm: 0.00022,
     k2: 0,
   },
   {
     name: "BCHAR (Removal – Biochar)",
-    price: 150,
+    price: 130, // Max 150
     liquidity: 1050,
     kvcm: 0.00349,
     k2: 0,
   },
+  // {
+  //   name: "Mangrove Restoration (NBS – Removal)",
+  //   price: 35,
+  //   liquidity: 1063,
+  //   kvcm: 0.00082,
+  //   k2: 0,
+  // },
   {
-    name: "Mangrove Restoration (NBS – Removal)",
-    price: 35,
-    liquidity: 1063,
-    kvcm: 0.00082,
+    name: "REDD+ 2008 (NBS – Mitigation/Avoidance)",
+    price: 0.8, // Max: ?
+    liquidity: 1082425,
+    kvcm: 0.03748,
+    // liquidity: 1107984/3,
+    // kvcm: 0.03557,
+    // liquidity: 1107984/10,
+    // kvcm: 0.03019,
     k2: 0,
   },
   {
-    name: "REDD+ (NBS – Mitigation/Avoidance)",
-    price: 1.5,
-    liquidity: 1107984,
+    name: "REDD+ 2017 (NBS – Mitigation/Avoidance)",
+    price: 1.3, // Max: ? 1.5
+    liquidity: 25559,
     kvcm: 0.03748,
+    // liquidity: 1107984/3,
+    // kvcm: 0.03557,
+    // liquidity: 1107984/10,
+    // kvcm: 0.03019,
     k2: 0,
   },
   {
     name: "IFM (NBS – Mitigation/Avoidance)",
-    price: 1.2,
+    price: 1.0, // Max: 1.2
     liquidity: 298455,
     kvcm: 0.00796,
     k2: 0,
   },
   {
     name: "Landfill Gas (Avoidance – Other)",
-    price: 0.9,
+    price: 0.7, // Max: 0.9
     liquidity: 96234,
     kvcm: 0.00192,
     k2: 0,
   },
-  {
-    name: "Renewables – Large Scale (Avoidance – Other)",
-    price: 0.15,
-    liquidity: 13556768,
-    kvcm: 0.04607,
-    k2: 0,
-  },
+  // {
+  //   name: "Renewables – Large Scale (Avoidance – Other)",
+  //   price: 0.15,
+  //   liquidity: 13556768,
+  //   kvcm: 0.04607,
+  //   // liquidity: 13556768/3,
+  //   // kvcm: 0.04371,
+  //   // liquidity: 13556768/10,
+  //   // kvcm: 0.03707,
+  //   k2: 0,
+  // },
 ]
+// const carbonClasses = [
+//   {
+//     name: "OAE (Removal – High Durability)",
+//     price: 700,
+//     liquidity: 14,
+//     kvcm: 0.00022,
+//     k2: 0,
+//   },
+//   {
+//     name: "BCHAR (Removal – Biochar)",
+//     price: 150,
+//     liquidity: 1050,
+//     kvcm: 0.00349,
+//     k2: 0,
+//   },
+//   {
+//     name: "Mangrove Restoration (NBS – Removal)",
+//     price: 35,
+//     liquidity: 1063,
+//     kvcm: 0.00082,
+//     k2: 0,
+//   },
+//   {
+//     name: "REDD+ (NBS – Mitigation/Avoidance)",
+//     price: 1.5,
+//     liquidity: 1107984,
+//     kvcm: 0.03748,
+//     k2: 0,
+//   },
+//   {
+//     name: "IFM (NBS – Mitigation/Avoidance)",
+//     price: 1.2,
+//     liquidity: 298455,
+//     kvcm: 0.00796,
+//     k2: 0,
+//   },
+//   {
+//     name: "Landfill Gas (Avoidance – Other)",
+//     price: 0.9,
+//     liquidity: 96234,
+//     kvcm: 0.00192,
+//     k2: 0,
+//   },
+//   {
+//     name: "Renewables – Large Scale (Avoidance – Other)",
+//     price: 0.15,
+//     liquidity: 13556768,
+//     kvcm: 0.04607,
+//     k2: 0,
+//   },
+// ]
 const defaultASupply = d3.sum(carbonClasses, d => d.liquidity);
 const defaultAPrice = 3;
 const defaultTogglePriceRetirement = false;
